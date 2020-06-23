@@ -1,0 +1,4 @@
+include ':app'
+include ':netlibrary'
+
+rootProject.name = "netlib"
