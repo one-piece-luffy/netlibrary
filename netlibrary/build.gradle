@@ -21,6 +21,9 @@ android {
 
         }
     }
+    dataBinding {
+        enabled = true
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -45,6 +48,12 @@ dependencies {
     api 'com.google.code.gson:gson:2.8.6'
     api 'com.squareup.okhttp3:okhttp:4.6.0'
     api 'org.conscrypt:conscrypt-android:2.2.1'
+
+    implementation "android.arch.lifecycle:extensions:1.1.0"
+// alternatively, just ViewModel
+    implementation "android.arch.lifecycle:viewmodel:1.1.0"
+// alternatively, just LiveData
+    implementation "android.arch.lifecycle:livedata:1.1.0"
 }
 
 
@@ -75,34 +84,34 @@ dependencies {
 
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
-version = "0.0.8"
+version = "0.0.11"
 def siteUrl = 'https://github.com/LIHAIYI/netlibrary'    // project homepage
 def gitUrl  = 'https://github.com/LIHAIYI/netlibrary.git' // project git
 group = "com.example.netlibrary"
 
-task sourcesJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
-
-}
-task javadoc(type: Javadoc) {
-    source = android.sourceSets.main.java.srcDirs
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-    options.addStringOption('encoding', 'UTF-8')
-    options.addStringOption('charSet', 'UTF-8')
-
-}
-//task javadocJar(type: Jar, dependsOn: javadoc) {
-//    classifier = 'javadoc'
-//    from javadoc.destinationDir
-////    options.addStringOption('encoding', 'UTF-8')
-////    options.addStringOption('charSet', 'UTF-8')
+//task sourcesJar(type: Jar) {
+//    from android.sourceSets.main.java.srcDirs
+//    classifier = 'sources'
 //
 //}
-artifacts {
-//    archives javadocJar
-    archives sourcesJar
-}
+//task javadoc(type: Javadoc) {
+//    source = android.sourceSets.main.java.srcDirs
+//    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+//    options.addStringOption('encoding', 'UTF-8')
+//    options.addStringOption('charSet', 'UTF-8')
+//
+//}
+////task javadocJar(type: Jar, dependsOn: javadoc) {
+////    classifier = 'javadoc'
+////    from javadoc.destinationDir
+//////    options.addStringOption('encoding', 'UTF-8')
+//////    options.addStringOption('charSet', 'UTF-8')
+////
+////}
+//artifacts {
+////    archives javadocJar
+//    archives sourcesJar
+//}
 
 install {
     repositories.mavenInstaller {
