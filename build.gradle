@@ -4,14 +4,16 @@ buildscript {
         google()
         jcenter()
         maven {
-            url  "https://dl.bintray.com/lihaiyi/netlibrary"
+            url  "https://dl.bintray.com/lihaiyi/netlibrary/"
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.2'
-        classpath 'com.novoda:bintray-release:0.8.1'
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        classpath 'com.android.tools.build:gradle:4.0.0'
+        //bintray 插件
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
+        //android-maven-gradle-plugin:1.3版本有bug，网上很多例子用的这个版本，编译的时候可能会出错，改一下版本就好了
+
     }
 }
 
@@ -19,6 +21,9 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven{
+            url "https://bintray.com/lihaiyi"
+        }
     }
 }
 

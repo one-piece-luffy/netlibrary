@@ -138,7 +138,7 @@ public class OkHttp3Stack implements HttpStack {
 //                .writeTimeout(timeoutMs, TimeUnit.MILLISECONDS)
 //                .build();
 
-        // 请求构造器
+//请求构造器
         okhttp3.Request.Builder okHttpRequestBuilder = new okhttp3.Request.Builder();
 
         Map<String, String> headers = request.getHeaders();

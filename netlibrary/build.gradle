@@ -3,7 +3,6 @@ apply plugin: 'com.android.library'
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
-
     useLibrary 'org.apache.http.legacy'
     defaultConfig {
         minSdkVersion 15
@@ -35,6 +34,9 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     api 'com.android.volley:volley:1.1.1'
     api 'com.squareup.retrofit2:retrofit:2.8.1'
@@ -45,15 +47,110 @@ dependencies {
     api 'org.conscrypt:conscrypt-android:2.2.1'
 }
 
-apply plugin: 'com.novoda.bintray-release'
 
-publish {
-    userOrg = 'lihaiyi' //bintray账户下某个组织id-不可自定义
-    groupId = 'com.example.netlibrary' //maven仓库下库的包名，一般为模块包名，自定义
-    artifactId = 'baofu-net' //项目名称-自定义
-    publishVersion = '0.0.1' //版本号-自定义
-    desc = 'netword library for android' //项目介绍，可以不写
-//    website = 'https://github.com/SpringSmell/quick.library' //项目主页，可以不写
+
+//ext {
+//    bintrayRepo = 'maven'
+//    bintrayName = 'netlibrary'
+//
+//    publishedGroupId = 'com.example.netlibrary'
+//    libraryName = 'netlibrary'
+//    artifact = 'netlibrary'
+//
+//    libraryDescription = 'The gradient ui that View can change from one background to another background. (Such as the background of ImageView, the color of TextView)'
+//
+//    siteUrl = 'https://github.com/LIHAIYI/netlibrary'
+//    gitUrl = 'https://github.com/LIHAIYI/netlibrary.git'
+//
+//    libraryVersion = '0.0.3'
+//
+//    developerId = 'lihaiyi'
+//    developerName = 'lihaiyi'
+//    developerEmail = 'lihaiyi8@gmail.com'
+//
+//    licenseName = 'The Apache Software License, Version 2.0'
+//    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+//    allLicenses = ["Apache-2.0"]
+//}
+
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
+version = "0.0.8"
+def siteUrl = 'https://github.com/LIHAIYI/netlibrary'    // project homepage
+def gitUrl  = 'https://github.com/LIHAIYI/netlibrary.git' // project git
+group = "com.example.netlibrary"
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+
+}
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    options.addStringOption('encoding', 'UTF-8')
+    options.addStringOption('charSet', 'UTF-8')
+
+}
+//task javadocJar(type: Jar, dependsOn: javadoc) {
+//    classifier = 'javadoc'
+//    from javadoc.destinationDir
+////    options.addStringOption('encoding', 'UTF-8')
+////    options.addStringOption('charSet', 'UTF-8')
+//
+//}
+artifacts {
+//    archives javadocJar
+    archives sourcesJar
 }
 
-//        ./gradlew clean build bintrayUpload -PbintrayUser=lihaiyi -PbintrayKey=00cb559360c775bd79c74529b61f41e6981cee8c -PdryRun=false
+install {
+    repositories.mavenInstaller {
+        // This generates POM.xml with proper parameters
+        pom {
+            project {
+                packaging 'aar'
+                name 'netlibrary'
+                url siteUrl
+                // Set your license
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer { //填写的一些基本信息
+                        id 'netlibrary'
+                        name 'lihaiyi'
+                        email 'lihaiyi8@gmail.com'
+                    }
+                }
+                scm {
+                    connection gitUrl
+                    developerConnection gitUrl
+                    url siteUrl
+                }
+            }
+        }
+    }
+}
+
+
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+bintray {
+    user = properties.getProperty("bintrayUser")
+    key = properties.getProperty("bintrayApiKey")
+    configurations = ['archives']
+    pkg {
+        repo = "netlibrary"               //跟上面创建的Maven仓库名字保持一致
+        name = "netlibrary"                //发布到JCenter上的项目名字
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = ["Apache-2.0"]
+        publish = true
+    }
+}
+

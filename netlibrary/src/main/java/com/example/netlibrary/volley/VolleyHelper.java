@@ -54,7 +54,7 @@ public class VolleyHelper {
     public void init(Context context) {
 //        if (mRequestQueue == null) {
         OkHttp3Stack stack = new OkHttp3Stack();
-        mRequestQueue = Volley.newRequestQueue(context,stack);
+        mRequestQueue = Volley.newRequestQueue(context, stack);
 //        }
     }
 
@@ -132,7 +132,7 @@ public class VolleyHelper {
      */
     public <T> void addToRequestQueue(Request<T> req, String tag) {
         if (mRequestQueue == null) {
-            Log.e(TAG,"网络库沒有初始化");
+            Log.e(TAG, "网络库沒有初始化");
             return;
         }
         // set the default tag if tag is empty
@@ -148,7 +148,7 @@ public class VolleyHelper {
      */
     public <T> void addToRequestQueue(Request<T> req) {
         if (mRequestQueue == null) {
-            Log.e(TAG,"网络库沒有初始化");
+            Log.e(TAG, "网络库沒有初始化");
             return;
         }
         // set the default tag if tag is empty
@@ -179,9 +179,9 @@ public class VolleyHelper {
     }
 
 
-    public <E> void requestGson(int method, final String url, final Map<String,String> param,final Map<String,String> header, Class<E> mClass,
-                            final VolleyListener.OnResponseListener<E> listener, String requestTag, boolean needCache) {
-        GsonRequest<E> req = new GsonRequest<E>(method,url, mClass, new Response.Listener<E>() {
+    public <E> void requestGson(int method, final String url, final Map<String, String> header, final Map<String, String> param, Class<E> mClass
+            , String requestTag, boolean needCache, final VolleyListener.OnResponseListener<E> listener) {
+        GsonRequest<E> req = new GsonRequest<E>(method, url, mClass, new Response.Listener<E>() {
 
             @Override
             public void onResponse(E response) {
@@ -196,11 +196,12 @@ public class VolleyHelper {
                     listener.onErrorResponse(error);
                 }
             }
-        }){
+        }) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 return param;
             }
+
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 return header;
@@ -209,9 +210,9 @@ public class VolleyHelper {
         addToRequestQueue(req, requestTag);
     }
 
-    public <E> void requestString(int method, final String url, final Map<String,String> param,final Map<String,String> header,
-                            final VolleyListener.OnResponseStrListener listener, String requestTag, boolean needCache) {
-        StringRequest req = new StringRequest(method,url, new Response.Listener<String>() {
+    public <E> void requestString(int method, final String url, final Map<String, String> header, final Map<String, String> param,
+                                  String requestTag, boolean needCache, final VolleyListener.OnResponseStrListener listener) {
+        StringRequest req = new StringRequest(method, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 if (listener != null) {
@@ -225,7 +226,7 @@ public class VolleyHelper {
                     listener.onErrorResponse(error);
                 }
             }
-        }){
+        }) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 return param;
@@ -233,7 +234,7 @@ public class VolleyHelper {
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-               return header;
+                return header;
 
             }
         };
@@ -241,16 +242,16 @@ public class VolleyHelper {
         addToRequestQueue(req, requestTag);
     }
 
-    public <E> void requestJsonRequest(int method, final String url, final Map<String,String> header,final JSONObject paramJsonObject,
-                               final VolleyListener.OnResponseStrListener listener, String requestTag, boolean needCache) {
-        JsonObjectRequest jsonObjectRequest=new JsonObjectRequest(method, url, paramJsonObject, new com.android.volley.Response.Listener<JSONObject>() {
+    public <E> void requestJsonRequest(int method, final String url, final Map<String, String> header, final JSONObject paramJsonObject,
+                                       String requestTag, boolean needCache, final VolleyListener.OnResponseStrListener listener) {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(method, url, paramJsonObject, new com.android.volley.Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 if (listener != null) {
                     listener.onResponse(response.toString());
                 }
             }
-        },new com.android.volley.Response.ErrorListener(){
+        }, new com.android.volley.Response.ErrorListener() {
 
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -258,7 +259,7 @@ public class VolleyHelper {
                     listener.onErrorResponse(error);
                 }
             }
-        }){
+        }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
 
@@ -270,7 +271,7 @@ public class VolleyHelper {
     }
 
 
-    private void initHeader( Map<String,String> headers){
+    private void initHeader(Map<String, String> headers) {
 //        if(headers==null){
 //            headers=new HashMap<>();
 //        }
