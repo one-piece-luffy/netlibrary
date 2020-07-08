@@ -21,9 +21,9 @@ android {
 
         }
     }
-    dataBinding {
-        enabled = true
-    }
+//    dataBinding {
+//        enabled = true
+//    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -84,7 +84,7 @@ dependencies {
 
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
-version = "0.0.11"
+version = "0.0.13"
 def siteUrl = 'https://github.com/LIHAIYI/netlibrary'    // project homepage
 def gitUrl  = 'https://github.com/LIHAIYI/netlibrary.git' // project git
 group = "com.example.netlibrary"

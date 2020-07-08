@@ -16,6 +16,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -268,6 +269,35 @@ public class VolleyHelper {
         };
 
         addToRequestQueue(jsonObjectRequest, requestTag);
+    }
+
+    public <E> void requestJsonArrayRequest(int method, final String url, final Map<String, String> header, final String paramJsonObject,
+                                       String requestTag, boolean needCache, final VolleyListener.OnResponseStrListener listener) {
+        BaoFuJsoArraynRequest jsonArrayRequest=new BaoFuJsoArraynRequest(method,url,paramJsonObject,new  Response.Listener<JSONArray>(){
+
+            @Override
+            public void onResponse(JSONArray s) {
+                if (listener != null) {
+                    listener.onResponse(s.toString());
+                }
+            }
+        },new com.android.volley.Response.ErrorListener(){
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (listener != null) {
+                    listener.onErrorResponse(error);
+                }
+            }
+        }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                return header;
+            }
+        };
+
+
+        addToRequestQueue(jsonArrayRequest, requestTag);
     }
 
 

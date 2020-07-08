@@ -3,7 +3,6 @@ package com.example.netlibrary;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
-import androidx.databinding.ObservableBoolean;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -16,7 +15,6 @@ public class BaseViewModel extends AndroidViewModel {
 
     protected BaseRequestModel mBaseModel;
 
-    public ObservableBoolean loading = new ObservableBoolean();
 
     protected MutableLiveData<String> toastMessage = new MutableLiveData<>();
 
