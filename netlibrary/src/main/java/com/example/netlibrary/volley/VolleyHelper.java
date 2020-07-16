@@ -300,6 +300,38 @@ public class VolleyHelper {
         addToRequestQueue(jsonArrayRequest, requestTag);
     }
 
+    public <E> void requestForm(int method, final String url, final Map<String,String> header, final Map<String,String> param,
+                                String requestTag, boolean needCache,  final VolleyListener.OnResponseStrListener listener) {
+        FormRequest formRequest=new FormRequest(url, param, new FormRequest.SuccessListener() {
+            @Override
+            public void onResponses(String responseDate, Map header) {
+                if(listener!=null){
+                    listener.onResponse(responseDate);
+                }
+            }
+
+            @Override
+            public void onResponse(Object response) {
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if(listener!=null){
+                    listener.onErrorResponse(error);
+                }
+            }
+        }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                return header;
+            }
+
+        };
+
+        addToRequestQueue(formRequest, requestTag);
+    }
+
 
     private void initHeader(Map<String, String> headers) {
 //        if(headers==null){

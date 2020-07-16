@@ -55,5 +55,9 @@ public class BaseRequestModel {
                                        boolean needCache, final VolleyListener.OnResponseStrListener listener) {
         VolleyHelper.getInstance().requestJsonArrayRequest(method,url,header,paramJsonObject,mRequestTag,needCache,listener);
     }
+    public <E> void requestForm(int method, final String url, final Map<String,String> header, final Map<String,String> paramJsonObject,
+                                       boolean needCache, final VolleyListener.OnResponseStrListener listener) {
+        VolleyHelper.getInstance().requestForm(method,url,header,paramJsonObject,mRequestTag,needCache,listener);
+    }
 
 }
