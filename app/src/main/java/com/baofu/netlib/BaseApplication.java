@@ -26,7 +26,7 @@ public class BaseApplication extends Application{
     @Override
     public void onCreate() {
         super.onCreate();
-        BPConfig config=new BPConfig.Builder().context(this).strategyType(BPRequest.STRATEGY_TYPE.VOLLEY).build();
+        BPConfig config=new BPConfig.Builder().context(this).strategyType(BPRequest.STRATEGY_TYPE.OKHTTPS).build();
         BPRequest.getInstance().init(config);
     }
 }
