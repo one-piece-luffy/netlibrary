@@ -7,20 +7,26 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.netlibrary.okhttps.OkhttpsStrategy;
+import com.example.netlibrary.volley.VolleyStrategy;
+
 /**
  * Created by txl on 2019/1/8.
  */
 
 public class BaseViewModel extends AndroidViewModel {
 
-    protected BaseRequestModel mBaseModel;
+    public  String mRequestTag;
+
+    protected RequestStrategy mBaseModel;
 
 
     protected MutableLiveData<String> toastMessage = new MutableLiveData<>();
 
     public BaseViewModel(@NonNull Application application) {
         super(application);
-        mBaseModel = new BaseRequestModel(getClass().getName() + System.currentTimeMillis());
+        mRequestTag = getClass().getName() + System.currentTimeMillis();
+        mBaseModel = BPRequest.getInstance().mStrategy;
     }
 
     public LiveData<String> getToastMessage() {
@@ -30,7 +36,7 @@ public class BaseViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
-        mBaseModel.cancelRequests();
+        mBaseModel.cancelRequests(mRequestTag);
     }
 
 }

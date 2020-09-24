@@ -15,11 +15,11 @@ import com.android.volley.toolbox.ClearCacheRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.netlibrary.BPListener;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -181,7 +181,7 @@ public class VolleyHelper {
 
 
     public <E> void requestGson(int method, final String url, final Map<String, String> header, final Map<String, String> param, Class<E> mClass
-            , String requestTag, boolean needCache, final VolleyListener.OnResponseListener<E> listener) {
+            , String requestTag, boolean needCache, final BPListener.OnResponseListener<E> listener) {
         GsonRequest<E> req = new GsonRequest<E>(method, url, mClass, new Response.Listener<E>() {
 
             @Override
@@ -194,7 +194,7 @@ public class VolleyHelper {
             @Override
             public void onErrorResponse(VolleyError error) {
                 if (listener != null) {
-                    listener.onErrorResponse(error);
+                    listener.onErrorResponse(error.getMessage());
                 }
             }
         }) {
@@ -212,7 +212,7 @@ public class VolleyHelper {
     }
 
     public <E> void requestString(int method, final String url, final Map<String, String> header, final Map<String, String> param,
-                                  String requestTag, boolean needCache, final VolleyListener.OnResponseStrListener listener) {
+                                  String requestTag, boolean needCache, final BPListener.OnResponseStrListener listener) {
         StringRequest req = new StringRequest(method, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -224,7 +224,7 @@ public class VolleyHelper {
             @Override
             public void onErrorResponse(VolleyError error) {
                 if (listener != null) {
-                    listener.onErrorResponse(error);
+                    listener.onErrorResponse(error.getMessage());
                 }
             }
         }) {
@@ -244,7 +244,7 @@ public class VolleyHelper {
     }
 
     public <E> void requestJsonRequest(int method, final String url, final Map<String, String> header, final JSONObject paramJsonObject,
-                                       String requestTag, boolean needCache, final VolleyListener.OnResponseStrListener listener) {
+                                       String requestTag, boolean needCache, final BPListener.OnResponseStrListener listener) {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(method, url, paramJsonObject, new com.android.volley.Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -257,7 +257,7 @@ public class VolleyHelper {
             @Override
             public void onErrorResponse(VolleyError error) {
                 if (listener != null) {
-                    listener.onErrorResponse(error);
+                    listener.onErrorResponse(error.getMessage());
                 }
             }
         }) {
@@ -271,9 +271,9 @@ public class VolleyHelper {
         addToRequestQueue(jsonObjectRequest, requestTag);
     }
 
-    public <E> void requestJsonArrayRequest(int method, final String url, final Map<String, String> header, final String paramJsonObject,
-                                       String requestTag, boolean needCache, final VolleyListener.OnResponseStrListener listener) {
-        BaoFuJsoArraynRequest jsonArrayRequest=new BaoFuJsoArraynRequest(method,url,paramJsonObject,new  Response.Listener<JSONArray>(){
+    public <E> void requestJsonArrayRequest(int method, final String url, final Map<String, String> header, final JSONObject paramJsonObject,
+                                       String requestTag, boolean needCache, final BPListener.OnResponseStrListener listener) {
+        BaoFuJsoArraynRequest jsonArrayRequest=new BaoFuJsoArraynRequest(method,url,paramJsonObject.toString(),new  Response.Listener<JSONArray>(){
 
             @Override
             public void onResponse(JSONArray s) {
@@ -286,7 +286,7 @@ public class VolleyHelper {
             @Override
             public void onErrorResponse(VolleyError error) {
                 if (listener != null) {
-                    listener.onErrorResponse(error);
+                    listener.onErrorResponse(error.getMessage());
                 }
             }
         }){
@@ -301,7 +301,7 @@ public class VolleyHelper {
     }
 
     public <E> void requestForm(int method, final String url, final Map<String,String> header, final Map<String,String> param,
-                                String requestTag, boolean needCache,  final VolleyListener.OnResponseStrListener listener) {
+                                String requestTag, boolean needCache,  final BPListener.OnResponseStrListener listener) {
         FormRequest formRequest=new FormRequest(url, param, new FormRequest.SuccessListener() {
             @Override
             public void onResponses(String responseDate, Map header) {
@@ -318,7 +318,7 @@ public class VolleyHelper {
             @Override
             public void onErrorResponse(VolleyError error) {
                 if(listener!=null){
-                    listener.onErrorResponse(error);
+                    listener.onErrorResponse(error.getMessage());
                 }
             }
         }){

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <external-path name="media" path="."/>
+
+    <!--对应Environment.getExternalStorageDirectory() + “/path/”，即/storage/emulated/0/-->
+    <external-path name="camera_photos"  path="." />
+
+
+
+    <external-files-path name="download" path="Download"/>
+
+
+    <!--对应Context.getExternalFilesDir(null) + “/path/”，即/storage/emulated/0/Android/data/<package_name>/files。-->
+    <external-files-path name="name" path="." />
+
+
+</paths>

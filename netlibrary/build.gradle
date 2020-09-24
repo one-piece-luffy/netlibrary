@@ -42,18 +42,24 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     api 'com.android.volley:volley:1.1.1'
-    api 'com.squareup.retrofit2:retrofit:2.8.1'
 //    api 'com.squareup.okio:okio:1.6.0'
     api 'org.apache:apache:23'
     api 'com.google.code.gson:gson:2.8.6'
     api 'com.squareup.okhttp3:okhttp:4.6.0'
     api 'org.conscrypt:conscrypt-android:2.2.1'
 
+//    implementation 'com.ejlchina:okhttps:2.4.2'
+    implementation 'com.ejlchina:okhttps-gson:2.4.2'
+
     implementation "android.arch.lifecycle:extensions:1.1.0"
 // alternatively, just ViewModel
     implementation "android.arch.lifecycle:viewmodel:1.1.0"
 // alternatively, just LiveData
     implementation "android.arch.lifecycle:livedata:1.1.0"
+
+
+//    api 'com.alibaba:fastjson:1.1.70.android'
+//    api 'com.alibaba:fastjson:1.2.55'
 }
 
 
@@ -84,7 +90,7 @@ dependencies {
 
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
-version = "0.0.15"
+version = "0.0.19"
 def siteUrl = 'https://github.com/LIHAIYI/netlibrary'    // project homepage
 def gitUrl  = 'https://github.com/LIHAIYI/netlibrary.git' // project git
 group = "com.example.netlibrary"

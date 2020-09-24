@@ -1,4 +1,4 @@
-package com.example.netlibrary.volley;
+package com.example.netlibrary;
 
 
 import com.android.volley.NetworkResponse;
@@ -8,7 +8,7 @@ import com.android.volley.VolleyError;
  * Created by wanglin on 2017/11/14.
  */
 
-public interface VolleyListener {
+public interface BPListener {
 
     public interface OnResponseListener<E> {
 
@@ -18,7 +18,7 @@ public interface VolleyListener {
 
         void onNotModify();
 
-        void onErrorResponse(VolleyError error);
+        void onErrorResponse(String error);
     }
 
     public interface OnResponseStrListener {
@@ -29,7 +29,7 @@ public interface VolleyListener {
 
         void onNotModify();
 
-        void onErrorResponse(VolleyError error);
+        void onErrorResponse(String error);
     }
 
     public interface OnResponseListenerAsyn<E> {
@@ -42,13 +42,13 @@ public interface VolleyListener {
 
         void onNotModify();
 
-        void onErrorResponse(VolleyError error);
+        void onErrorResponse(String error);
     }
 
     public interface OnResponseMultipartListener<E> {
         void onResponse(E response);
 
-        void onErrorResponse(VolleyError error);
+        void onErrorResponse(String error);
 
     }
 
@@ -60,7 +60,7 @@ public interface VolleyListener {
 
         void onNotModify();
 
-        void onErrorResponse(VolleyError error);
+        void onErrorResponse(String error);
 
         NetworkResponse parseNetworkResponse(NetworkResponse response);
     }
