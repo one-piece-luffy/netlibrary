@@ -3,6 +3,7 @@ package com.example.netlibrary.volley;
 import android.content.Context;
 import android.util.Log;
 
+import com.example.netlibrary.BPConfig;
 import com.example.netlibrary.RequestStrategy;
 import com.example.netlibrary.BPListener;
 
@@ -17,8 +18,8 @@ public class VolleyStrategy implements RequestStrategy {
     }
 
     @Override
-    public void init(Context context) {
-        VolleyHelper.getInstance().init(context);
+    public void init(BPConfig config) {
+        VolleyHelper.getInstance().init(config);
     }
 
     public String getRequestTag() {

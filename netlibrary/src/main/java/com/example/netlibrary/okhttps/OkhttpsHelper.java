@@ -12,6 +12,7 @@ import com.ejlchina.okhttps.HttpTask;
 import com.ejlchina.okhttps.OkHttps;
 import com.ejlchina.okhttps.OnCallback;
 import com.ejlchina.okhttps.internal.AsyncHttpTask;
+import com.example.netlibrary.BPConfig;
 import com.example.netlibrary.BPRequest;
 import com.example.netlibrary.volley.RedirectInterceptor;
 import com.example.netlibrary.BPListener;
@@ -55,9 +56,9 @@ public class OkhttpsHelper {
     /**
      * 参数传递 applicationContext
      *
-     * @param context
+     * @param config
      */
-    public void init(Context context) {
+    public void init(BPConfig config) {
 //        if (mRequestQueue == null) {
 //        }
         Handler handler=new Handler(Looper.getMainLooper());
@@ -170,6 +171,7 @@ public class OkhttpsHelper {
                 task.get();
                 break;
         }
+        Log.e(TAG,"from okhttps");
     }
 
     public <E> void requestJsonRequest(int method, final String url, final Map<String, String> header, final JSONObject paramJsonObject,

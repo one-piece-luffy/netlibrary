@@ -15,6 +15,7 @@ import com.android.volley.toolbox.ClearCacheRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.netlibrary.BPConfig;
 import com.example.netlibrary.BPListener;
 
 import org.json.JSONArray;
@@ -50,12 +51,12 @@ public class VolleyHelper {
     /**
      * 参数传递 applicationContext
      *
-     * @param context
+     * @param config
      */
-    public void init(Context context) {
+    public void init(BPConfig config) {
 //        if (mRequestQueue == null) {
         OkHttp3Stack stack = new OkHttp3Stack();
-        mRequestQueue = Volley.newRequestQueue(context, stack);
+        mRequestQueue = Volley.newRequestQueue(config.context, stack);
 //        }
     }
 
@@ -239,6 +240,7 @@ public class VolleyHelper {
 
             }
         };
+        Log.e(TAG,"from volley");
 
         addToRequestQueue(req, requestTag);
     }

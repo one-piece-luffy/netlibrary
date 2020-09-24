@@ -2,6 +2,7 @@ package com.example.netlibrary.okhttps;
 
 import android.content.Context;
 
+import com.example.netlibrary.BPConfig;
 import com.example.netlibrary.RequestStrategy;
 import com.example.netlibrary.BPListener;
 
@@ -16,8 +17,8 @@ public class OkhttpsStrategy implements RequestStrategy {
     }
 
     @Override
-    public void init(Context context) {
-        OkhttpsHelper.getInstance().init(context);
+    public void init(BPConfig config) {
+        OkhttpsHelper.getInstance().init(config);
     }
 
     public String getRequestTag() {

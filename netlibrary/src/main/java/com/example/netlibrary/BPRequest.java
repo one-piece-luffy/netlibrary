@@ -18,7 +18,10 @@ public class BPRequest {
         int TRACE = 6;
         int PATCH = 7;
     }
-
+    public interface STRATEGY_TYPE {
+        int OKHTTPS = 0;
+        int VOLLEY = 1;
+    }
 
 
     private static BPRequest mInstance;
@@ -38,13 +41,26 @@ public class BPRequest {
         return mInstance;
     }
 
+
     public BPRequest() {
 //        mStrategy = new VolleyStrategy();
-        mStrategy = new OkhttpsStrategy();
+//        mStrategy = new OkhttpsStrategy();
     }
 
-    public void init(Context context){
-        mStrategy.init(context);
+    public void init(BPConfig config){
+        if(config==null){
+            mStrategy = new OkhttpsStrategy();
+        }else {
+            switch (config.strategyType){
+                case 1:
+                    mStrategy = new VolleyStrategy();
+                    break;
+                case 0:
+                default:
+                    mStrategy = new OkhttpsStrategy();
+            }
+        }
+        mStrategy.init(config);
 
     }
 

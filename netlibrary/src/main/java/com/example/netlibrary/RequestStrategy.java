@@ -8,7 +8,7 @@ import java.util.Map;
 
 public interface RequestStrategy {
 
-    public void init(Context context);
+    public void init(BPConfig config);
 
     public String getRequestTag();
 
