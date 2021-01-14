@@ -44,6 +44,11 @@ public class OkhttpsStrategy implements RequestStrategy {
         OkhttpsHelper.getInstance().requestString(method,url,header,param,requestTag,needCache,listener);
 
     }
+    public <E> void requestNesString(int method, final String url, final Map<String,String> header,final Map<String,String> param,
+                                  boolean needCache,String requestTag,final BPListener.OnResponseNesStrListener listener) {
+        OkhttpsHelper.getInstance().requestNewString(method,url,header,param,requestTag,needCache,listener);
+
+    }
 
     public <E> void requestJsonRequest(int method, final String url, final Map<String,String> header, final JSONObject param,
                                        boolean needCache,String requestTag, final BPListener.OnResponseStrListener listener) {

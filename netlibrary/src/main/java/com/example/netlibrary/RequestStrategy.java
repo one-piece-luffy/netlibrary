@@ -23,6 +23,9 @@ public interface RequestStrategy {
     public <E> void requestString(int method, final String url, final Map<String,String> header,final Map<String,String> param,
                                   boolean needCache,String requestTag,final BPListener.OnResponseStrListener listener);
 
+    public <E> void requestNesString(int method, final String url, final Map<String,String> header,final Map<String,String> param,
+                                  boolean needCache,String requestTag,final BPListener.OnResponseNesStrListener listener);
+
     public <E> void requestJsonRequest(int method, final String url, final Map<String,String> header, final JSONObject paramJsonObject,
                                        boolean needCache, String requestTag,final BPListener.OnResponseStrListener listener) ;
     public <E> void requestJsonArrayRequest(int method, final String url, final Map<String,String> header, final JSONObject paramJsonObject,

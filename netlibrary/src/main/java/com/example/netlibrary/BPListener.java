@@ -4,6 +4,8 @@ package com.example.netlibrary;
 import com.android.volley.NetworkResponse;
 import com.android.volley.VolleyError;
 
+import java.util.Map;
+
 /**
  * Created by wanglin on 2017/11/14.
  */
@@ -24,6 +26,17 @@ public interface BPListener {
     public interface OnResponseStrListener {
 
         void onResponse(String response);
+
+        void onCache(String response);
+
+        void onNotModify();
+
+        void onErrorResponse(String error);
+    }
+
+    public interface OnResponseNesStrListener {
+
+        void onResponse(String response, Object obj);
 
         void onCache(String response);
 

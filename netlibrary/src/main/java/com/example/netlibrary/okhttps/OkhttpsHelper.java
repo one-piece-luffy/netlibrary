@@ -20,10 +20,12 @@ import com.example.netlibrary.BPListener;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.ConnectionPool;
+import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 
 /**
@@ -68,7 +70,7 @@ public class OkhttpsHelper {
 
                     // 返回 true 表示继续执行 task 的 OnResponse 回调，
                     // 返回 false 则表示不再执行，即 阻断
-                    Log.e("tag", "所有请求响应后都会走这里");
+                    Log.i("tag", "所有请求响应后都会走这里");
                     return true;
                 })
                 .completeListener((HttpTask<?> task, HttpResult.State state) -> {
@@ -150,6 +152,56 @@ public class OkhttpsHelper {
                     // 得到响应报文体的字符串 String 对象
                     if (listener != null) {
                         listener.onResponse(str);
+
+                    }
+                })
+
+                .setOnException((IOException e) -> {
+                    // 这里处理请求异常
+                    if (listener != null) {
+                        listener.onErrorResponse(e.getMessage());
+
+                    }
+                });
+        switch (method) {
+            case BPRequest.Method.POST:
+                task.addBodyPara(param);
+                task.post();
+                break;
+            case BPRequest.Method.GET:
+                task.addUrlPara(param);
+                task.get();
+                break;
+        }
+        Log.e(TAG,"from okhttps");
+    }
+
+
+    public <E> void requestNewString(int method, final String url, final Map<String, String> header, final Map<String, String> param,
+                                  String requestTag, boolean needCache, final BPListener.OnResponseNesStrListener listener) {
+        AsyncHttpTask task = http.async(url)
+                .addHeader(header)
+                .tag(requestTag)
+//                .setOnResString((String str) -> {
+//                    // 得到响应报文体的字符串 String 对象
+//                    if (listener != null) {
+//                        listener.onResponse(str);
+//
+//                    }
+//                })
+                .setOnResponse((HttpResult res) -> {
+                    // 响应回调
+                    int status = res.getStatus();       // 状态码
+                    Headers headers = res.getHeaders(); // 响应头
+                    Map<String,String> map=new HashMap<>();
+                    for (int i = 0, count = headers.size(); i < count; i++) {
+                        String name = headers.name(i);
+                        // Skip headers from the request body as they are explicitly logged above.
+                        map.put(name,headers.value(i));
+                    }
+                    HttpResult.Body body = res.getBody();          // 报文体
+                    if (listener != null) {
+                        listener.onResponse(body.toString(),map);
 
                     }
                 })

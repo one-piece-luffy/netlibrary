@@ -46,6 +46,11 @@ public class VolleyStrategy implements RequestStrategy {
         Log.e("time",System.currentTimeMillis()+"");
         VolleyHelper.getInstance().requestString(method,url,header,param,requestTag,needCache,listener);
     }
+    public <E> void requestNesString(int method, final String url, final Map<String,String> header,final Map<String,String> param,
+                                  boolean needCache,String requestTag,final BPListener.OnResponseNesStrListener listener) {
+        Log.e("time",System.currentTimeMillis()+"");
+        VolleyHelper.getInstance().requestNesString(method,url,header,param,requestTag,needCache,listener);
+    }
 
     public <E> void requestJsonRequest(int method, final String url, final Map<String,String> header, final JSONObject paramJsonObject,
                                        boolean needCache, String requestTag,final BPListener.OnResponseStrListener listener) {

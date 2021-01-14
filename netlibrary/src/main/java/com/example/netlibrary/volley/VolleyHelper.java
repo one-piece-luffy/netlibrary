@@ -244,6 +244,38 @@ public class VolleyHelper {
 
         addToRequestQueue(req, requestTag);
     }
+    public <E> void requestNesString(int method, final String url, final Map<String, String> header, final Map<String, String> param,
+                                  String requestTag, boolean needCache, final BPListener.OnResponseNesStrListener listener) {
+        StringRequest req = new StringRequest(method, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                if (listener != null) {
+                    listener.onResponse(response,null);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (listener != null) {
+                    listener.onErrorResponse(error.getMessage());
+                }
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                return param;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                return header;
+
+            }
+        };
+        Log.e(TAG,"from volley");
+
+        addToRequestQueue(req, requestTag);
+    }
 
     public <E> void requestJsonRequest(int method, final String url, final Map<String, String> header, final JSONObject paramJsonObject,
                                        String requestTag, boolean needCache, final BPListener.OnResponseStrListener listener) {

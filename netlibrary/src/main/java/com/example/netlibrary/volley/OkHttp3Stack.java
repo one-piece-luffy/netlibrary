@@ -91,7 +91,7 @@ public class OkHttp3Stack implements HttpStack {
                 break;
 
             case Request.Method.OPTIONS:
-                builder.method("OPTIONS", null);
+                builder.method("OPTIONS", createRequestBody(request));
                 break;
 
             case Request.Method.TRACE:
@@ -181,6 +181,8 @@ public class OkHttp3Stack implements HttpStack {
                 response.addHeader(new BasicHeader(name, value));
             }
         }
+
+
         return response;
     }
 }
