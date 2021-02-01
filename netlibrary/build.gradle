@@ -90,7 +90,7 @@ dependencies {
 
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
-version = "0.0.22"
+version = "0.0.23"
 def siteUrl = 'https://github.com/LIHAIYI/netlibrary'    // project homepage
 def gitUrl  = 'https://github.com/LIHAIYI/netlibrary.git' // project git
 group = "com.example.netlibrary"
