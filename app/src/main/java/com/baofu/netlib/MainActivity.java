@@ -49,9 +49,10 @@ public class MainActivity extends AppCompatActivity {
 //        viewModel.requestGson();
 //        viewModel.requestCheap(null, null, null, null, null);
 //        viewModel.requestSp(null,null,"002142");
-        viewModel.requestStringPost();
+//        viewModel.requestStringPost();
 
 //        viewModel.requestGsonPOST();
+        viewModel.sendVifyCode("18259462251");
     }
 
 }

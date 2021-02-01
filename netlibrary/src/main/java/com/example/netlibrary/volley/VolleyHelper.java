@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Cache;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -246,11 +247,11 @@ public class VolleyHelper {
     }
     public <E> void requestNesString(int method, final String url, final Map<String, String> header, final Map<String, String> param,
                                   String requestTag, boolean needCache, final BPListener.OnResponseNesStrListener listener) {
-        StringRequest req = new StringRequest(method, url, new Response.Listener<String>() {
+        StringRequestV2 req = new StringRequestV2(method, url, new ResponseListenerV2() {
             @Override
-            public void onResponse(String response) {
+            public void onResponse(String response,Object o) {
                 if (listener != null) {
-                    listener.onResponse(response,null);
+                    listener.onResponse(response,o);
                 }
             }
         }, new Response.ErrorListener() {
@@ -270,6 +271,11 @@ public class VolleyHelper {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 return header;
 
+            }
+
+            @Override
+            protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                return super.parseNetworkResponse(response);
             }
         };
         Log.e(TAG,"from volley");

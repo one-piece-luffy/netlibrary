@@ -7,8 +7,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.alibaba.fastjson.JSON;
 import com.android.volley.Request;
 import com.baofu.netlib.bean.AccountTokenBean;
+import com.baofu.netlib.bean.MobileEntity;
 import com.baofu.netlib.bean.NationaDebtBean;
 import com.example.netlibrary.BPRequest;
 import com.example.netlibrary.BaseViewModel;
@@ -325,4 +327,230 @@ public class MonitorViewModel extends BaseViewModel {
         });
     }
 
+
+    public void sendVifyCode(String phone){
+        requestFlag(phone);
+
+    }
+    String mFlag;
+
+    public void requestFlag(String phone) {
+
+
+        String url = "https://login.10086.cn/sendflag.htm?timestamp="+System.currentTimeMillis();
+
+        mBaseModel.requestNesString(BPRequest.Method.GET, url, null, null, false, mRequestTag, new BPListener.OnResponseNesStrListener() {
+            @Override
+            public void onResponse(String s,Object o) {
+//                if(s==null)
+//                    return;
+
+                Map<String,String> map= (Map<String, String>) o;
+                String cookie=map.get("set-cookie");
+                String arr[]=cookie.split(";");
+
+                for(int i=0;i<arr.length;i++){
+                    if(arr[i].contains("sendflag")){
+                        mFlag=arr[i];
+                        break;
+                    }
+                }
+//
+
+                Log.e("asdf",mFlag+"");
+
+
+                requestNeedVify(phone);
+
+            }
+
+            @Override
+            public void onCache(String s) {
+
+            }
+
+            @Override
+            public void onNotModify() {
+
+            }
+
+            @Override
+            public void onErrorResponse(String s) {
+
+            }
+        });
+
+    }
+
+    public void requestNeedVify(String phone) {
+
+
+        String url = "https://login.10086.cn/needVerifyCode.htm?account="+phone+"&pwdType=02&timestamp="+System.currentTimeMillis();
+        Map<String,String> header=new HashMap<>();
+        header.put("User-Agent","Mozilla/5.0 (Linux; Android 5.0; SM-G900P Build/LRX21T) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Mobile Safari/537.36");
+
+
+        mBaseModel.requestString(BPRequest.Method.GET, url, header, null, false, mRequestTag, new BPListener.OnResponseStrListener() {
+            @Override
+            public void onResponse(String s) {
+//                if(s==null)
+//                    return;
+
+
+//
+                Log.e("asdf",s);
+
+                requestCheckNum(phone);
+
+
+            }
+
+            @Override
+            public void onCache(String s) {
+
+            }
+
+            @Override
+            public void onNotModify() {
+
+            }
+
+            @Override
+            public void onErrorResponse(String s) {
+
+            }
+        });
+
+    }
+    public void requestCheckNum(String phone) {
+
+
+        String url = "https://login.10086.cn/chkNumberAction.action";
+        Map<String,String> header=new HashMap<>();
+        header.put("User-Agent","Mozilla/5.0 (Linux; Android 5.0; SM-G900P Build/LRX21T) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Mobile Safari/537.36");
+
+        Map map=new HashMap();
+        map.put("userName",phone);
+        map.put("loginMode","03");
+        map.put("channelID","12012");
+        mBaseModel.requestString(BPRequest.Method.POST, url, header, map, false, mRequestTag, new BPListener.OnResponseStrListener() {
+            @Override
+            public void onResponse(String s) {
+                if(s==null)
+                    return;
+
+                Log.e("asdf",s);
+
+                request10086(phone);
+
+            }
+
+            @Override
+            public void onCache(String s) {
+
+            }
+
+            @Override
+            public void onNotModify() {
+
+            }
+
+            @Override
+            public void onErrorResponse(String s) {
+
+            }
+        });
+
+    }
+
+
+    public void request10086(String phone) {
+
+
+        String url = "https://login.10086.cn/loadToken.action";
+
+        Map map=new HashMap();
+        map.put("userName",phone);
+        Map header=new HashMap();
+        header.put("User-Agent","Mozilla/5.0 (Linux; Android 5.0; SM-G900P Build/LRX21T) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Mobile Safari/537.36");
+        header.put("Cookie",mFlag);
+
+//        header.put("Cookie","sendflag="+flag);
+
+        mBaseModel.requestString(BPRequest.Method.POST, url, header, map, false, mRequestTag, new BPListener.OnResponseStrListener() {
+            @Override
+            public void onResponse(String s) {
+                if(s==null)
+                    return;
+
+                Log.e("asdf",s);
+                MobileEntity entity= JSON.parseObject(s,MobileEntity.class);
+                requestSendCode(phone,entity.result);
+
+
+            }
+
+            @Override
+            public void onCache(String s) {
+
+            }
+
+            @Override
+            public void onNotModify() {
+
+            }
+
+            @Override
+            public void onErrorResponse(String s) {
+
+            }
+        });
+
+    }
+    public void requestSendCode(String phone,String token) {
+
+
+        String url = "https://login.10086.cn/sendRandomCodeAction.action";
+        Map map=new HashMap();
+        map.put("userName",phone);
+        map.put("type","01");
+        map.put("channelID","12012");
+        Map header=new HashMap();
+        header.put("User-Agent","Mozilla/5.0 (Linux; Android 5.0; SM-G900P Build/LRX21T) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Mobile Safari/537.36");
+
+        header.put("Xa-before",token);
+//        header.put("Cookie","CmProvid=bj; CmLocation=100|100; sendflag="+flag+"; WT_FPC=id=29c1418a4eab500ad2b1602578143455:lv=1610530441302:ss="+System.currentTimeMillis()+";  ");
+//        header.put("Cookie","sendflag="+flag+"; WT_FPC=id=29c1418a4eab500ad2b1602578143455:lv=1610530441302:ss=1610530430075");
+        header.put("Cookie",mFlag);
+
+        mBaseModel.requestString(BPRequest.Method.POST, url, header, map, false, mRequestTag, new BPListener.OnResponseStrListener() {
+            @Override
+            public void onResponse(String s) {
+                if(s==null)
+                    return;
+                Log.e("asdf",s);
+
+
+
+            }
+
+            @Override
+            public void onCache(String s) {
+
+            }
+
+            @Override
+            public void onNotModify() {
+
+            }
+
+            @Override
+            public void onErrorResponse(String s) {
+                Log.e("asdf",s);
+            }
+        });
+
+
+
+    }
 }
