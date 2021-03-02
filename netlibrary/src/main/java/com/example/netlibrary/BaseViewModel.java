@@ -7,8 +7,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.netlibrary.okhttps.OkhttpsStrategy;
-import com.example.netlibrary.volley.VolleyStrategy;
+
 
 /**
  * Created by txl on 2019/1/8.

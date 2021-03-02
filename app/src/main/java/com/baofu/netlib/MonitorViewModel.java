@@ -1,29 +1,24 @@
 package com.baofu.netlib;
 
 import android.app.Application;
-import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.alibaba.fastjson.JSON;
-import com.android.volley.Request;
-import com.baofu.netlib.bean.AccountTokenBean;
-import com.baofu.netlib.bean.MobileEntity;
-import com.baofu.netlib.bean.NationaDebtBean;
+import com.baofu.netlib.bean.ConfigModelBean;
 import com.example.netlibrary.BPRequest;
+import com.example.netlibrary.BPRequestBody;
+import com.example.netlibrary.BPRequestBuilder;
 import com.example.netlibrary.BaseViewModel;
 import com.example.netlibrary.BPListener;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.example.netlibrary.BPRequestPattern;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class MonitorViewModel extends BaseViewModel {
-    public final String COOKIE="jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YzNhYzYxOGNmOWYzNDNkOGZkMDMyMzkiLCJpYXQiOjE2MDAzOTkzMjgsImV4cCI6MTYwMTYwODkyOH0.ImOPavAeqrTKFT-WOBmPefoKVV3c29DV1v5eZylNvXc";
+    public final String COOKIE = "jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YzNhYzYxOGNmOWYzNDNkOGZkMDMyMzkiLCJpYXQiOjE2MDAzOTkzMjgsImV4cCI6MTYwMTYwODkyOH0.ImOPavAeqrTKFT-WOBmPefoKVV3c29DV1v5eZylNvXc";
 
 
     public MonitorViewModel(@NonNull Application application) {
@@ -32,525 +27,302 @@ public class MonitorViewModel extends BaseViewModel {
 
 
     public void request() {
-        Map<String,String> param=new HashMap<>();
-        param.put("code","18933333333");
-        param.put("password","123456");
-        mBaseModel.requestString(0, "https://api.dongqiudi.com/app/global/2/android.json?mark=gif&platform=android&version=216&android-channel=website", null, param, false,mRequestTag, new BPListener.OnResponseStrListener() {
-            @Override
-            public void onResponse(String response) {
-                Log.e("a", response);
-                Log.e("time",System.currentTimeMillis()+"");
-                Toast.makeText(BaseApplication.getInstance(),"asdf",Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onCache(String response) {
-
-            }
-
-            @Override
-            public void onNotModify() {
-
-            }
-
-            @Override
-            public void onErrorResponse(String error) {
-
-            }
-        });
-
-    }
-
-    public void requestStringPost() {
-        String url ="http://103.4.29.27:8080/1/api/oauth/account_token";
-        Map<String,String> param=new HashMap<>();
-        param.put("code","18933333333");
-        param.put("password","123456");
-        mBaseModel.requestString(Request.Method.POST, url, null, param, false, mRequestTag, new BPListener.OnResponseStrListener() {
-            @Override
-            public void onResponse(String response) {
-                Log.e("a",response);
-            }
-
-            @Override
-            public void onCache(String response) {
-
-            }
-
-            @Override
-            public void onNotModify() {
-
-            }
-
-            @Override
-            public void onErrorResponse(String error) {
-
-            }
-        });
-    }
-
-    public void requestGson(){
-        mBaseModel.requestGson(BPRequest.Method.GET, "http://mm.leal.wang/rate/market/api", null, null, NationaDebtBean.class, false, mRequestTag,new BPListener.OnResponseListener<NationaDebtBean>() {
-            @Override
-            public void onResponse(NationaDebtBean response) {
-                Log.e("a",response.data);
-            }
-
-            @Override
-            public void onCache(NationaDebtBean response) {
-
-            }
-
-            @Override
-            public void onNotModify() {
-
-            }
-
-            @Override
-            public void onErrorResponse(String error) {
-
-            }
-        });
-    }
-    public void requestGsonPOST(){
-        String url ="http://103.4.29.27:8080/1/api/oauth/account_token";
-        Map<String,String> param=new HashMap<>();
-        param.put("code","18933333333");
-        param.put("password","123456");
-        mBaseModel.requestGson(BPRequest.Method.POST, url, null, param, AccountTokenBean.class, false, mRequestTag, new BPListener.OnResponseListener<AccountTokenBean>() {
-            @Override
-            public void onResponse(AccountTokenBean response) {
-                Log.e("a","token:"+response.data.token);
-
-            }
-
-            @Override
-            public void onCache(AccountTokenBean response) {
-
-            }
-
-            @Override
-            public void onNotModify() {
-
-            }
-
-            @Override
-            public void onErrorResponse(String error) {
-
-            }
-        });
-    }
-
-    /**
-     * 获取所有的便宜组合
-     */
-    public void requestCheap(final String date,String paramMc,String paramPe,String paramPb,String paramDyr) {
-
-        JSONObject paramJsonObject = null;
-        try {
-            if (TextUtils.isEmpty(paramPe)) {
-                paramPe="10";
-            }
-            if (TextUtils.isEmpty(paramPb)) {
-                paramPb="1.5";
-            }
-            if (TextUtils.isEmpty(paramDyr)) {
-                paramDyr="0.03";
-            }
-
-
-            paramJsonObject = new JSONObject();
-            paramJsonObject.put("sortName", "priceMetrics.latest.pm.pb_wo_gw");
-            paramJsonObject.put("sortOrder", "desc");
-            paramJsonObject.put("pageIndex", "0");
-            paramJsonObject.put("pageSize", "300");
-            paramJsonObject.put("areaCode", "cn");
-
-            JSONObject range = new JSONObject();
-            range.put("market", "a");
-            paramJsonObject.put("ranges", range);
-
-
-            JSONArray filterListJa = new JSONArray();
-            paramJsonObject.put("filterList", filterListJa);
-            //pe-ttm扣非
-            JSONObject pe = new JSONObject();
-            pe.put("id", "pm.d_pe_ttm");
-            pe.put("min", 0);
-            pe.put("max", Integer.parseInt(paramPe));
-            if (!TextUtils.isEmpty(date)) {
-                pe.put("date", date);
-            }
-            filterListJa.put(pe);
-            //pb不含商誉
-            JSONObject pb = new JSONObject();
-            pb.put("id", "pm.pb_wo_gw");
-            pb.put("min", 0);
-            pb.put("max", Double.parseDouble(paramPb));
-            if (!TextUtils.isEmpty(date)) {
-                pb.put("date", date);
-            }
-            filterListJa.put(pb);
-            //股息率
-            JSONObject dyr = new JSONObject();
-            dyr.put("id", "pm.dyr");
-            dyr.put("min", Double.parseDouble(paramDyr));
-            if (!TextUtils.isEmpty(date)) {
-                dyr.put("date", date);
-            }
-            filterListJa.put(dyr);
-            //股价
-            JSONObject sp = new JSONObject();
-            sp.put("id", "pm.sp");
-            if (!TextUtils.isEmpty(date)) {
-                sp.put("date", date);
-            }
-            filterListJa.put(sp);
-            //pb不含商誉分位点10年
-            JSONObject pbpos = new JSONObject();
-            pbpos.put("id", "pm.pb_wo_gw_pos10");
-//            pbpos.put("max", 0.2);
-            if (!TextUtils.isEmpty(date)) {
-                pbpos.put("date", date);
-            }
-            filterListJa.put(pbpos);
-
-            //市值
-            if(!TextUtils.isEmpty(paramMc)){
-                JSONObject mc = new JSONObject();
-                mc.put("id", "pm.mc");
-                //单位元
-                mc.put("min", Long.parseLong(paramMc)*100000000);
-                if (!TextUtils.isEmpty(date)) {
-                    mc.put("date", date);
-                }
-                filterListJa.put(mc);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-        Map<String, String> header = new HashMap<>();
-//        header.put("content-type", "application/json;charset=UTF-8");
-        header.put("cookie", COOKIE);
-        String url = "https://www.lixinger.com/api/analyt/screener/stock";
-
-
-        mBaseModel.requestJsonRequest(com.android.volley.Request.Method.POST, url, header, paramJsonObject,false,mRequestTag, new BPListener.OnResponseStrListener() {
-            @Override
-            public void onResponse(String response) {
-
-                Log.e("tag",response);
-            }
-
-            @Override
-            public void onCache(String response) {
-
-            }
-
-            @Override
-            public void onNotModify() {
-
-            }
-
-            @Override
-            public void onErrorResponse(String error) {
-
-            }
-        });
-
-
-    }
-
-
-    /**
-     * 获取股价
-     */
-    public void requestSp(final String start, String end, String stockId) {
-
-        JSONObject paramJsonObject = null;
-        try {
-            paramJsonObject = new JSONObject();
-
-            JSONArray ids = new JSONArray();
-            paramJsonObject.put("stockIds", ids);
-            ids.put(Integer.parseInt(stockId));
-
-            paramJsonObject.put("dateFlag", "day");
-            paramJsonObject.put("granularity", "fs");
-
-            JSONArray filters = new JSONArray();
-            filters.put("fc_rights");
-            paramJsonObject.put("metricNames", filters);
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-//        {
-//            "stockIds": [603288],
-//            "dateFlag": "day",
-//                "granularity": "fs",
-//                "metricNames": ["d_pe_ttm", "lxr_fc_rights", "fc_rights", "bc_rights", "sp", "mc", "cmc"]
-//        }
-
-        Map<String, String> header = new HashMap<>();
-//        header.put("content-type", "application/json;charset=UTF-8");
-        header.put("cookie", COOKIE);
-        String url = "https://www.lixinger.com/api/analyt/company/price-metrics/load";
-
-        mBaseModel.requestJsonRequest(Request.Method.POST, url, header, paramJsonObject, false, mRequestTag,new BPListener.OnResponseStrListener() {
-            @Override
-            public void onResponse(String s) {
-                Log.e("a",s);
-
-            }
-
-            @Override
-            public void onCache(String s) {
-
-            }
-
-            @Override
-            public void onNotModify() {
-
-            }
-
-            @Override
-            public void onErrorResponse(String volleyError) {
-                Log.e("FlashBackViewModel", volleyError + "");
-            }
-        });
-    }
-
-
-    public void sendVifyCode(String phone){
-        requestFlag(phone);
-
-    }
-    String mFlag;
-
-    public void requestFlag(String phone) {
-
-
-        String url = "https://login.10086.cn/sendflag.htm?timestamp="+System.currentTimeMillis();
-
-        mBaseModel.requestNesString(BPRequest.Method.GET, url, null, null, false, mRequestTag, new BPListener.OnResponseNesStrListener() {
-            @Override
-            public void onResponse(String s,Object o) {
-//                if(s==null)
-//                    return;
-
-                Map<String,String> map= (Map<String, String>) o;
-                String cookie=map.get("set-cookie");
-                String arr[]=cookie.split(";");
-
-                for(int i=0;i<arr.length;i++){
-                    if(arr[i].contains("sendflag")){
-                        mFlag=arr[i];
-                        break;
+        Map<String, String> param = new HashMap<>();
+        param.put("code", "18933333333");
+        param.put("password", "123456");
+        BPRequestPattern concreteBuilder = new BPRequestPattern();
+        BPRequestBody build = concreteBuilder
+                .setMethod(BPRequest.Method.GET)
+                .setUrl("https://api.dongqiudi.com/app/global/2/android.json?mark=gif&platform=android&version=216&android-channel=website")
+                .setParams(param)
+                .setRequestTag(mRequestTag)
+//                .setOnResponseString(new BPListener.OnResponseString() {
+//                    @Override
+//                    public void onResponse(String response) {
+//                        Log.e("a", response);
+//                        Log.e("time",System.currentTimeMillis()+"");
+//                        Toast.makeText(BaseApplication.getInstance(),"asdf",Toast.LENGTH_SHORT).show();
+//                    }
+//                })
+
+                .setOnResponseBean(ConfigModelBean.class, new BPListener.OnResponseBean<ConfigModelBean>() {
+                    @Override
+                    public void onResponse(ConfigModelBean response) {
+                        Toast.makeText(BaseApplication.getInstance(), response.getUpdated_at(), Toast.LENGTH_SHORT).show();
                     }
-                }
+                })
+                .build();
+
+
+        mBaseModel.request(build);
 //
-
-                Log.e("asdf",mFlag+"");
-
-
-                requestNeedVify(phone);
-
-            }
-
-            @Override
-            public void onCache(String s) {
-
-            }
-
-            @Override
-            public void onNotModify() {
-
-            }
-
-            @Override
-            public void onErrorResponse(String s) {
-
-            }
-        });
-
     }
 
-    public void requestNeedVify(String phone) {
-
-
-        String url = "https://login.10086.cn/needVerifyCode.htm?account="+phone+"&pwdType=02&timestamp="+System.currentTimeMillis();
-        Map<String,String> header=new HashMap<>();
-        header.put("User-Agent","Mozilla/5.0 (Linux; Android 5.0; SM-G900P Build/LRX21T) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Mobile Safari/537.36");
-
-
-        mBaseModel.requestString(BPRequest.Method.GET, url, header, null, false, mRequestTag, new BPListener.OnResponseStrListener() {
-            @Override
-            public void onResponse(String s) {
-//                if(s==null)
-//                    return;
-
-
+//    public void requestStringPost() {
+//        String url ="http://103.4.29.27:8080/1/api/oauth/account_token";
+//        Map<String,String> param=new HashMap<>();
+//        param.put("code","18933333333");
+//        param.put("password","123456");
+//        mBaseModel.requestString(Request.Method.POST, url, null, param, false, mRequestTag, new BPListener.OnResponseStrListener() {
+//            @Override
+//            public void onResponse(String response) {
+//                Log.e("a",response);
+//            }
 //
-                Log.e("asdf",s);
+//            @Override
+//            public void onCache(String response) {
+//
+//            }
+//
+//            @Override
+//            public void onNotModify() {
+//
+//            }
+//
+//            @Override
+//            public void onErrorResponse(String error) {
+//
+//            }
+//        });
+//    }
+//
+//    public void requestGson(){
+//        mBaseModel.requestGson(BPRequest.Method.GET, "http://mm.leal.wang/rate/market/api", null, null, NationaDebtBean.class, false, mRequestTag,new BPListener.OnResponseListener<NationaDebtBean>() {
+//            @Override
+//            public void onResponse(NationaDebtBean response) {
+//                Log.e("a",response.data);
+//            }
+//
+//            @Override
+//            public void onCache(NationaDebtBean response) {
+//
+//            }
+//
+//            @Override
+//            public void onNotModify() {
+//
+//            }
+//
+//            @Override
+//            public void onErrorResponse(String error) {
+//
+//            }
+//        });
+//    }
+//    public void requestGsonPOST(){
+//        String url ="http://103.4.29.27:8080/1/api/oauth/account_token";
+//        Map<String,String> param=new HashMap<>();
+//        param.put("code","18933333333");
+//        param.put("password","123456");
+//        mBaseModel.requestGson(BPRequest.Method.POST, url, null, param, AccountTokenBean.class, false, mRequestTag, new BPListener.OnResponseListener<AccountTokenBean>() {
+//            @Override
+//            public void onResponse(AccountTokenBean response) {
+//                Log.e("a","token:"+response.data.token);
+//
+//            }
+//
+//            @Override
+//            public void onCache(AccountTokenBean response) {
+//
+//            }
+//
+//            @Override
+//            public void onNotModify() {
+//
+//            }
+//
+//            @Override
+//            public void onErrorResponse(String error) {
+//
+//            }
+//        });
+//    }
+//
+//    /**
+//     * 获取所有的便宜组合
+//     */
+//    public void requestCheap(final String date,String paramMc,String paramPe,String paramPb,String paramDyr) {
+//
+//        JSONObject paramJsonObject = null;
+//        try {
+//            if (TextUtils.isEmpty(paramPe)) {
+//                paramPe="10";
+//            }
+//            if (TextUtils.isEmpty(paramPb)) {
+//                paramPb="1.5";
+//            }
+//            if (TextUtils.isEmpty(paramDyr)) {
+//                paramDyr="0.03";
+//            }
+//
+//
+//            paramJsonObject = new JSONObject();
+//            paramJsonObject.put("sortName", "priceMetrics.latest.pm.pb_wo_gw");
+//            paramJsonObject.put("sortOrder", "desc");
+//            paramJsonObject.put("pageIndex", "0");
+//            paramJsonObject.put("pageSize", "300");
+//            paramJsonObject.put("areaCode", "cn");
+//
+//            JSONObject range = new JSONObject();
+//            range.put("market", "a");
+//            paramJsonObject.put("ranges", range);
+//
+//
+//            JSONArray filterListJa = new JSONArray();
+//            paramJsonObject.put("filterList", filterListJa);
+//            //pe-ttm扣非
+//            JSONObject pe = new JSONObject();
+//            pe.put("id", "pm.d_pe_ttm");
+//            pe.put("min", 0);
+//            pe.put("max", Integer.parseInt(paramPe));
+//            if (!TextUtils.isEmpty(date)) {
+//                pe.put("date", date);
+//            }
+//            filterListJa.put(pe);
+//            //pb不含商誉
+//            JSONObject pb = new JSONObject();
+//            pb.put("id", "pm.pb_wo_gw");
+//            pb.put("min", 0);
+//            pb.put("max", Double.parseDouble(paramPb));
+//            if (!TextUtils.isEmpty(date)) {
+//                pb.put("date", date);
+//            }
+//            filterListJa.put(pb);
+//            //股息率
+//            JSONObject dyr = new JSONObject();
+//            dyr.put("id", "pm.dyr");
+//            dyr.put("min", Double.parseDouble(paramDyr));
+//            if (!TextUtils.isEmpty(date)) {
+//                dyr.put("date", date);
+//            }
+//            filterListJa.put(dyr);
+//            //股价
+//            JSONObject sp = new JSONObject();
+//            sp.put("id", "pm.sp");
+//            if (!TextUtils.isEmpty(date)) {
+//                sp.put("date", date);
+//            }
+//            filterListJa.put(sp);
+//            //pb不含商誉分位点10年
+//            JSONObject pbpos = new JSONObject();
+//            pbpos.put("id", "pm.pb_wo_gw_pos10");
+////            pbpos.put("max", 0.2);
+//            if (!TextUtils.isEmpty(date)) {
+//                pbpos.put("date", date);
+//            }
+//            filterListJa.put(pbpos);
+//
+//            //市值
+//            if(!TextUtils.isEmpty(paramMc)){
+//                JSONObject mc = new JSONObject();
+//                mc.put("id", "pm.mc");
+//                //单位元
+//                mc.put("min", Long.parseLong(paramMc)*100000000);
+//                if (!TextUtils.isEmpty(date)) {
+//                    mc.put("date", date);
+//                }
+//                filterListJa.put(mc);
+//            }
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//
+//        Map<String, String> header = new HashMap<>();
+////        header.put("content-type", "application/json;charset=UTF-8");
+//        header.put("cookie", COOKIE);
+//        String url = "https://www.lixinger.com/api/analyt/screener/stock";
+//
+//
+//        mBaseModel.requestJsonRequest(com.android.volley.Request.Method.POST, url, header, paramJsonObject,false,mRequestTag, new BPListener.OnResponseStrListener() {
+//            @Override
+//            public void onResponse(String response) {
+//
+//                Log.e("tag",response);
+//            }
+//
+//            @Override
+//            public void onCache(String response) {
+//
+//            }
+//
+//            @Override
+//            public void onNotModify() {
+//
+//            }
+//
+//            @Override
+//            public void onErrorResponse(String error) {
+//
+//            }
+//        });
+//
+//
+//    }
+//
+//
+//    /**
+//     * 获取股价
+//     */
+//    public void requestSp(final String start, String end, String stockId) {
+//
+//        JSONObject paramJsonObject = null;
+//        try {
+//            paramJsonObject = new JSONObject();
+//
+//            JSONArray ids = new JSONArray();
+//            paramJsonObject.put("stockIds", ids);
+//            ids.put(Integer.parseInt(stockId));
+//
+//            paramJsonObject.put("dateFlag", "day");
+//            paramJsonObject.put("granularity", "fs");
+//
+//            JSONArray filters = new JSONArray();
+//            filters.put("fc_rights");
+//            paramJsonObject.put("metricNames", filters);
+//
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//
+////        {
+////            "stockIds": [603288],
+////            "dateFlag": "day",
+////                "granularity": "fs",
+////                "metricNames": ["d_pe_ttm", "lxr_fc_rights", "fc_rights", "bc_rights", "sp", "mc", "cmc"]
+////        }
+//
+//        Map<String, String> header = new HashMap<>();
+////        header.put("content-type", "application/json;charset=UTF-8");
+//        header.put("cookie", COOKIE);
+//        String url = "https://www.lixinger.com/api/analyt/company/price-metrics/load";
+//
+//        mBaseModel.requestJsonRequest(Request.Method.POST, url, header, paramJsonObject, false, mRequestTag,new BPListener.OnResponseStrListener() {
+//            @Override
+//            public void onResponse(String s) {
+//                Log.e("a",s);
+//
+//            }
+//
+//            @Override
+//            public void onCache(String s) {
+//
+//            }
+//
+//            @Override
+//            public void onNotModify() {
+//
+//            }
+//
+//            @Override
+//            public void onErrorResponse(String volleyError) {
+//                Log.e("FlashBackViewModel", volleyError + "");
+//            }
+//        });
+//    }
 
-                requestCheckNum(phone);
 
-
-            }
-
-            @Override
-            public void onCache(String s) {
-
-            }
-
-            @Override
-            public void onNotModify() {
-
-            }
-
-            @Override
-            public void onErrorResponse(String s) {
-
-            }
-        });
-
-    }
-    public void requestCheckNum(String phone) {
-
-
-        String url = "https://login.10086.cn/chkNumberAction.action";
-        Map<String,String> header=new HashMap<>();
-        header.put("User-Agent","Mozilla/5.0 (Linux; Android 5.0; SM-G900P Build/LRX21T) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Mobile Safari/537.36");
-
-        Map map=new HashMap();
-        map.put("userName",phone);
-        map.put("loginMode","03");
-        map.put("channelID","12012");
-        mBaseModel.requestString(BPRequest.Method.POST, url, header, map, false, mRequestTag, new BPListener.OnResponseStrListener() {
-            @Override
-            public void onResponse(String s) {
-                if(s==null)
-                    return;
-
-                Log.e("asdf",s);
-
-                request10086(phone);
-
-            }
-
-            @Override
-            public void onCache(String s) {
-
-            }
-
-            @Override
-            public void onNotModify() {
-
-            }
-
-            @Override
-            public void onErrorResponse(String s) {
-
-            }
-        });
-
-    }
-
-
-    public void request10086(String phone) {
-
-
-        String url = "https://login.10086.cn/loadToken.action";
-
-        Map map=new HashMap();
-        map.put("userName",phone);
-        Map header=new HashMap();
-        header.put("User-Agent","Mozilla/5.0 (Linux; Android 5.0; SM-G900P Build/LRX21T) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Mobile Safari/537.36");
-        header.put("Cookie",mFlag);
-
-//        header.put("Cookie","sendflag="+flag);
-
-        mBaseModel.requestString(BPRequest.Method.POST, url, header, map, false, mRequestTag, new BPListener.OnResponseStrListener() {
-            @Override
-            public void onResponse(String s) {
-                if(s==null)
-                    return;
-
-                Log.e("asdf",s);
-                MobileEntity entity= JSON.parseObject(s,MobileEntity.class);
-                requestSendCode(phone,entity.result);
-
-
-            }
-
-            @Override
-            public void onCache(String s) {
-
-            }
-
-            @Override
-            public void onNotModify() {
-
-            }
-
-            @Override
-            public void onErrorResponse(String s) {
-
-            }
-        });
-
-    }
-    public void requestSendCode(String phone,String token) {
-
-
-        String url = "https://login.10086.cn/sendRandomCodeAction.action";
-        Map map=new HashMap();
-        map.put("userName",phone);
-        map.put("type","01");
-        map.put("channelID","12012");
-        Map header=new HashMap();
-        header.put("User-Agent","Mozilla/5.0 (Linux; Android 5.0; SM-G900P Build/LRX21T) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Mobile Safari/537.36");
-
-        header.put("Xa-before",token);
-//        header.put("Cookie","CmProvid=bj; CmLocation=100|100; sendflag="+flag+"; WT_FPC=id=29c1418a4eab500ad2b1602578143455:lv=1610530441302:ss="+System.currentTimeMillis()+";  ");
-//        header.put("Cookie","sendflag="+flag+"; WT_FPC=id=29c1418a4eab500ad2b1602578143455:lv=1610530441302:ss=1610530430075");
-        header.put("Cookie",mFlag);
-
-        mBaseModel.requestString(BPRequest.Method.POST, url, header, map, false, mRequestTag, new BPListener.OnResponseStrListener() {
-            @Override
-            public void onResponse(String s) {
-                if(s==null)
-                    return;
-                Log.e("asdf",s);
-
-
-
-            }
-
-            @Override
-            public void onCache(String s) {
-
-            }
-
-            @Override
-            public void onNotModify() {
-
-            }
-
-            @Override
-            public void onErrorResponse(String s) {
-                Log.e("asdf",s);
-            }
-        });
-
-
-
-    }
 }

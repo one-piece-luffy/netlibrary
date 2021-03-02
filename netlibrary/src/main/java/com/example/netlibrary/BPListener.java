@@ -78,4 +78,34 @@ public interface BPListener {
         NetworkResponse parseNetworkResponse(NetworkResponse response);
     }
 
+
+    /**
+     *
+     * 建造者模式使用==============
+     */
+
+    public interface OnResponseBean<E> {
+
+        void onResponse(E response);
+    }
+    public interface OnResponseString {
+
+        void onResponse(String response);
+    }
+    public interface OnResponse {
+
+        void onResponse(String response,Object obj);
+    }
+    public interface OnException {
+
+        void onException(String response);
+    }
+    public interface onCacheBean<E> {
+
+        void onCache(E response);
+    }
+    public interface onCacheString {
+
+        void onResponse(String response);
+    }
 }

@@ -41,5 +41,5 @@ dependencies {
 
     api project(':netlibrary')
     api 'com.baofu.base:base:0.0.9'
-//    implementation 'com.example.netlibrary:netlibrary:0.0.22'
+//    implementation 'com.example.netlibrary:netlibrary:0.0.24'
 }

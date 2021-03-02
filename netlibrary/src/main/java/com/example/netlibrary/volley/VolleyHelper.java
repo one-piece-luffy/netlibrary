@@ -18,8 +18,10 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.netlibrary.BPConfig;
 import com.example.netlibrary.BPListener;
+import com.example.netlibrary.BPRequestBody;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Map;
@@ -181,9 +183,33 @@ public class VolleyHelper {
         }
     }
 
+    public <E> void request(BPRequestBody<E> builder) {
+        if (!TextUtils.isEmpty(builder.paramsJson)) {
+            try {
+                requestJsonRequest(builder.method,builder.url,builder.header,new JSONObject(builder.paramsJson),builder.requestTag,false,builder.onResponseString,builder.onException);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+        if(builder.onResponse!=null){
+            requestNesString(builder.method,builder.url,builder.header,builder.params,builder.requestTag,false,builder.onResponse,builder.onException);
+            return;
+
+        }
+        if(builder.clazz!=null){
+            requestGson(builder.method,builder.url,builder.header,builder.params,builder.clazz,builder.requestTag,false,builder.onResponseBean,builder.onException);
+            return;
+        }else {
+            requestString(builder.method,builder.url,builder.header,builder.params,builder.requestTag,false,builder.onResponseString,builder.onException);
+            return;
+        }
+
+
+    }
 
     public <E> void requestGson(int method, final String url, final Map<String, String> header, final Map<String, String> param, Class<E> mClass
-            , String requestTag, boolean needCache, final BPListener.OnResponseListener<E> listener) {
+            , String requestTag, boolean needCache, final BPListener.OnResponseBean<E> listener,final BPListener.OnException onException) {
         GsonRequest<E> req = new GsonRequest<E>(method, url, mClass, new Response.Listener<E>() {
 
             @Override
@@ -195,8 +221,8 @@ public class VolleyHelper {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if (listener != null) {
-                    listener.onErrorResponse(error.getMessage());
+                if (onException != null) {
+                    onException.onException(error.getMessage());
                 }
             }
         }) {
@@ -214,7 +240,7 @@ public class VolleyHelper {
     }
 
     public <E> void requestString(int method, final String url, final Map<String, String> header, final Map<String, String> param,
-                                  String requestTag, boolean needCache, final BPListener.OnResponseStrListener listener) {
+                                  String requestTag, boolean needCache, final BPListener.OnResponseString listener,final  BPListener.OnException onException) {
         StringRequest req = new StringRequest(method, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -225,8 +251,8 @@ public class VolleyHelper {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if (listener != null) {
-                    listener.onErrorResponse(error.getMessage());
+                if (onException != null) {
+                    onException.onException(error.getMessage());
                 }
             }
         }) {
@@ -246,7 +272,7 @@ public class VolleyHelper {
         addToRequestQueue(req, requestTag);
     }
     public <E> void requestNesString(int method, final String url, final Map<String, String> header, final Map<String, String> param,
-                                  String requestTag, boolean needCache, final BPListener.OnResponseNesStrListener listener) {
+                                  String requestTag, boolean needCache, final BPListener.OnResponse listener,final  BPListener.OnException onException) {
         StringRequestV2 req = new StringRequestV2(method, url, new ResponseListenerV2() {
             @Override
             public void onResponse(String response,Object o) {
@@ -257,8 +283,8 @@ public class VolleyHelper {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if (listener != null) {
-                    listener.onErrorResponse(error.getMessage());
+                if (onException != null) {
+                    onException.onException(error.getMessage());
                 }
             }
         }) {
@@ -284,7 +310,7 @@ public class VolleyHelper {
     }
 
     public <E> void requestJsonRequest(int method, final String url, final Map<String, String> header, final JSONObject paramJsonObject,
-                                       String requestTag, boolean needCache, final BPListener.OnResponseStrListener listener) {
+                                       String requestTag, boolean needCache, final BPListener.OnResponseString listener,final BPListener.OnException onException) {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(method, url, paramJsonObject, new com.android.volley.Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -296,8 +322,8 @@ public class VolleyHelper {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                if (listener != null) {
-                    listener.onErrorResponse(error.getMessage());
+                if (onException != null) {
+                    onException.onException(error.getMessage());
                 }
             }
         }) {
@@ -373,12 +399,4 @@ public class VolleyHelper {
     }
 
 
-    private void initHeader(Map<String, String> headers) {
-//        if(headers==null){
-//            headers=new HashMap<>();
-//        }
-//        if(headers.size()==0){
-//            headers.put("Content-Type","application/json;charset=utf-8");
-//        }
-    }
 }

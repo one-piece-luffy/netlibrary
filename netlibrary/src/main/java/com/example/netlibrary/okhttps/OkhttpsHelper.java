@@ -1,8 +1,8 @@
 package com.example.netlibrary.okhttps;
 
-import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.ejlchina.okhttps.GsonMsgConvertor;
@@ -14,6 +14,7 @@ import com.ejlchina.okhttps.OnCallback;
 import com.ejlchina.okhttps.internal.AsyncHttpTask;
 import com.example.netlibrary.BPConfig;
 import com.example.netlibrary.BPRequest;
+import com.example.netlibrary.BPRequestBody;
 import com.example.netlibrary.volley.RedirectInterceptor;
 import com.example.netlibrary.BPListener;
 
@@ -63,7 +64,7 @@ public class OkhttpsHelper {
     public void init(BPConfig config) {
 //        if (mRequestQueue == null) {
 //        }
-        Handler handler=new Handler(Looper.getMainLooper());
+        Handler handler = new Handler(Looper.getMainLooper());
         http = HTTP.builder()
                 .responseListener((HttpTask<?> task, HttpResult result) -> {
                     // 所有请求响应后都会走这里
@@ -108,173 +109,87 @@ public class OkhttpsHelper {
 
     }
 
-
-    public <E> void requestGson(int method, final String url, final Map<String, String> header, final Map<String, String> param, Class<E> mClass
-            , String requestTag, boolean needCache, final BPListener.OnResponseListener<E> listener) {
-        AsyncHttpTask task = http.async(url)
-                .addHeader(header)
-
-                .tag(requestTag)
-                .setOnResBean(mClass, new OnCallback<E>() {
-                    @Override
-                    public void on(E data) {
-                        if (listener != null) {
-                            listener.onResponse(data);
-
-                        }
-                    }
-                })
-                .setOnException((IOException e) -> {
-                    // 这里处理请求异常
-                    if (listener != null) {
-                        listener.onErrorResponse(e.getMessage());
-
-                    }
-                });
-        switch (method) {
-            case BPRequest.Method.POST:
-                task.addBodyPara(param);
-                task.post();
-                break;
-            case BPRequest.Method.GET:
-                task.addUrlPara(param);
-                task.get();
-                break;
-        }
-    }
-
-    public <E> void requestString(int method, final String url, final Map<String, String> header, final Map<String, String> param,
-                                  String requestTag, boolean needCache, final BPListener.OnResponseStrListener listener) {
-        AsyncHttpTask task = http.async(url)
-                .addHeader(header)
-                .tag(requestTag)
-                .setOnResString((String str) -> {
-                    // 得到响应报文体的字符串 String 对象
-                    if (listener != null) {
-                        listener.onResponse(str);
-
-                    }
-                })
-
-                .setOnException((IOException e) -> {
-                    // 这里处理请求异常
-                    if (listener != null) {
-                        listener.onErrorResponse(e.getMessage());
-
-                    }
-                });
-        switch (method) {
-            case BPRequest.Method.POST:
-                task.addBodyPara(param);
-                task.post();
-                break;
-            case BPRequest.Method.GET:
-                task.addUrlPara(param);
-                task.get();
-                break;
-        }
-        Log.e(TAG,"from okhttps");
-    }
-
-
-    public <E> void requestNewString(int method, final String url, final Map<String, String> header, final Map<String, String> param,
-                                  String requestTag, boolean needCache, final BPListener.OnResponseNesStrListener listener) {
-        AsyncHttpTask task = http.async(url)
-                .addHeader(header)
-                .tag(requestTag)
-//                .setOnResString((String str) -> {
-//                    // 得到响应报文体的字符串 String 对象
-//                    if (listener != null) {
-//                        listener.onResponse(str);
-//
-//                    }
-//                })
-                .setOnResponse((HttpResult res) -> {
-                    // 响应回调
-                    int status = res.getStatus();       // 状态码
-                    Headers headers = res.getHeaders(); // 响应头
-                    Map<String,String> map=new HashMap<>();
-                    for (int i = 0, count = headers.size(); i < count; i++) {
-                        String name = headers.name(i);
-                        // Skip headers from the request body as they are explicitly logged above.
-                        map.put(name,headers.value(i));
-                    }
-                    HttpResult.Body body = res.getBody();          // 报文体
-                    if (listener != null) {
-                        listener.onResponse(body.toString(),map);
-
-                    }
-                })
-
-                .setOnException((IOException e) -> {
-                    // 这里处理请求异常
-                    if (listener != null) {
-                        listener.onErrorResponse(e.getMessage());
-
-                    }
-                });
-        switch (method) {
-            case BPRequest.Method.POST:
-                task.addBodyPara(param);
-                task.post();
-                break;
-            case BPRequest.Method.GET:
-                task.addUrlPara(param);
-                task.get();
-                break;
-        }
-        Log.e(TAG,"from okhttps");
-    }
-
-    public <E> void requestJsonRequest(int method, final String url, final Map<String, String> header, final JSONObject paramJsonObject,
-                                       String requestTag, boolean needCache, final BPListener.OnResponseStrListener listener) {
-        AsyncHttpTask task = http.async(url)
-                .addHeader(header)
-                .tag(requestTag)
-                .bodyType(OkHttps.JSON)
-//                .addBodyPara(mapType)
-                .setBodyPara(paramJsonObject.toString())
-                .setOnResString((String str) -> {
-                    // 得到响应报文体的字符串 String 对象
-                    if (listener != null) {
-                        listener.onResponse(str);
-
-                    }
-                })
-                .setOnException((IOException e) -> {
-                    // 这里处理请求异常
-                    if (listener != null) {
-                        listener.onErrorResponse(e.getMessage());
-
-                    }
-                });
-        switch (method) {
-            case BPRequest.Method.POST:
-                task.post();
-                break;
-            case BPRequest.Method.GET:
-                task.get();
-                break;
-        }
-    }
-
-
-    public <E> void requestJsonArrayRequest(int method, final String url, final Map<String, String> header, final JSONObject paramJsonObject,
-                                            String requestTag, boolean needCache, final BPListener.OnResponseStrListener listener) {
-        requestJsonRequest(method, url, header, paramJsonObject, requestTag, needCache, listener);
-    }
-
-    public <E> void requestForm(int method, final String url, final Map<String, String> header, final Map<String, String> param,
-                                String requestTag, boolean needCache, final BPListener.OnResponseStrListener listener) {
-    }
-
-
-    private void initHeader(Map<String, String> headers) {
-    }
-
     public void cancelRequests(Object tag) {
         int count = http.cancel(tag.toString());  //（2）（3）（4）（6）被取消（取消标签包含"B"的任务）
         Log.i(TAG, "cancelRequests count:" + count);   // 输出 4
     }
+
+
+
+    public <E> void request(BPRequestBody<E> builder) {
+        AsyncHttpTask task = http.async(builder.url)
+                .addHeader(builder.header)
+
+                .tag(builder.requestTag)
+                .setOnException((IOException e) -> {
+                    // 这里处理请求异常
+
+                    if (builder.onException != null) {
+                        builder.onException.onException(e.getMessage());
+
+                    }
+                });
+        if (!TextUtils.isEmpty(builder.paramsJson)) {
+            task.setBodyPara(builder.paramsJson);
+
+        }
+
+
+        if (builder.onResponseBean != null) {
+            task.setOnResBean(builder.clazz, new OnCallback<E>() {
+                @Override
+                public void on(E data) {
+
+                    builder.onResponseBean.onResponse(data);
+
+                }
+            });
+        } else if (builder.onResponse != null) {
+            task.setOnResponse((HttpResult res) -> {
+                // 响应回调
+                int status = res.getStatus();       // 状态码
+                Headers headers = res.getHeaders(); // 响应头
+                Map<String, String> map = new HashMap<>();
+                for (int i = 0, count = headers.size(); i < count; i++) {
+                    String name = headers.name(i);
+                    // Skip headers from the request body as they are explicitly logged above.
+                    map.put(name, headers.value(i));
+                }
+                HttpResult.Body body = res.getBody();          // 报文体
+
+                builder.onResponse.onResponse(body.toString(), map);
+
+
+            });
+        } else {
+            task.setOnResString((String str) -> {
+                // 得到响应报文体的字符串 String 对象
+                if (builder.onResponseString != null) {
+                    builder.onResponseString.onResponse(str);
+
+                }
+            });
+        }
+
+        switch (builder.method) {
+            case BPRequest.Method.POST:
+                if (builder.params != null) {
+
+                    task.addBodyPara(builder.params);
+                }
+                task.post();
+                break;
+            case BPRequest.Method.GET:
+                if (builder.params != null) {
+
+                    task.addUrlPara(builder.params);
+                }
+
+                task.get();
+                break;
+        }
+    }
+
+
 
 }
