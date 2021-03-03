@@ -131,6 +131,7 @@ public class OkhttpsHelper {
                 });
         if (!TextUtils.isEmpty(builder.paramsJson)) {
             task.setBodyPara(builder.paramsJson);
+            task.bodyType(OkHttps.JSON);
 
         }
 
