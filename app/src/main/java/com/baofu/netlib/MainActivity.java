@@ -1,5 +1,6 @@
 package com.baofu.netlib;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -11,6 +12,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        AlertDialog.Builder localBuilder = new AlertDialog.Builder(this);
 
 //        /**
 //         * 请求方式1

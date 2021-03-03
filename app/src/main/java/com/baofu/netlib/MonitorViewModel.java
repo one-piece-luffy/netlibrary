@@ -9,10 +9,8 @@ import androidx.annotation.NonNull;
 import com.baofu.netlib.bean.ConfigModelBean;
 import com.example.netlibrary.BPRequest;
 import com.example.netlibrary.BPRequestBody;
-import com.example.netlibrary.BPRequestBuilder;
 import com.example.netlibrary.BaseViewModel;
 import com.example.netlibrary.BPListener;
-import com.example.netlibrary.BPRequestPattern;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,27 +28,27 @@ public class MonitorViewModel extends BaseViewModel {
         Map<String, String> param = new HashMap<>();
         param.put("code", "18933333333");
         param.put("password", "123456");
-        BPRequestPattern concreteBuilder = new BPRequestPattern();
-        BPRequestBody build = concreteBuilder
+
+        BPRequestBody build = new BPRequestBody.Builder()
                 .setMethod(BPRequest.Method.GET)
                 .setUrl("https://api.dongqiudi.com/app/global/2/android.json?mark=gif&platform=android&version=216&android-channel=website")
                 .setParams(param)
                 .setRequestTag(mRequestTag)
-//                .setOnResponseString(new BPListener.OnResponseString() {
-//                    @Override
-//                    public void onResponse(String response) {
-//                        Log.e("a", response);
-//                        Log.e("time",System.currentTimeMillis()+"");
-//                        Toast.makeText(BaseApplication.getInstance(),"asdf",Toast.LENGTH_SHORT).show();
-//                    }
-//                })
-
-                .setOnResponseBean(ConfigModelBean.class, new BPListener.OnResponseBean<ConfigModelBean>() {
+                .setOnResponseString(new BPListener.OnResponseString() {
                     @Override
-                    public void onResponse(ConfigModelBean response) {
-                        Toast.makeText(BaseApplication.getInstance(), response.getUpdated_at(), Toast.LENGTH_SHORT).show();
+                    public void onResponse(String response) {
+                        Log.e("a", response);
+                        Log.e("time",System.currentTimeMillis()+"");
+                        Toast.makeText(BaseApplication.getInstance(),"asdf",Toast.LENGTH_SHORT).show();
                     }
                 })
+
+//                .setOnResponseBean(ConfigModelBean.class, new BPListener.OnResponseBean<ConfigModelBean>() {
+//                    @Override
+//                    public void onResponse(ConfigModelBean response) {
+//                        Toast.makeText(BaseApplication.getInstance(), response.getUpdated_at(), Toast.LENGTH_SHORT).show();
+//                    }
+//                })
                 .build();
 
 
