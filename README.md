@@ -10,38 +10,31 @@ api 'com.example.netlibrary:netlibrary:0.0.26'
 
 3.请求：
 
-RequestStrategy mBaseModel= = BPRequest.getInstance().mStrategy;
-
 BPRequestBody build = new BPRequestBody.Builder()
 
                 .setMethod(BPRequest.Method.POST)
-                
-                .setParams(param)
-                
-                .setUrl(url)
-                
-                .setRequestTag(”mRequestTag“)
-                
+
+                .setParams(null).setUrl("url")
+
+                .setRequestTag("mRequestTag")
+
                 .setOnResponseString(new BPListener.OnResponseString() {
-                
+
                     @Override
-                    
+
                     public void onResponse(String s) {
-                    
-                       
-                })
-                
-                .setOnException(new BPListener.OnException() {
-                
-                    @Override
-                    
-                    public void onException(String s) {
-                    
-                      
+
+
                     }
-                    
                 })
-                
-                .build();
-                
-mBaseModel.request(build);
+                .setOnException(new BPListener.OnException() {
+
+                    @Override
+
+                    public void onException(String s) {
+
+
+                    }
+
+                }).build();
+        mBaseModel.request(build);
