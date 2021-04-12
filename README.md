@@ -10,11 +10,16 @@ api 'com.example.netlibrary:netlibrary:0.0.26'
 
 3.请求：
 
-BPRequestBody build = new BPRequestBody.Builder()
+ RequestStrategy mBaseModel = BPRequest.getInstance().mStrategy;
+ 
+
+ BPRequestBody build = new BPRequestBody.Builder()
 
                 .setMethod(BPRequest.Method.POST)
 
-                .setParams(null).setUrl("url")
+                .setParams(null)
+
+                .setUrl("url")
 
                 .setRequestTag("mRequestTag")
 
