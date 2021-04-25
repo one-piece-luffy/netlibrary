@@ -43,6 +43,7 @@ public class VolleyHelper {
     private RequestQueue mRequestQueue;
 
     private boolean inited;
+    BPConfig config;
 
     public static VolleyHelper getInstance() {
         return ourInstance;
@@ -60,6 +61,7 @@ public class VolleyHelper {
 //        if (mRequestQueue == null) {
         OkHttp3Stack stack = new OkHttp3Stack();
         mRequestQueue = Volley.newRequestQueue(config.context, stack);
+        this.config=config;
 //        }
     }
 
@@ -263,6 +265,9 @@ public class VolleyHelper {
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
+                if(config!=null&&config.header!=null){
+                    header.putAll(config.header);
+                }
                 return header;
 
             }
@@ -295,6 +300,9 @@ public class VolleyHelper {
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
+                if(config!=null&&config.header!=null){
+                    header.putAll(config.header);
+                }
                 return header;
 
             }
@@ -329,7 +337,9 @@ public class VolleyHelper {
         }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-
+                if(config!=null&&config.header!=null){
+                    header.putAll(config.header);
+                }
                 return header;
             }
         };
@@ -358,6 +368,9 @@ public class VolleyHelper {
         }){
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
+                if(config!=null&&config.header!=null){
+                    header.putAll(config.header);
+                }
                 return header;
             }
         };
@@ -390,6 +403,9 @@ public class VolleyHelper {
         }){
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
+                if(config!=null&&config.header!=null){
+                    header.putAll(config.header);
+                }
                 return header;
             }
 

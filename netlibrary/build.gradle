@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
 
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
@@ -48,8 +49,8 @@ dependencies {
     api 'com.squareup.okhttp3:okhttp:4.6.0'
     api 'org.conscrypt:conscrypt-android:2.2.1'
 
-//    implementation 'com.ejlchina:okhttps:2.4.2'
-    implementation 'com.ejlchina:okhttps-gson:2.4.2'
+//    implementation 'com.ejlchina:okhttps:3.0.1'
+    implementation 'com.ejlchina:okhttps-gson:3.0.1'
 
     implementation "android.arch.lifecycle:extensions:1.1.0"
 // alternatively, just ViewModel

@@ -8,6 +8,9 @@ import com.example.netlibrary.BPRequest;
 import com.example.netlibrary.okhttps.OkhttpsHelper;
 import com.example.netlibrary.volley.VolleyHelper;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class BaseApplication extends Application{
     public static BaseApplication instance;
     public static BaseApplication getInstance(){
@@ -26,7 +29,9 @@ public class BaseApplication extends Application{
     @Override
     public void onCreate() {
         super.onCreate();
-        BPConfig config=new BPConfig.Builder().context(this).strategyType(BPRequest.STRATEGY_TYPE.OKHTTPS).build();
+        Map<String, String> header = new HashMap<>();
+        header.put("User-Agent", "UA");
+        BPConfig config=new BPConfig.Builder().context(this).strategyType(BPRequest.STRATEGY_TYPE.VOLLEY).addHeader(header).build();
         BPRequest.getInstance().init(config);
     }
 }

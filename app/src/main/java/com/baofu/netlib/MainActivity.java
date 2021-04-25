@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         viewModel.request();
 
         Handler handler = new Handler();
+
 //        viewModel.requestGson();
 //        viewModel.requestCheap(null, null, null, null, null);
 //        viewModel.requestSp(null,null,"002142");

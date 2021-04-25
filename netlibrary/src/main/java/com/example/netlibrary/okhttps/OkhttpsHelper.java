@@ -47,7 +47,7 @@ public class OkhttpsHelper {
     private boolean inited;
 
     HTTP http;
-
+    BPConfig config;
 
     public static OkhttpsHelper getInstance() {
         return ourInstance;
@@ -65,6 +65,7 @@ public class OkhttpsHelper {
 //        if (mRequestQueue == null) {
 //        }
         Handler handler = new Handler(Looper.getMainLooper());
+        this.config=config;
         http = HTTP.builder()
                 .responseListener((HttpTask<?> task, HttpResult result) -> {
                     // 所有请求响应后都会走这里
@@ -89,16 +90,22 @@ public class OkhttpsHelper {
                     return true;
                 })
                 .config((OkHttpClient.Builder builder) -> {
+                    // 其它配置: CookieJar、SSL、缓存、代理、事件监听...
+                    // 所有 OkHttp 能配置的，都可以在这里配置
+
                     // 配置连接池 最小10个连接（不配置默认为 5）
                     builder.connectionPool(new ConnectionPool(10, 5, TimeUnit.MINUTES));
                     // 配置连接超时时间（默认10秒）
                     builder.connectTimeout(20, TimeUnit.SECONDS);
                     // 配置 WebSocket 心跳间隔（默认没有心跳）
                     builder.pingInterval(60, TimeUnit.SECONDS);
+
                     // 配置拦截器
                     builder.addInterceptor(new RedirectInterceptor());
-                    // 其它配置: CookieJar、SSL、缓存、代理、事件监听...
-                    // 所有 OkHttp 能配置的，都可以在这里配置
+
+
+                    builder.sslSocketFactory(BPRequest.getInstance().getSSLSocketFactory(), BPRequest.getInstance().getTrustManager());
+                    builder.hostnameVerifier( BPRequest.getInstance().getHostnameVerifier());
                 })
                 .addMsgConvertor(new GsonMsgConvertor())
                 .callbackExecutor((Runnable run) -> {
@@ -129,6 +136,9 @@ public class OkhttpsHelper {
 
                     }
                 });
+        if(config!=null&&config.header!=null){
+            task .addHeader(config.header);
+        }
         if (!TextUtils.isEmpty(builder.paramsJson)) {
             task.setBodyPara(builder.paramsJson);
             task.bodyType(OkHttps.JSON);

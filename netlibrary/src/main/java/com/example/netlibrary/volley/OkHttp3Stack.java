@@ -4,6 +4,8 @@ package com.example.netlibrary.volley;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.toolbox.HttpStack;
+import com.example.netlibrary.BPRequest;
+
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -15,7 +17,6 @@ import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -40,7 +41,11 @@ public class OkHttp3Stack implements HttpStack {
     public OkHttp3Stack() {
         mClient = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS)
                 .addInterceptor(new RedirectInterceptor())
+                .hostnameVerifier( BPRequest.getInstance().getHostnameVerifier())
+                .sslSocketFactory(BPRequest.getInstance().getSSLSocketFactory(),BPRequest.getInstance().getTrustManager())
+
                 .readTimeout(15, TimeUnit.SECONDS).build();
+
     }
 
     private static HttpEntity entityFromOkHttpResponse(Response response) throws IOException {

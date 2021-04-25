@@ -28,12 +28,14 @@ public class MonitorViewModel extends BaseViewModel {
         Map<String, String> param = new HashMap<>();
         param.put("code", "18933333333");
         param.put("password", "123456");
-
+        Map<String, String> header = new HashMap<>();
+        header.put("header", "header");
         BPRequestBody build = new BPRequestBody.Builder()
                 .setMethod(BPRequest.Method.GET)
                 .setUrl("https://api.dongqiudi.com/app/global/2/android.json?mark=gif&platform=android&version=216&android-channel=website")
                 .setParams(param)
                 .setRequestTag(mRequestTag)
+                .setHeader(header)
                 .setOnResponseString(new BPListener.OnResponseString() {
                     @Override
                     public void onResponse(String response) {
