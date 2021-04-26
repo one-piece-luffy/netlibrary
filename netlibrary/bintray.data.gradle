@@ -1,0 +1,23 @@
+ext {
+    bintrayRepo = 'maven' //jcenter上的仓库名，习惯用maven
+    bintrayName = 'netlibrary' //发布到JCenter上的项目名字
+    bintrayUserOrg = 'lihaiyi' //jcenter 上的用户名
+    publishedGroupId = 'com.example.netlibrary' //groupId
+    libraryName = 'netlibrary' //name
+    artifact = 'netlibrary'
+
+    libraryDescription = ""//简介
+
+    siteUrl = 'https://github.com/one-piece-luffy/netlibrary'
+    gitUrl = 'https://github.com/one-piece-luffy/netlibrary.git'
+
+    libraryVersion = '0.0.27'
+
+    developerId = 'lihaiyi'
+    developerName = 'lihaiyi'
+    developerEmail = 'lihaiyi8@gmail.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}

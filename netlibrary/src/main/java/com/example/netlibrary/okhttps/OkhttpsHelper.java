@@ -16,9 +16,7 @@ import com.example.netlibrary.BPConfig;
 import com.example.netlibrary.BPRequest;
 import com.example.netlibrary.BPRequestBody;
 import com.example.netlibrary.volley.RedirectInterceptor;
-import com.example.netlibrary.BPListener;
-
-import org.json.JSONObject;
+import com.example.netlibrary.SSLUtil;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -104,8 +102,8 @@ public class OkhttpsHelper {
                     builder.addInterceptor(new RedirectInterceptor());
 
 
-                    builder.sslSocketFactory(BPRequest.getInstance().getSSLSocketFactory(), BPRequest.getInstance().getTrustManager());
-                    builder.hostnameVerifier( BPRequest.getInstance().getHostnameVerifier());
+                    builder.sslSocketFactory(SSLUtil.getInstance().getSSLSocketFactory(), SSLUtil.getInstance().getTrustManager());
+                    builder.hostnameVerifier( SSLUtil.getInstance().getHostnameVerifier());
                 })
                 .addMsgConvertor(new GsonMsgConvertor())
                 .callbackExecutor((Runnable run) -> {

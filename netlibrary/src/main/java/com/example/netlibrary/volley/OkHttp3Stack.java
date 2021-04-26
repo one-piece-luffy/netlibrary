@@ -5,6 +5,7 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.toolbox.HttpStack;
 import com.example.netlibrary.BPRequest;
+import com.example.netlibrary.SSLUtil;
 
 
 import org.apache.http.HttpEntity;
@@ -41,8 +42,8 @@ public class OkHttp3Stack implements HttpStack {
     public OkHttp3Stack() {
         mClient = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS)
                 .addInterceptor(new RedirectInterceptor())
-                .hostnameVerifier( BPRequest.getInstance().getHostnameVerifier())
-                .sslSocketFactory(BPRequest.getInstance().getSSLSocketFactory(),BPRequest.getInstance().getTrustManager())
+                .hostnameVerifier( SSLUtil.getInstance().getHostnameVerifier())
+                .sslSocketFactory(SSLUtil.getInstance().getSSLSocketFactory(),SSLUtil.getInstance().getTrustManager())
 
                 .readTimeout(15, TimeUnit.SECONDS).build();
 
