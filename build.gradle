@@ -23,13 +23,11 @@ allprojects {
         google()
         jcenter()
         maven{
+            //这个如果配置错了会导致lib下载不下来，地址在bintray的项目详情页的右上角
             url "https://dl.bintray.com/lihaiyi/netlibrary"
         }
     }
-    tasks.withType(Javadoc) {
-        options.addStringOption('Xdoclint:none', '-quiet')
-        options.addStringOption('encoding', 'UTF-8')
-    }
+
 }
 
 task clean(type: Delete) {
