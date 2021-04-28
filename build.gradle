@@ -24,6 +24,7 @@ allprojects {
         jcenter()
         maven{
             //这个如果配置错了会导致lib下载不下来，地址在bintray的项目详情页的右上角
+            //出现这个问题 【pom:3:3: 文档中根元素前面的标记必须格式正确。 】配置下面的url即可解决
             url "https://dl.bintray.com/lihaiyi/netlibrary"
         }
     }
