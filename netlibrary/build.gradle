@@ -81,7 +81,7 @@ def libName = "netlibrary"
 //compile引用时的第1部分
 group = "com.example.netlibrary"
 // 版本号，//compile引用时的最后部分项目名，下次更新是只需要更改版本号即可
-version = "0.0.31"
+version = "0.0.32"
 //上面配置后上传至JCenter后的编译路径是这样的： compile 'com.xzy.util:keyboard:1.0.0'
 
 //生成源文件

@@ -70,7 +70,10 @@ public class OkhttpsHelper {
 
                     // 返回 true 表示继续执行 task 的 OnResponse 回调，
                     // 返回 false 则表示不再执行，即 阻断
-                    Log.i("tag", "所有请求响应后都会走这里");
+                    Log.i("tag", "所有请求响应后都会走这里:");
+                    if(config.onResponseListener!=null){
+                        config.onResponseListener.responseListener(result.getHeaders(),result.getStatus(),result.getBody().toString(),task.getUrl());
+                    }
                     return true;
                 })
                 .completeListener((HttpTask<?> task, HttpResult.State state) -> {
@@ -85,6 +88,9 @@ public class OkhttpsHelper {
 
                     // 返回 true 表示继续执行 task 的 OnException 回调，
                     // 返回 false 则表示不再执行，即 阻断
+                    if(config.onResponseListener!=null){
+                        config.onResponseListener.exceptionListener(task.getUrl(),error.getMessage());
+                    }
                     return true;
                 })
                 .config((OkHttpClient.Builder builder) -> {
@@ -100,6 +106,11 @@ public class OkhttpsHelper {
 
                     // 配置拦截器
                     builder.addInterceptor(new RedirectInterceptor());
+                    if(config.interceptorList!=null){
+                        for(int i=0;i<config.interceptorList.size();i++){
+                            builder.addInterceptor(config.interceptorList.get(i));
+                        }
+                    }
 
 
                     builder.sslSocketFactory(SSLUtil.getInstance().getSSLSocketFactory(), SSLUtil.getInstance().getTrustManager());

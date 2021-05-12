@@ -4,6 +4,7 @@ package com.example.netlibrary.volley;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.toolbox.HttpStack;
+import com.example.netlibrary.BPConfig;
 import com.example.netlibrary.BPRequest;
 import com.example.netlibrary.SSLUtil;
 
@@ -38,14 +39,22 @@ import okhttp3.ResponseBody;
 public class OkHttp3Stack implements HttpStack {
 
     private final OkHttpClient mClient;
+    BPConfig config;
 
-    public OkHttp3Stack() {
-        mClient = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS)
+    public OkHttp3Stack(BPConfig config) {
+        this.config=config;
+        OkHttpClient.Builder builder = new OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS)
                 .addInterceptor(new RedirectInterceptor())
                 .hostnameVerifier( SSLUtil.getInstance().getHostnameVerifier())
                 .sslSocketFactory(SSLUtil.getInstance().getSSLSocketFactory(),SSLUtil.getInstance().getTrustManager())
 
-                .readTimeout(15, TimeUnit.SECONDS).build();
+                .readTimeout(15, TimeUnit.SECONDS);
+        if(config.interceptorList!=null){
+            for(int i=0;i<config.interceptorList.size();i++){
+                builder.addInterceptor(config.interceptorList.get(i));
+            }
+        }
+        mClient=builder.build();
 
     }
 
@@ -178,6 +187,7 @@ public class OkHttp3Stack implements HttpStack {
                 );
 
         BasicHttpResponse response = new BasicHttpResponse(responseStatus);
+
         response.setEntity(entityFromOkHttpResponse(okHttpResponse));
 
         Headers responseHeaders = okHttpResponse.headers();
@@ -187,8 +197,9 @@ public class OkHttp3Stack implements HttpStack {
                 response.addHeader(new BasicHeader(name, value));
             }
         }
-
-
+        if(config!=null&&config.onResponseListener!=null){
+            config.onResponseListener.responseListener(responseHeaders,okHttpResponse.code(),null,request.getUrl());
+        }
         return response;
     }
 }

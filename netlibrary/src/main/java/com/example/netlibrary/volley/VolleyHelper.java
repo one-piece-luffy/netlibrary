@@ -59,7 +59,7 @@ public class VolleyHelper {
      */
     public void init(BPConfig config) {
 //        if (mRequestQueue == null) {
-        OkHttp3Stack stack = new OkHttp3Stack();
+        OkHttp3Stack stack = new OkHttp3Stack(config);
         mRequestQueue = Volley.newRequestQueue(config.context, stack);
         this.config=config;
 //        }

@@ -40,8 +40,8 @@ dependencies {
 // alternatively, just LiveData
     api "android.arch.lifecycle:livedata:1.1.0"
 
-//    api project(':netlibrary')
     api 'com.baofu.base:base:0.0.9'
 
-    implementation 'com.example.netlibrary:netlibrary:0.0.31'
+    api project(':netlibrary')
+//    implementation 'com.example.netlibrary:netlibrary:0.0.31'
 }
