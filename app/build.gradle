@@ -44,4 +44,5 @@ dependencies {
 
     api project(':netlibrary')
 //    implementation 'com.example.netlibrary:netlibrary:0.0.31'
+//    implementation 'com.github.one-piece-luffy:netlibrary:1.0.1'
 }
