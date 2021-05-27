@@ -29,7 +29,6 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 }
-
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.1.0'
@@ -40,9 +39,11 @@ dependencies {
 // alternatively, just LiveData
     api "android.arch.lifecycle:livedata:1.1.0"
 
-    api 'com.baofu.base:base:0.0.9'
+//    api 'com.baofu.base:base:0.0.9'
 
-    api project(':netlibrary')
 //    implementation 'com.example.netlibrary:netlibrary:0.0.31'
-//    implementation 'com.github.one-piece-luffy:netlibrary:1.0.1'
+    
+    api project(':netlibrary')
+//    implementation 'com.github.one-piece-luffy:netlibrary:1.0.2'
 }
+
