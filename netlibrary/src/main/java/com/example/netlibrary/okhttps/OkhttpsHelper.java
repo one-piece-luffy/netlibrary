@@ -19,6 +19,7 @@ import com.example.netlibrary.volley.RedirectInterceptor;
 import com.example.netlibrary.SSLUtil;
 
 import java.io.IOException;
+import java.net.Proxy;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -110,6 +111,9 @@ public class OkhttpsHelper {
                         for(int i=0;i<config.interceptorList.size();i++){
                             builder.addInterceptor(config.interceptorList.get(i));
                         }
+                    }
+                    if(config.banProxy){
+                        builder.proxy(Proxy.NO_PROXY);
                     }
 
 

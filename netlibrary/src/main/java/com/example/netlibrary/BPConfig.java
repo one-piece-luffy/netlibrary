@@ -18,6 +18,8 @@ public class BPConfig {
     public Map<String, String> header;// 通用header，所有请求都会加
     public List<Interceptor> interceptorList;
     public RequestListener onResponseListener;
+    //禁止使用代理
+    public boolean banProxy;
 
     private BPConfig(Builder builder) {
         this.context = builder.context;
@@ -25,6 +27,7 @@ public class BPConfig {
         this.header = builder.header;
         this.interceptorList = builder.interceptorList;
         this.onResponseListener = builder.onResponseListener;
+        this.banProxy=builder.banProxy;
     }
 
     public static class Builder {
@@ -33,6 +36,7 @@ public class BPConfig {
         private Map<String, String> header;
         private List<Interceptor> interceptorList;
         private RequestListener onResponseListener;
+        private boolean banProxy;
 
         public Builder context(Context context) {
             this.context = context;
@@ -41,6 +45,10 @@ public class BPConfig {
 
         public Builder strategyType(int strategyType) {
             this.strategyType = strategyType;
+            return this;
+        }
+        public Builder banProxy(boolean banProxy) {
+            this.banProxy = banProxy;
             return this;
         }
 

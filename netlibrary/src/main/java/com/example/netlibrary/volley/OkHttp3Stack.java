@@ -19,6 +19,7 @@ import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
 
 import java.io.IOException;
+import java.net.Proxy;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -53,6 +54,9 @@ public class OkHttp3Stack implements HttpStack {
             for(int i=0;i<config.interceptorList.size();i++){
                 builder.addInterceptor(config.interceptorList.get(i));
             }
+        }
+        if(config.banProxy){
+            builder.proxy(Proxy.NO_PROXY);
         }
         mClient=builder.build();
 

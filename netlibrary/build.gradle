@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
-
+apply plugin: 'com.github.dcendents.android-maven' //jitpack上传
+group='com.github.one-piece-luffy'// jitpack上传 : 这里对应自己的github名称就可以了
 
 android {
     compileSdkVersion 29

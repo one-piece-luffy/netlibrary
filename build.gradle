@@ -1,11 +1,19 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     repositories {
-        google()
-        jcenter()
-        maven {
-            url  "https://dl.bintray.com/lihaiyi/netlibrary"
-        }
+//        google()
+//        jcenter()
+        /**
+         * bintray上传
+         */
+//        maven {
+//            url  "https://dl.bintray.com/lihaiyi/netlibrary"
+//        }
+
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url "https://jitpack.io" } //jitpack上传
+
 
     }
     dependencies {
@@ -13,20 +21,26 @@ buildscript {
         //bintray 插件
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
-        //android-maven-gradle-plugin:1.3版本有bug，网上很多例子用的这个版本，编译的时候可能会出错，改一下版本就好了
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'    //jitpack上传
 
     }
 }
 
 allprojects {
     repositories {
-        google()
-        jcenter()
-        maven{
-            //这个如果配置错了会导致lib下载不下来，地址在bintray的项目详情页的右上角
-            //出现这个问题 【pom:3:3: 文档中根元素前面的标记必须格式正确。 】配置下面的url即可解决
-            url "https://dl.bintray.com/lihaiyi/netlibrary"
-        }
+        /**
+         * bintray上传
+         */
+//        google()
+//        jcenter()
+//        maven{
+//            //这个如果配置错了会导致lib下载不下来，地址在bintray的项目详情页的右上角
+//            //出现这个问题 【pom:3:3: 文档中根元素前面的标记必须格式正确。 】配置下面的url即可解决
+//            url "https://dl.bintray.com/lihaiyi/netlibrary"
+//        }
+        maven { url "https://jitpack.io" }//jitpack上传
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://maven.aliyun.com/repository/google' }
     }
 
 }
