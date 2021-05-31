@@ -45,12 +45,19 @@ public class MonitorViewModel extends BaseViewModel {
                     }
                 })
 
+
 //                .setOnResponseBean(ConfigModelBean.class, new BPListener.OnResponseBean<ConfigModelBean>() {
 //                    @Override
 //                    public void onResponse(ConfigModelBean response) {
 //                        Toast.makeText(BaseApplication.getInstance(), response.getUpdated_at(), Toast.LENGTH_SHORT).show();
 //                    }
 //                })
+                .setOnException(new BPListener.OnException() {
+                    @Override
+                    public void onException(String response) {
+                        Log.e("a", response);
+                    }
+                })
                 .build();
 
 

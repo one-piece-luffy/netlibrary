@@ -40,11 +40,10 @@ public class BaseApplication extends Application{
 //                .banProxy(true)
                 .setRequestListener(new RequestListener() {
                     @Override
-                    public void responseListener(Headers headers, int status, String response, String url) {
+                    public void responseListener(Headers headers, int status,  String url) {
                         Log.e("asdf","所有的请求");
                         Log.e("asdf","status:"+status);
                         Log.e("asdf","url:"+url);
-                        Log.e("asdf","response:"+response);
                     }
 
                     @Override
