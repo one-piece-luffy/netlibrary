@@ -21,6 +21,7 @@ import com.example.netlibrary.SSLUtil;
 import java.io.IOException;
 import java.net.Proxy;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -139,7 +140,6 @@ public class OkhttpsHelper {
     public <E> void request(BPRequestBody<E> builder) {
         AsyncHttpTask task = http.async(builder.url)
                 .addHeader(builder.header)
-
                 .tag(builder.requestTag)
                 .setOnException((IOException e) -> {
                     // 这里处理请求异常
@@ -174,10 +174,19 @@ public class OkhttpsHelper {
                 int status = res.getStatus();       // 状态码
                 Headers headers = res.getHeaders(); // 响应头
                 Map<String, String> map = new HashMap<>();
+                String cookie=null;
+
                 for (int i = 0, count = headers.size(); i < count; i++) {
+
                     String name = headers.name(i);
-                    // Skip headers from the request body as they are explicitly logged above.
-                    map.put(name, headers.value(i));
+                    if(name.toLowerCase().equals("Set-Cookie".toLowerCase())){
+                        cookie+=headers.value(i);
+                    }else {
+                        map.put(name, headers.value(i));
+                    }
+                    if(!TextUtils.isEmpty(cookie)){
+                        map.put("Set-Cookie", cookie);
+                    }
                 }
                 HttpResult.Body body = res.getBody();          // 报文体
 

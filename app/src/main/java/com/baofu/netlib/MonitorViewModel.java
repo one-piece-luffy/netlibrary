@@ -1,6 +1,7 @@
 package com.baofu.netlib;
 
 import android.app.Application;
+import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -63,6 +64,51 @@ public class MonitorViewModel extends BaseViewModel {
 
         mBaseModel.request(build);
 //
+    }
+
+    public void requestcookie(){
+        String url =  "http://www.yeens.xyz/api.php/v1.Auth/Third";
+        Map<String, String> header = new HashMap<>();
+        header.put("User-Agent", "UA");
+        header.put("source", "newgimy");
+        header.put("uniqueID", Build.ID);
+        header.put("x-version", "11");
+        header.put("x-os", String.format("%s %s", "Android", Build.VERSION.RELEASE));
+        header.put("x-country", "zh-cn");
+        header.put("x-lang",  "zh-cn");
+        header.put("x-device", Build.ID);
+
+        Map<String, String> param = new HashMap<>();
+        param.put("openid", Build.ID);
+
+
+        BPRequestBody build = new BPRequestBody.Builder()
+                .setMethod(BPRequest.Method.POST)
+                .setUrl(url)
+                .setRequestTag(mRequestTag)
+                .setHeader(header)
+                .setParams(param)
+                .setOnResponse(new BPListener.OnResponse() {
+                    @Override
+                    public void onResponse(String response, Map<String,String> obj) {
+                        Map<String,String> header= (Map<String, String>) obj;
+
+//                        String cc="";
+                    }
+                })
+
+                .setOnException(new BPListener.OnException() {
+                    @Override
+                    public void onException(String response) {
+                        request();
+                    }
+                })
+
+
+                .build();
+
+
+        mBaseModel.request(build);
     }
 
 //    public void requestStringPost() {
