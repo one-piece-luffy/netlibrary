@@ -179,10 +179,14 @@ public class OkhttpsHelper {
                 for (int i = 0, count = headers.size(); i < count; i++) {
 
                     String name = headers.name(i);
+                    String value=headers.value(i);
                     if(name.toLowerCase().equals("Set-Cookie".toLowerCase())){
-                        cookie+=headers.value(i);
+                        cookie+=value;
+                        if(!value.equals(";")){
+                            cookie+=";";
+                        }
                     }else {
-                        map.put(name, headers.value(i));
+                        map.put(name, value);
                     }
                     if(!TextUtils.isEmpty(cookie)){
                         map.put("Set-Cookie", cookie);
