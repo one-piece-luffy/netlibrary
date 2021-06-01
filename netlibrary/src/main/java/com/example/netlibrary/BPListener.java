@@ -94,7 +94,7 @@ public interface BPListener {
     }
     public interface OnResponse {
 
-        void onResponse(String response,Object obj);
+        void onResponse(String response,Map<String,String> heaer);
     }
     public interface OnException {
 

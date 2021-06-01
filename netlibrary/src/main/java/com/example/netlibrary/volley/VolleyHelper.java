@@ -280,7 +280,7 @@ public class VolleyHelper {
                                   String requestTag, boolean needCache, final BPListener.OnResponse listener,final  BPListener.OnException onException) {
         StringRequestV2 req = new StringRequestV2(method, url, new ResponseListenerV2() {
             @Override
-            public void onResponse(String response,Object o) {
+            public void onResponse(String response,Map<String,String> o) {
                 if (listener != null) {
                     listener.onResponse(response,o);
                 }
