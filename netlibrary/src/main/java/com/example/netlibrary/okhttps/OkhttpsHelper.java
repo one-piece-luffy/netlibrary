@@ -174,7 +174,7 @@ public class OkhttpsHelper {
                 int status = res.getStatus();       // 状态码
                 Headers headers = res.getHeaders(); // 响应头
                 Map<String, String> map = new HashMap<>();
-                String cookie=null;
+                String cookie="";
 
                 for (int i = 0, count = headers.size(); i < count; i++) {
 
