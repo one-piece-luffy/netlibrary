@@ -224,6 +224,12 @@ public class OkhttpsHelper {
 
                 task.get();
                 break;
+            case BPRequest.Method.DELETE:
+                if (builder.params != null) {
+                    task.addBodyPara(builder.params);
+                }
+                task.get();
+                break;
         }
     }
 
