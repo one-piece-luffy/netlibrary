@@ -228,7 +228,7 @@ public class OkhttpsHelper {
                 if (builder.params != null) {
                     task.addBodyPara(builder.params);
                 }
-                task.get();
+                task.delete();
                 break;
         }
     }
