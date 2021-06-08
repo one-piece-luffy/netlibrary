@@ -53,11 +53,11 @@ dependencies {
 //    implementation 'com.ejlchina:okhttps:3.0.1'
     implementation 'com.ejlchina:okhttps-gson:3.0.1'
 
-    implementation "android.arch.lifecycle:extensions:1.1.0"
+    api "android.arch.lifecycle:extensions:1.1.1"
 // alternatively, just ViewModel
-    implementation "android.arch.lifecycle:viewmodel:1.1.0"
+    api "android.arch.lifecycle:viewmodel:1.1.1"
 // alternatively, just LiveData
-    implementation "android.arch.lifecycle:livedata:1.1.0"
+    api "android.arch.lifecycle:livedata:1.1.1"
 
 
 //    api 'com.alibaba:fastjson:1.1.70.android'
