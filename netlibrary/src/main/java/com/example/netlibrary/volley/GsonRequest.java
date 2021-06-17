@@ -1,10 +1,10 @@
 package com.example.netlibrary.volley;
 
+import com.alibaba.fastjson.JSON;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
-import com.google.gson.Gson;
 
 import java.io.UnsupportedEncodingException;
 
@@ -45,7 +45,7 @@ public class GsonRequest<T> extends Request<T> {
 
 //将json字符串解析为javabean
 
-        T t = new Gson().fromJson(parsed, clazz);
+        T t = JSON.parseObject(parsed,clazz);
 
         return Response.success(t, HttpHeaderParser.parseCacheHeaders(response));
 

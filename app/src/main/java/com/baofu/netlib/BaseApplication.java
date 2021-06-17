@@ -15,6 +15,7 @@ import java.util.Map;
 
 import okhttp3.Headers;
 
+
 public class BaseApplication extends Application{
     public static BaseApplication instance;
     public static BaseApplication getInstance(){
@@ -40,7 +41,7 @@ public class BaseApplication extends Application{
 //                .banProxy(true)
                 .setRequestListener(new RequestListener() {
                     @Override
-                    public void responseListener(Headers headers, int status,  String url) {
+                    public void responseListener(Headers headers, int status, String url) {
                         Log.e("asdf","所有的请求");
                         Log.e("asdf","status:"+status);
                         Log.e("asdf","url:"+url);

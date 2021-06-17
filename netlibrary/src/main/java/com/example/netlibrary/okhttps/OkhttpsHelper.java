@@ -1,11 +1,12 @@
 package com.example.netlibrary.okhttps;
 
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.ejlchina.okhttps.GsonMsgConvertor;
+import com.ejlchina.okhttps.FastjsonMsgConvertor;
 import com.ejlchina.okhttps.HTTP;
 import com.ejlchina.okhttps.HttpResult;
 import com.ejlchina.okhttps.HttpTask;
@@ -18,6 +19,7 @@ import com.example.netlibrary.BPRequestBody;
 import com.example.netlibrary.volley.RedirectInterceptor;
 import com.example.netlibrary.SSLUtil;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.Proxy;
 import java.util.HashMap;
@@ -25,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Cache;
 import okhttp3.ConnectionPool;
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;
@@ -116,12 +119,16 @@ public class OkhttpsHelper {
                     if(config.banProxy){
                         builder.proxy(Proxy.NO_PROXY);
                     }
-
+                    // 缓存目录
+//                    File file = new File(Environment.getExternalStorageDirectory(), "a_cache");
+//                    // 缓存大小
+//                    int cacheSize = 10 * 1024 * 1024;
+//                    builder.cache(new Cache(file, cacheSize));
 
                     builder.sslSocketFactory(SSLUtil.getInstance().getSSLSocketFactory(), SSLUtil.getInstance().getTrustManager());
                     builder.hostnameVerifier( SSLUtil.getInstance().getHostnameVerifier());
                 })
-                .addMsgConvertor(new GsonMsgConvertor())
+                .addMsgConvertor(new FastjsonMsgConvertor())
                 .callbackExecutor((Runnable run) -> {
                     handler.post(run); // 在主线程执行
                 })

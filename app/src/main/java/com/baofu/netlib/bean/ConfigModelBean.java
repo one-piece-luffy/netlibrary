@@ -1,12 +1,10 @@
 package com.baofu.netlib.bean;
 
-import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
 public class ConfigModelBean {
 
-    @SerializedName("config")
     private ConfigBean _$Config139; // FIXME check this code
     private EmojiBean emoji;
     private String updated_at;
@@ -63,8 +61,6 @@ public class ConfigModelBean {
     }
 
     public static class ConfigBean {
-        @SerializedName("gif_max_size")
-        private int _$Gif_max_size196; // FIXME check this code
         private int max_upload_files;
         private int match_refresh_interval;
         private boolean qr_login;
@@ -139,13 +135,6 @@ public class ConfigModelBean {
         private List<TagsBean> tags;
         private List<String> domain_ua_white_list;
 
-        public int get_$Gif_max_size196() {
-            return _$Gif_max_size196;
-        }
-
-        public void set_$Gif_max_size196(int _$Gif_max_size196) {
-            this._$Gif_max_size196 = _$Gif_max_size196;
-        }
 
         public int getMax_upload_files() {
             return max_upload_files;
@@ -732,7 +721,6 @@ public class ConfigModelBean {
         }
 
         public static class PlayerBean {
-            @SerializedName("video")
             private String _$Video238; // FIXME check this code
             private String ad;
             private String live;
