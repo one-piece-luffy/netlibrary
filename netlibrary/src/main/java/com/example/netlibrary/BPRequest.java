@@ -3,6 +3,7 @@ package com.example.netlibrary;
 import android.content.Context;
 
 import com.android.volley.toolbox.ImageLoader;
+import com.example.netlibrary.okhttp.OkhttpStrategy;
 import com.example.netlibrary.okhttps.OkhttpsStrategy;
 import com.example.netlibrary.volley.VolleyStrategy;
 
@@ -34,6 +35,7 @@ public class BPRequest {
     public interface STRATEGY_TYPE {
         int OKHTTPS = 0;
         int VOLLEY = 1;
+        int OKHTTP = 1;
     }
 
 
@@ -67,6 +69,9 @@ public class BPRequest {
             switch (config.strategyType){
                 case 1:
                     mStrategy = new VolleyStrategy();
+                    break;
+                case 2:
+                    mStrategy = new OkhttpStrategy();
                     break;
                 case 0:
                 default:

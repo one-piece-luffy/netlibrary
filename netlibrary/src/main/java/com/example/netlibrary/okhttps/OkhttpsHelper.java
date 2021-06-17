@@ -1,6 +1,5 @@
 package com.example.netlibrary.okhttps;
 
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
@@ -17,17 +16,14 @@ import com.example.netlibrary.BPConfig;
 import com.example.netlibrary.BPRequest;
 import com.example.netlibrary.BPRequestBody;
 import com.example.netlibrary.volley.RedirectInterceptor;
-import com.example.netlibrary.SSLUtil;
+import com.example.netlibrary.utils.SSLUtil;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.Proxy;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.Cache;
 import okhttp3.ConnectionPool;
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;

@@ -20,6 +20,7 @@ public class BPConfig {
     public RequestListener onResponseListener;
     //禁止使用代理
     public boolean banProxy;
+    public int timeout;
 
     private BPConfig(Builder builder) {
         this.context = builder.context;
@@ -28,6 +29,7 @@ public class BPConfig {
         this.interceptorList = builder.interceptorList;
         this.onResponseListener = builder.onResponseListener;
         this.banProxy=builder.banProxy;
+        this.timeout=builder.timeout;
     }
 
     public static class Builder {
@@ -37,6 +39,7 @@ public class BPConfig {
         private List<Interceptor> interceptorList;
         private RequestListener onResponseListener;
         private boolean banProxy;
+        private int timeout;
 
         public Builder context(Context context) {
             this.context = context;
@@ -49,6 +52,10 @@ public class BPConfig {
         }
         public Builder banProxy(boolean banProxy) {
             this.banProxy = banProxy;
+            return this;
+        }
+        public Builder timeout(int timeout) {
+            this.timeout = timeout;
             return this;
         }
 

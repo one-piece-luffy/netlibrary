@@ -36,7 +36,7 @@ public class BaseApplication extends Application{
         super.onCreate();
         Map<String, String> header = new HashMap<>();
         header.put("User-Agent", "UA");
-        BPConfig config=new BPConfig.Builder().context(this).strategyType(BPRequest.STRATEGY_TYPE.OKHTTPS).addHeader(header)
+        BPConfig config=new BPConfig.Builder().context(this).strategyType(BPRequest.STRATEGY_TYPE.OKHTTP).addHeader(header)
                 .addInterceptor(new MyTestInterceptor())
 //                .banProxy(true)
                 .setRequestListener(new RequestListener() {

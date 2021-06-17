@@ -5,8 +5,7 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.toolbox.HttpStack;
 import com.example.netlibrary.BPConfig;
-import com.example.netlibrary.BPRequest;
-import com.example.netlibrary.SSLUtil;
+import com.example.netlibrary.utils.SSLUtil;
 
 
 import org.apache.http.HttpEntity;
