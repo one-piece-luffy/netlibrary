@@ -130,7 +130,7 @@ public class OkhttpHelper {
                 delete(builder);
                 break;
             case BPRequest.Method.PATCH:
-                delete(builder);
+                patch(builder);
                 break;
         }
     }
