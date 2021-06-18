@@ -13,7 +13,9 @@ import com.example.netlibrary.BPRequestBody;
 import com.example.netlibrary.BaseViewModel;
 import com.example.netlibrary.BPListener;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MonitorViewModel extends BaseViewModel {
@@ -47,12 +49,13 @@ public class MonitorViewModel extends BaseViewModel {
                 })
 
 
-                .setOnResponseBean(ConfigModelBean.class, new BPListener.OnResponseBean<ConfigModelBean>() {
-                    @Override
-                    public void onResponse(ConfigModelBean response) {
-                        Toast.makeText(BaseApplication.getInstance(), response.getUpdated_at(), Toast.LENGTH_SHORT).show();
-                    }
-                })
+//                .setOnResponseBean(ConfigModelBean.class, new BPListener.OnResponseBean<ConfigModelBean>() {
+//                    @Override
+//                    public void onResponse(ConfigModelBean response) {
+//                        Log.e("time",response.toString()+"");
+//                        Toast.makeText(BaseApplication.getInstance(), response.getUpdated_at(), Toast.LENGTH_SHORT).show();
+//                    }
+//                })
                 .setOnException(new BPListener.OnException() {
                     @Override
                     public void onException(String response) {
@@ -92,15 +95,19 @@ public class MonitorViewModel extends BaseViewModel {
                     @Override
                     public void onResponse(String response, Map<String,String> obj) {
                         Map<String,String> header= (Map<String, String>) obj;
-
-//                        String cc="";
+                        String cookie=obj.get("Set-Cookie");
+                        Map<String, String> he = new HashMap<>();
+                        he.put("timestamp", System.currentTimeMillis() + "");
+//                        he.put("cookie",cookie);
+                        he.put("cookie","user_id=50358;user_name=644164976769;user_nick_name=TGNC4;group_id=2;group_name=%E9%BB%98%E8%AE%A4%E4%BC%9A%E5%91%98;user_check=c574b5b1871e2af45c99dd320d9a678c;user_portrait=%2Fstatic%2Fimages%2Ftouxiang.png;");
+                        delete(he);
                     }
                 })
 
                 .setOnException(new BPListener.OnException() {
                     @Override
                     public void onException(String response) {
-                        request();
+
                     }
                 })
 
@@ -108,6 +115,29 @@ public class MonitorViewModel extends BaseViewModel {
                 .build();
 
 
+        mBaseModel.request(build);
+    }
+    public void delete( Map<String,String> header){
+            String url = "http://www.yeens.xyz/api.php/v1.user/ulog?type=2&ids=183901";
+        BPRequestBody build = new BPRequestBody.Builder()
+                    .setMethod(BPRequest.Method.DELETE)
+                    .setUrl(url)
+//                .setParams(param)
+                    .setRequestTag(mRequestTag)
+                    .setHeader(header)
+                   .setOnResponseString(new BPListener.OnResponseString() {
+                       @Override
+                       public void onResponse(String response) {
+                            Log.e("asdf",response);
+                       }
+                   })
+                .setOnException(new BPListener.OnException() {
+                    @Override
+                    public void onException(String response) {
+                        Log.e("asdf",response);
+                    }
+                })
+            .build();
         mBaseModel.request(build);
     }
 
