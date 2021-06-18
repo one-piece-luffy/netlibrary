@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.ConnectionPool;
+import okhttp3.Dispatcher;
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -81,7 +82,7 @@ public class OkhttpHelper {
                 .pingInterval(60, TimeUnit.SECONDS)
                 .addInterceptor(new RedirectInterceptor())
                 .hostnameVerifier(SSLUtil.getInstance().getHostnameVerifier())
-                .sslSocketFactory(SSLUtil.getInstance().getSSLSocketFactory(), SSLUtil.getInstance().getTrustManager())
+                .sslSocketFactory(SSLUtil.getInstance().getSSLSocketFactory(), SSLUtil.getInstance().getTrustManager());
         if (config.interceptorList != null) {
             for (int i = 0; i < config.interceptorList.size(); i++) {
                 builder.addInterceptor(config.interceptorList.get(i));
@@ -95,8 +96,17 @@ public class OkhttpHelper {
     }
 
     public void cancelRequests(Object tag) {
-//        int count = mClient.cancel(tag.toString());  //（2）（3）（4）（6）被取消（取消标签包含"B"的任务）
-//        Log.i(TAG, "cancelRequests count:" + count);   // 输出 4
+        Dispatcher dispatcher = mClient.dispatcher();
+        for (Call call : dispatcher.queuedCalls()) {
+            if (tag.equals(call.request().tag())) {
+                call.cancel();
+            }
+        }
+        for (Call call : dispatcher.runningCalls()) {
+            if (tag.equals(call.request().tag())) {
+                call.cancel();
+            }
+        }
     }
 
 
@@ -143,6 +153,7 @@ public class OkhttpHelper {
             }
 
         }
+        okBuilder.tag(builder.requestTag);
 
         return okBuilder;
     }
@@ -278,6 +289,10 @@ public class OkhttpHelper {
 
     private <E> void handlerError(BPRequestBody<E> builder, IOException e) {
         if (builder.onException != null && e != null) {
+            if(e.toString().contains("Socket closed")) {
+                //如果是主动取消的情况下
+                return;
+            }
             mMainHandler.post(new Runnable() {
                 @Override
                 public void run() {

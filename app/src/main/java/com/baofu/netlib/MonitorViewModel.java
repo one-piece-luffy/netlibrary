@@ -2,6 +2,7 @@ package com.baofu.netlib;
 
 import android.app.Application;
 import android.os.Build;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -66,6 +67,13 @@ public class MonitorViewModel extends BaseViewModel {
 
 
         mBaseModel.request(build);
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                mBaseModel.cancelRequests(mRequestTag);
+//            }
+//        },300);
+
 //
     }
 
@@ -107,7 +115,7 @@ public class MonitorViewModel extends BaseViewModel {
                 .setOnException(new BPListener.OnException() {
                     @Override
                     public void onException(String response) {
-
+                        Log.e("a", response);
                     }
                 })
 
