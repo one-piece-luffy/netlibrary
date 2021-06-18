@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
         MonitorViewModel viewModel = ViewModelProviders.of(this).get(MonitorViewModel.class);
         viewModel.request();
         viewModel.requestcookie();
-        Handler handler = new Handler();
 
 //        viewModel.requestGson();
 //        viewModel.requestCheap(null, null, null, null, null);

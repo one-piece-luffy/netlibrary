@@ -73,7 +73,7 @@ public class OkhttpsHelper {
                     // 返回 false 则表示不再执行，即 阻断
                     Log.i("tag", "所有请求响应后都会走这里:");
                     if(config.onResponseListener!=null){
-                        config.onResponseListener.responseListener(result.getHeaders(),result.getStatus(),task.getUrl());
+                        config.onResponseListener.responseListener(result.getHeaders(),result.getStatus(),task.getUrl(),null);
                     }
                     return true;
                 })

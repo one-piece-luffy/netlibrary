@@ -35,7 +35,7 @@ public class BPRequest {
     public interface STRATEGY_TYPE {
         int OKHTTPS = 0;
         int VOLLEY = 1;
-        int OKHTTP = 1;
+        int OKHTTP = 2;
     }
 
 
