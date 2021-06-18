@@ -201,7 +201,7 @@ public class OkHttp3Stack implements HttpStack {
             }
         }
         if(config!=null&&config.onResponseListener!=null){
-            config.onResponseListener.responseListener(responseHeaders,okHttpResponse.code(),request.getUrl());
+            config.onResponseListener.responseListener(responseHeaders,okHttpResponse.code(),request.getUrl(),null);
         }
         return response;
     }

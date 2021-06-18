@@ -31,6 +31,7 @@ import okhttp3.Callback;
 import okhttp3.ConnectionPool;
 import okhttp3.Dispatcher;
 import okhttp3.Headers;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -181,8 +182,13 @@ public class OkhttpHelper {
     }
 
     private <E> void post(BPRequestBody<E> builder) {
+        RequestBody body=null;
+        if (!TextUtils.isEmpty(builder.paramsJson)) {
+            body=RequestBody.create(MediaType.parse("application/json;charset=utf-8"), builder.paramsJson);
+        }else {
+            body = setRequestBody(builder.params);
+        }
 
-        RequestBody body = setRequestBody(builder.params);
         Request.Builder okBuilder = getBuilder(builder);
         Request request = okBuilder.post(body).url(builder.url).build();
 
@@ -301,12 +307,30 @@ public class OkhttpHelper {
             });
 
         }
+        if(config.onResponseListener!=null){
+            mMainHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    config.onResponseListener.exceptionListener(builder.url,e.getMessage());
+                }
+            });
+
+        }
     }
 
     private <E> void handlerResponse(final Call call, final Response response, BPRequestBody<E> builder) {
+
         try {
             String json = response.body().string();
+            if(config.onResponseListener!=null){
+                mMainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        config.onResponseListener.responseListener(response.headers(),response.code(),builder.url,json);
+                    }
+                });
 
+            }
             if (builder.onResponseBean != null) {
                 E model = JSON.parseObject(json, builder.clazz);
                 mMainHandler.post(new Runnable() {
