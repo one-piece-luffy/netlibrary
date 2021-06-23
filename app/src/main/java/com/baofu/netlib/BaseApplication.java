@@ -7,9 +7,6 @@ import android.util.Log;
 import com.example.netlibrary.BPConfig;
 import com.example.netlibrary.BPRequest;
 import com.example.netlibrary.listener.RequestListener;
-import com.example.netlibrary.okhttps.OkhttpsHelper;
-import com.example.netlibrary.volley.VolleyHelper;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,7 +38,7 @@ public class BaseApplication extends Application{
 //                .banProxy(true)
                 .setRequestListener(new RequestListener() {
                     @Override
-                    public void responseListener(Headers headers, int status, String url) {
+                    public void responseListener(Headers headers, int status, String url,String response) {
                         Log.e("asdf","所有的请求");
                         Log.e("asdf","status:"+status);
                         Log.e("asdf","url:"+url);

@@ -44,11 +44,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     api 'com.android.volley:volley:1.1.1'
-//    api 'com.squareup.okio:okio:1.6.0'
-    api 'org.apache:apache:23'
-
-
-    api 'com.ejlchina:okhttps:3.1.0'
     implementation 'com.ejlchina:okhttps-fastjson:3.1.0'
 
 
@@ -57,7 +52,6 @@ dependencies {
     api "android.arch.lifecycle:viewmodel:1.1.1"
 // alternatively, just LiveData
     api "android.arch.lifecycle:livedata:1.1.1"
-
 
     api("com.squareup.okhttp3:okhttp:4.9.1")
 }
