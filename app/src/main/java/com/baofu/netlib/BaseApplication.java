@@ -42,6 +42,7 @@ public class BaseApplication extends Application{
                         Log.e("asdf","所有的请求");
                         Log.e("asdf","status:"+status);
                         Log.e("asdf","url:"+url);
+                        Log.e("asdf","response:"+response);
                     }
 
                     @Override

@@ -139,10 +139,18 @@ public class OkhttpHelper {
     private <E> Request.Builder getBuilder(BPRequestBody<E> builder) {
         Request.Builder okBuilder = new Request.Builder();
         if (config != null && config.header != null) {
+
             Iterator<Map.Entry<String, String>> it = config.header.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry<String, String> entry = it.next();
-                okBuilder.addHeader(entry.getKey(), entry.getValue());
+                if(entry==null)
+                    continue;
+                String key=entry.getKey();
+                String value=entry.getValue();
+                if(TextUtils.isEmpty(key)||TextUtils.isEmpty(value)){
+                    continue;
+                }
+                okBuilder.addHeader(key,value);
             }
 
         }
@@ -150,7 +158,14 @@ public class OkhttpHelper {
             Iterator<Map.Entry<String, String>> it = builder.header.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry<String, String> entry = it.next();
-                okBuilder.addHeader(entry.getKey(), entry.getValue());
+                if(entry==null)
+                    continue;
+                String key=entry.getKey();
+                String value=entry.getValue();
+                if(TextUtils.isEmpty(key)||TextUtils.isEmpty(value)){
+                    continue;
+                }
+                okBuilder.addHeader(key,value);
             }
 
         }
@@ -169,12 +184,19 @@ public class OkhttpHelper {
         RequestBody body = null;
         okhttp3.FormBody.Builder formEncodingBuilder = new okhttp3.FormBody.Builder();
         if (BodyParams != null) {
-            Iterator<String> iterator = BodyParams.keySet().iterator();
-            String key = "";
-            while (iterator.hasNext()) {
-                key = iterator.next();
-                formEncodingBuilder.add(key, BodyParams.get(key));
+            Iterator<Map.Entry<String, String>> it = BodyParams.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String, String> entry = it.next();
+                if(entry==null)
+                    continue;
+                String key=entry.getKey();
+                String value=entry.getValue();
+                if(TextUtils.isEmpty(key)||TextUtils.isEmpty(value)){
+                    continue;
+                }
+                formEncodingBuilder.add(key, value);
             }
+
         }
         body = formEncodingBuilder.build();
         return body;
@@ -214,18 +236,23 @@ public class OkhttpHelper {
         Request.Builder okBuilder = getBuilder(builder);
         String url = builder.url;
         if (builder.params != null) {
-            Iterator<String> iterator = builder.params.keySet().iterator();
-            String key = "";
-            String value = "";
-            while (iterator.hasNext()) {
-                key = iterator.next();
-                value = builder.params.get(key);
+            Iterator<Map.Entry<String, String>> it = builder.params.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String, String> entry = it.next();
+                if(entry==null)
+                    continue;
+                String key=entry.getKey();
+                String value=entry.getValue();
+                if(TextUtils.isEmpty(key)||TextUtils.isEmpty(value)){
+                    continue;
+                }
                 if (url.contains("?")) {
                     url = url + "&" + key + "=" + value;
                 } else {
                     url = url + "?" + key + "=" + value;
                 }
             }
+
         }
         Request request = okBuilder.url(url)
                 .build();
