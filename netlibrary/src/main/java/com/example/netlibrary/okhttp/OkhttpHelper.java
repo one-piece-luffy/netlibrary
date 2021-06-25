@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONException;
 import com.ejlchina.okhttps.FastjsonMsgConvertor;
 import com.ejlchina.okhttps.HTTP;
 import com.ejlchina.okhttps.HttpResult;
@@ -359,11 +360,17 @@ public class OkhttpHelper {
 
             }
             if (builder.onResponseBean != null) {
-                E model = JSON.parseObject(json, builder.clazz);
+                E model = null;
+                try {
+                    model=JSON.parseObject(json, builder.clazz);
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+                E finalModel = model;
                 mMainHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        builder.onResponseBean.onResponse(model);
+                        builder.onResponseBean.onResponse(finalModel);
                     }
                 });
 
