@@ -1,24 +1,7 @@
 package com.example.netlibrary;
 
-import android.content.Context;
-
-import com.android.volley.toolbox.ImageLoader;
 import com.example.netlibrary.okhttp.OkhttpStrategy;
-import com.example.netlibrary.okhttps.OkhttpsStrategy;
 import com.example.netlibrary.volley.VolleyStrategy;
-
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 
 public class BPRequest {
     public interface Method {
@@ -33,7 +16,6 @@ public class BPRequest {
         int PATCH = 7;
     }
     public interface STRATEGY_TYPE {
-        int OKHTTPS = 0;
         int VOLLEY = 1;
         int OKHTTP = 2;
     }
@@ -64,7 +46,7 @@ public class BPRequest {
 
     public void init(BPConfig config){
         if(config==null){
-            mStrategy = new OkhttpsStrategy();
+            mStrategy = new OkhttpStrategy();
         }else {
             switch (config.strategyType){
                 case 1:
@@ -75,7 +57,7 @@ public class BPRequest {
                     break;
                 case 0:
                 default:
-                    mStrategy = new OkhttpsStrategy();
+                    mStrategy = new OkhttpStrategy();
             }
         }
         mStrategy.init(config);
