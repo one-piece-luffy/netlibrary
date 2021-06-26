@@ -22,10 +22,11 @@ import java.util.Map;
 public class MonitorViewModel extends BaseViewModel {
     public final String COOKIE = "jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YzNhYzYxOGNmOWYzNDNkOGZkMDMyMzkiLCJpYXQiOjE2MDAzOTkzMjgsImV4cCI6MTYwMTYwODkyOH0.ImOPavAeqrTKFT-WOBmPefoKVV3c29DV1v5eZylNvXc";
 
-
+    public final String TAG="MonitorViewModel";
     public MonitorViewModel(@NonNull Application application) {
         super(application);
     }
+
 
 
     public void request() {
@@ -40,23 +41,37 @@ public class MonitorViewModel extends BaseViewModel {
                 .setParams(param)
                 .setRequestTag(mRequestTag)
                 .setHeader(header)
-                .setOnResponseString(new BPListener.OnResponseString() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.e("a", response);
-                        Log.e("time",System.currentTimeMillis()+"");
-                        Toast.makeText(BaseApplication.getInstance(),"asdf",Toast.LENGTH_SHORT).show();
-                    }
-                })
-
-
-//                .setOnResponseBean(ConfigModelBean.class, new BPListener.OnResponseBean<ConfigModelBean>() {
+                .setNeedCache(true)
+//                .setOnResponseString(new BPListener.OnResponseString() {
 //                    @Override
-//                    public void onResponse(ConfigModelBean response) {
-//                        Log.e("time",response.toString()+"");
-//                        Toast.makeText(BaseApplication.getInstance(), response.getUpdated_at(), Toast.LENGTH_SHORT).show();
+//                    public void onResponse(String response) {
+//                        Log.e(TAG,"response:"+ response);
+//                        Log.e(TAG,"time:"+System.currentTimeMillis()+"");
+//                        Toast.makeText(BaseApplication.getInstance(),"asdf",Toast.LENGTH_SHORT).show();
 //                    }
 //                })
+//                .setOnCacheString(new BPListener.onCacheString() {
+//                    @Override
+//                    public void onCacheString(String response) {
+//                        Log.e("a","response cache:"+ response);
+//                        Log.e("time","response  cache"+System.currentTimeMillis()+"");
+//                    }
+//                })
+
+
+                .setOnResponseBean(ConfigModelBean.class, new BPListener.OnResponseBean<ConfigModelBean>() {
+                    @Override
+                    public void onResponse(ConfigModelBean response) {
+                        Log.e("time",response.toString()+"");
+                        Toast.makeText(BaseApplication.getInstance(), response.getUpdated_at(), Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setOnCacheBean(new BPListener.onCacheBean() {
+                    @Override
+                    public void onCache(Object response) {
+                        Log.e(TAG,"cache time:"+response.toString()+"");
+                    }
+                })
                 .setOnException(new BPListener.OnException() {
                     @Override
                     public void onException(String response) {

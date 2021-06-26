@@ -7,16 +7,10 @@ import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
-import com.ejlchina.okhttps.FastjsonMsgConvertor;
-import com.ejlchina.okhttps.HTTP;
-import com.ejlchina.okhttps.HttpResult;
-import com.ejlchina.okhttps.HttpTask;
-import com.ejlchina.okhttps.OkHttps;
-import com.ejlchina.okhttps.OnCallback;
-import com.ejlchina.okhttps.internal.AsyncHttpTask;
 import com.example.netlibrary.BPConfig;
 import com.example.netlibrary.BPRequest;
 import com.example.netlibrary.BPRequestBody;
+import com.example.netlibrary.utils.AppSharePreference;
 import com.example.netlibrary.utils.SSLUtil;
 import com.example.netlibrary.volley.RedirectInterceptor;
 
@@ -233,6 +227,32 @@ public class OkhttpHelper {
     }
 
     private <E> void get(BPRequestBody<E> builder) {
+        if(builder.needCache){
+            if (builder.onCacheBean != null) {
+                final E model = AppSharePreference.getCache(config.context,builder.url,builder.clazz);
+                mMainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        builder.onCacheBean.onCache(model);
+                    }
+                });
+
+            } else if (builder.onResponse != null) {
+                //todo
+
+            } else {
+                // 得到响应报文体的字符串 String 对象
+                if (builder.onCacheString != null) {
+                    String res=AppSharePreference.getCacheByString(config.context,builder.url);
+                    mMainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            builder.onCacheString.onCacheString(res);
+                        }
+                    });
+                }
+            }
+        }
 
         Request.Builder okBuilder = getBuilder(builder);
         String url = builder.url;
@@ -350,6 +370,7 @@ public class OkhttpHelper {
 
         try {
             String json = response.body().string();
+
             if(config.onResponseListener!=null){
                 mMainHandler.post(new Runnable() {
                     @Override
@@ -373,7 +394,9 @@ public class OkhttpHelper {
                         builder.onResponseBean.onResponse(finalModel);
                     }
                 });
-
+                if(builder.needCache&&config!=null&&config.context!=null){
+                    AppSharePreference.saveCache(config.context,builder.url,finalModel);
+                }
 
             } else if (builder.onResponse != null) {
                 // 响应回调
@@ -398,6 +421,7 @@ public class OkhttpHelper {
                         map.put("Set-Cookie", cookie);
                     }
                 }
+
                 // 报文体
                 mMainHandler.post(new Runnable() {
                     @Override
@@ -405,6 +429,9 @@ public class OkhttpHelper {
                         builder.onResponse.onResponse(json, map);
                     }
                 });
+                if(builder.needCache&&config!=null&&config.context!=null){
+                    AppSharePreference.saveCacheByString(config.context,builder.url,json);
+                }
 
 
             } else {
@@ -417,7 +444,9 @@ public class OkhttpHelper {
                             builder.onResponseString.onResponse(json);
                         }
                     });
-
+                    if(builder.needCache&&config!=null&&config.context!=null){
+                        AppSharePreference.saveCacheByString(config.context,builder.url,json);
+                    }
                 }
             }
         } catch (IOException e) {

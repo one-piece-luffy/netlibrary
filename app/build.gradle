@@ -38,7 +38,7 @@ dependencies {
 
 //    implementation 'com.example.netlibrary:netlibrary:0.0.31'
     
-//    api project(':netlibrary')
-    implementation 'com.github.one-piece-luffy:netlibrary:1.1'
+    api project(':netlibrary')
+//    implementation 'com.github.one-piece-luffy:netlibrary:1.1'
 }
 

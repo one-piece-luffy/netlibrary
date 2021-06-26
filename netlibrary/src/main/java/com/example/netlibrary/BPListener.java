@@ -106,6 +106,6 @@ public interface BPListener {
     }
     public interface onCacheString {
 
-        void onResponse(String response);
+        void onCacheString(String response);
     }
 }
