@@ -1,14 +1,17 @@
 使用：
 
-1.在gradle 引入： 
-api 'com.example.netlibrary:netlibrary:0.0.26'
+1.在根目录gradle加入：     maven { url 'https://jitpack.io' }
 
-2.在application 初始化
+
+2.在项目gradle 引入： 
+api 'com.example.netlibrary:netlibrary:1.4'
+
+3.在application 初始化
 
  BPConfig config=new BPConfig.Builder().context(this).strategyType(BPRequest.STRATEGY_TYPE.OKHTTPS).build();
  BPRequest.getInstance().init(config);
 
-3.请求：
+4.请求：
 
  RequestStrategy mBaseModel = BPRequest.getInstance().mStrategy;
  
