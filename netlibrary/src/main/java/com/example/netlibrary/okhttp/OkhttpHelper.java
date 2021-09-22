@@ -297,7 +297,18 @@ public class OkhttpHelper {
 
                 @Override
                 public void onResponse(final Call call, final Response response) throws IOException {
-                    handlerResponse(call, response, builder);
+                    if(response==null){
+                        handlerError(builder, new IOException());
+                        return;
+                    }
+                    int code = response.code();
+                    if ((code >= 200 && code < 300) || code == 304) {
+
+                        handlerResponse(call, response, builder);
+                    } else {
+                        handlerError(builder, new IOException());
+                    }
+
 
                 }
             });
@@ -322,7 +333,18 @@ public class OkhttpHelper {
 
             @Override
             public void onResponse(final Call call, final Response response) throws IOException {
-                handlerResponse(call, response, builder);
+                if(response==null){
+                    handlerError(builder, new IOException());
+                    return;
+                }
+                int code = response.code();
+                if ((code >= 200 && code < 300) || code == 304) {
+
+                    handlerResponse(call, response, builder);
+                } else {
+                    handlerError(builder, new IOException());
+                }
+
 
             }
         });
@@ -345,7 +367,18 @@ public class OkhttpHelper {
 
             @Override
             public void onResponse(final Call call, final Response response) throws IOException {
-                handlerResponse(call, response, builder);
+                if(response==null){
+                    handlerError(builder, new IOException());
+                    return;
+                }
+                int code = response.code();
+                if ((code >= 200 && code < 300) || code == 304) {
+
+                    handlerResponse(call, response, builder);
+                } else {
+                    handlerError(builder, new IOException());
+                }
+
 
             }
         });
