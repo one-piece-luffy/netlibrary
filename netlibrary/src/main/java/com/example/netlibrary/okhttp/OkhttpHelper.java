@@ -3,14 +3,13 @@ package com.example.netlibrary.okhttp;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import com.example.netlibrary.BPConfig;
 import com.example.netlibrary.BPRequest;
 import com.example.netlibrary.BPRequestBody;
-import com.example.netlibrary.utils.AppSharePreference;
+import com.example.netlibrary.utils.NetSharePreference;
 import com.example.netlibrary.utils.SSLUtil;
 import com.example.netlibrary.volley.RedirectInterceptor;
 
@@ -239,7 +238,7 @@ public class OkhttpHelper {
     private <E> void get(BPRequestBody<E> builder) {
         if(builder.needCache){
             if (builder.onCacheBean != null) {
-                final E model = AppSharePreference.getCache(config.context,builder.url,builder.clazz);
+                final E model = NetSharePreference.getCache(config.context,builder.url,builder.clazz);
                 mMainHandler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -253,7 +252,7 @@ public class OkhttpHelper {
             } else {
                 // 得到响应报文体的字符串 String 对象
                 if (builder.onCacheString != null) {
-                    String res=AppSharePreference.getCacheByString(config.context,builder.url);
+                    String res= NetSharePreference.getCacheByString(config.context,builder.url);
                     mMainHandler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -438,7 +437,7 @@ public class OkhttpHelper {
                     }
                 });
                 if(builder.needCache&&config!=null&&config.context!=null){
-                    AppSharePreference.saveCache(config.context,builder.url,finalModel);
+                    NetSharePreference.saveCache(config.context,builder.url,finalModel);
                 }
 
             } else if (builder.onResponse != null) {
@@ -473,7 +472,7 @@ public class OkhttpHelper {
                     }
                 });
                 if(builder.needCache&&config!=null&&config.context!=null){
-                    AppSharePreference.saveCacheByString(config.context,builder.url,json);
+                    NetSharePreference.saveCacheByString(config.context,builder.url,json);
                 }
 
 
@@ -488,7 +487,7 @@ public class OkhttpHelper {
                         }
                     });
                     if(builder.needCache&&config!=null&&config.context!=null){
-                        AppSharePreference.saveCacheByString(config.context,builder.url,json);
+                        NetSharePreference.saveCacheByString(config.context,builder.url,json);
                     }
                 }
             }
