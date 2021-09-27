@@ -8,7 +8,7 @@ api 'com.example.netlibrary:netlibrary:1.4'
 
 3.在application 初始化
 
- BPConfig config=new BPConfig.Builder().context(this).strategyType(BPRequest.STRATEGY_TYPE.OKHTTPS).build();
+ BPConfig config=new BPConfig.Builder().context(this).strategyType(BPRequest.STRATEGY_TYPE.OKHTTP).build();
  BPRequest.getInstance().init(config);
 
 4.请求：
