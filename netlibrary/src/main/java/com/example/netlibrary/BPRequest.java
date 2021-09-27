@@ -1,7 +1,6 @@
 package com.example.netlibrary;
 
 import com.example.netlibrary.okhttp.OkhttpStrategy;
-import com.example.netlibrary.volley.VolleyStrategy;
 
 public class BPRequest {
     public interface Method {
@@ -50,7 +49,7 @@ public class BPRequest {
         }else {
             switch (config.strategyType){
                 case 1:
-                    mStrategy = new VolleyStrategy();
+                    mStrategy = new OkhttpStrategy();
                     break;
                 case 2:
                     mStrategy = new OkhttpStrategy();

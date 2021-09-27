@@ -1,27 +1,18 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     repositories {
-//        google()
-//        jcenter()
-        /**
-         * bintray上传
-         */
-//        maven {
-//            url  "https://dl.bintray.com/lihaiyi/netlibrary"
-//        }
-
-        maven { url 'https://maven.aliyun.com/repository/public' }
-        maven { url 'https://maven.aliyun.com/repository/google' }
+        google()
+        mavenCentral()
+//        maven { url 'https://maven.aliyun.com/repository/public' }
+//        maven { url 'https://maven.aliyun.com/repository/google' }
         maven { url "https://jitpack.io" } //jitpack上传
 
 
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.3'
-        //bintray 插件
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
+        classpath "com.android.tools.build:gradle:4.2.2"
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'    //jitpack上传
+//        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'    //jitpack上传
 
     }
 }
@@ -31,7 +22,8 @@ allprojects {
         /**
          * bintray上传
          */
-//        google()
+        google()
+        mavenCentral()
 //        jcenter()
 //        maven{
 //            //这个如果配置错了会导致lib下载不下来，地址在bintray的项目详情页的右上角
@@ -39,8 +31,8 @@ allprojects {
 //            url "https://dl.bintray.com/lihaiyi/netlibrary"
 //        }
         maven { url "https://jitpack.io" }//jitpack上传
-        maven { url 'https://maven.aliyun.com/repository/public' }
-        maven { url 'https://maven.aliyun.com/repository/google' }
+//        maven { url 'https://maven.aliyun.com/repository/public' }
+//        maven { url 'https://maven.aliyun.com/repository/google' }
     }
 
 }

@@ -3,12 +3,12 @@ apply plugin: 'com.github.dcendents.android-maven' //jitpack上传
 group='com.github.one-piece-luffy'// jitpack上传 : 这里对应自己的github名称就可以了
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.3"
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
     useLibrary 'org.apache.http.legacy'
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
 
@@ -40,8 +40,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    api 'com.android.volley:volley:1.1.1'
-    api 'com.alibaba:fastjson:1.1.72.android'
+    api 'com.alibaba:fastjson:1.2.55'
 
     api "android.arch.lifecycle:extensions:1.1.1"
 // alternatively, just ViewModel

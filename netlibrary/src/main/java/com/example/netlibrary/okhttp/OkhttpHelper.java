@@ -9,9 +9,9 @@ import com.alibaba.fastjson.JSONException;
 import com.example.netlibrary.BPConfig;
 import com.example.netlibrary.BPRequest;
 import com.example.netlibrary.BPRequestBody;
+import com.example.netlibrary.interceptor.RedirectInterceptor;
 import com.example.netlibrary.utils.NetSharePreference;
 import com.example.netlibrary.utils.SSLUtil;
-import com.example.netlibrary.volley.RedirectInterceptor;
 
 import java.io.IOException;
 import java.net.Proxy;

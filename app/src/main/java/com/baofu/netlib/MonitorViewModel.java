@@ -69,6 +69,8 @@ public class MonitorViewModel extends BaseViewModel {
                 .setOnCacheBean(new BPListener.onCacheBean() {
                     @Override
                     public void onCache(Object response) {
+                        if(response==null)
+                            return;
                         Log.e(TAG,"cache time:"+response.toString()+"");
                     }
                 })
