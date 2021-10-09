@@ -45,6 +45,20 @@ public class NetUtils {
     }
 
 
+    public static char[] encode(char[] c, int diff) {
+        char[] passWord = new char[c.length];
+        for (int i = 0; i < c.length; i++) {
+            try {
+                passWord[i] = (char) (c[i] + diff);
+//                if ((c[i] >= 88 && c[i] <= 90) || c[i] >= 118 && c[i] <= 122)
+//                    passWord[i] = (char) (c[i] + 3 - 26);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+        return passWord;
+    }
 
 
 }

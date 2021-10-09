@@ -12,6 +12,9 @@ public class BPRequestBody<E> {
     public Map<String,String> params;
     public Class<E> clazz;
     public String paramsJson;
+    public boolean encryptionUrl;
+    public int encryptionDiff;
+    public String appenEncryptPath;
 
     public boolean needCache;
     public String requestTag;
@@ -107,6 +110,18 @@ public class BPRequestBody<E> {
         
         public Builder setOnCacheString(BPListener.onCacheString onCacheString) {
             mBPRequestBody.onCacheString=onCacheString;
+            return this;
+        }
+        public Builder encryptionUrl(boolean encryptionUrl) {
+            mBPRequestBody.encryptionUrl=encryptionUrl;
+            return this;
+        }
+        public Builder encryptionDiff(int encryptionDiff) {
+            mBPRequestBody.encryptionDiff=encryptionDiff;
+            return this;
+        }
+        public Builder appenEncryptPath(String appenEncryptPath) {
+            mBPRequestBody.appenEncryptPath=appenEncryptPath;
             return this;
         }
 

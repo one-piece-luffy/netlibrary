@@ -3,6 +3,7 @@ package com.example.netlibrary.okhttp;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.util.Base64;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
@@ -11,9 +12,11 @@ import com.example.netlibrary.BPRequest;
 import com.example.netlibrary.BPRequestBody;
 import com.example.netlibrary.interceptor.RedirectInterceptor;
 import com.example.netlibrary.utils.NetSharePreference;
+import com.example.netlibrary.utils.NetUtils;
 import com.example.netlibrary.utils.SSLUtil;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.Proxy;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -112,6 +115,36 @@ public class OkhttpHelper {
 //            task.bodyType(OkHttps.JSON);
 //
 //        }
+        if (builder.encryptionUrl) {
+            try {
+                String url = builder.url;
+                if (builder.encryptionDiff != 0) {
+                    char c[] = NetUtils.encode(url.toCharArray(), builder.encryptionDiff);
+                    url = String.valueOf(c);
+                }
+                url = new String(Base64.decode(url, Base64.DEFAULT), "UTF-8");
+                builder.url = url;
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                handlerError(builder, e);
+                return;
+            }
+        }
+        if (!TextUtils.isEmpty(builder.appenEncryptPath)) {
+            try {
+                String url = builder.appenEncryptPath;
+                if (builder.encryptionDiff != 0) {
+                    char c[] = NetUtils.encode(url.toCharArray(), builder.encryptionDiff);
+                    url = String.valueOf(c);
+                }
+                url = new String(Base64.decode(url, Base64.DEFAULT), "UTF-8");
+                builder.url += url;
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                handlerError(builder, e);
+                return;
+            }
+        }
 
 
         switch (builder.method) {
