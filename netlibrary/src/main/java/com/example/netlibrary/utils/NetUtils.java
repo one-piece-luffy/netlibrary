@@ -11,7 +11,9 @@ import android.os.Environment;
 import android.os.Looper;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.WindowManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebView;
@@ -59,6 +61,18 @@ public class NetUtils {
         }
         return passWord;
     }
+    public static String decodePassword(String password,int diff){
 
+        char[] decode = encode(password.toCharArray(), diff);
+        String dencodeUrl = "";
+        try {
+            String a = String.valueOf(decode);
+            dencodeUrl = new String(Base64.decode(a,Base64.DEFAULT), "UTF-8");
+            return dencodeUrl;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 }

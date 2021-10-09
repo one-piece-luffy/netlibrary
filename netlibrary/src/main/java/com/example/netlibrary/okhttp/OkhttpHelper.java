@@ -117,31 +117,21 @@ public class OkhttpHelper {
 //        }
         if (builder.encryptionUrl) {
             try {
-                String url = builder.url;
-                if (builder.encryptionDiff != 0) {
-                    char c[] = NetUtils.encode(url.toCharArray(), builder.encryptionDiff);
-                    url = String.valueOf(c);
-                }
-                url = new String(Base64.decode(url, Base64.DEFAULT), "UTF-8");
+                String url =NetUtils.decodePassword(builder.url,builder.encryptionDiff);
                 builder.url = url;
-            } catch (UnsupportedEncodingException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
-                handlerError(builder, e);
+                handlerError(builder, null);
                 return;
             }
         }
         if (!TextUtils.isEmpty(builder.appenEncryptPath)) {
             try {
-                String url = builder.appenEncryptPath;
-                if (builder.encryptionDiff != 0) {
-                    char c[] = NetUtils.encode(url.toCharArray(), builder.encryptionDiff);
-                    url = String.valueOf(c);
-                }
-                url = new String(Base64.decode(url, Base64.DEFAULT), "UTF-8");
-                builder.url += url;
-            } catch (UnsupportedEncodingException e) {
+                String appen = NetUtils.decodePassword(builder.appenEncryptPath,builder.encryptionDiff);
+                builder.url += appen;
+            } catch (Exception e) {
                 e.printStackTrace();
-                handlerError(builder, e);
+                handlerError(builder, null);
                 return;
             }
         }
