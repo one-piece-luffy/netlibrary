@@ -29,9 +29,12 @@ public class OkhttpStrategy implements RequestStrategy {
             Log.e("OkhttpStrategy","==============url 不能为空==============");
             return;
         }
-        if (builder.url.startsWith("http://") || builder.url.startsWith("https://")) {
+        if (builder.encryptionUrl||!TextUtils.isEmpty(builder.appenEncryptPath)) {
             OkhttpHelper.getInstance().request(builder);
-        } else {
+        } else if( builder.url.startsWith("http://") || builder.url.startsWith("https://")){
+            OkhttpHelper.getInstance().request(builder);
+
+        }else {
             Log.e("OkhttpStrategy", "==============url必须是http或者https开头==============");
         }
 
