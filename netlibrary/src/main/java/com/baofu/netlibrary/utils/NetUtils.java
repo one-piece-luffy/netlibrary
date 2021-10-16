@@ -1,4 +1,4 @@
-package com.example.netlibrary.utils;
+package com.baofu.netlibrary.utils;
 
 import android.app.Activity;
 import android.app.ActivityManager;

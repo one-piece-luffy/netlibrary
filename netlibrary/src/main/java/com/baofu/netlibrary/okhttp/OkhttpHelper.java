@@ -1,22 +1,20 @@
-package com.example.netlibrary.okhttp;
+package com.baofu.netlibrary.okhttp;
 
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
-import android.util.Base64;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
-import com.example.netlibrary.BPConfig;
-import com.example.netlibrary.BPRequest;
-import com.example.netlibrary.BPRequestBody;
-import com.example.netlibrary.interceptor.RedirectInterceptor;
-import com.example.netlibrary.utils.NetSharePreference;
-import com.example.netlibrary.utils.NetUtils;
-import com.example.netlibrary.utils.SSLUtil;
+import com.baofu.netlibrary.BPConfig;
+import com.baofu.netlibrary.BPRequest;
+import com.baofu.netlibrary.BPRequestBody;
+import com.baofu.netlibrary.interceptor.RedirectInterceptor;
+import com.baofu.netlibrary.utils.NetUtils;
+import com.baofu.netlibrary.utils.SSLUtil;
+import com.baofu.netlibrary.utils.NetSharePreference;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.Proxy;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -46,6 +44,7 @@ public class OkhttpHelper {
     private static final OkhttpHelper ourInstance = new OkhttpHelper();
     Handler mMainHandler = new Handler(Looper.getMainLooper());
     private OkHttpClient mClient;
+    private final int UNKNOW=-1;
 
     /**
      * Global request queue for Volley
@@ -117,11 +116,11 @@ public class OkhttpHelper {
 //        }
         if (builder.encryptionUrl) {
             try {
-                String url =NetUtils.decodePassword(builder.url,builder.encryptionDiff);
+                String url = NetUtils.decodePassword(builder.url,builder.encryptionDiff);
                 builder.url = url;
             } catch (Exception e) {
                 e.printStackTrace();
-                handlerError(builder, null);
+                handlerError(builder, null,UNKNOW);
                 return;
             }
         }
@@ -131,7 +130,7 @@ public class OkhttpHelper {
                 builder.url += appen;
             } catch (Exception e) {
                 e.printStackTrace();
-                handlerError(builder, null);
+                handlerError(builder, null,UNKNOW);
                 return;
             }
         }
@@ -237,21 +236,22 @@ public class OkhttpHelper {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(final Call call, final IOException e) {
-                handlerError(builder, e);
+                handlerError(builder, e,UNKNOW);
             }
 
             @Override
             public void onResponse(final Call call, final Response response) throws IOException {
+                int code = response.code();
                 if(response==null){
-                    handlerError(builder, new IOException());
+                    handlerError(builder, null,code);
                     return;
                 }
-                int code = response.code();
+
                 if ((code >= 200 && code < 300) || code == 304) {
 
                     handlerResponse(call, response, builder);
                 } else {
-                    handlerError(builder, new IOException());
+                    handlerError(builder, null,code);
                 }
 
             }
@@ -314,21 +314,22 @@ public class OkhttpHelper {
             call.enqueue(new Callback() {
                 @Override
                 public void onFailure(final Call call, final IOException e) {
-                    handlerError(builder, e);
+                    handlerError(builder, e,UNKNOW);
                 }
 
                 @Override
                 public void onResponse(final Call call, final Response response) throws IOException {
+                    int code = response.code();
                     if(response==null){
-                        handlerError(builder, new IOException());
+                        handlerError(builder, null,code);
                         return;
                     }
-                    int code = response.code();
+
                     if ((code >= 200 && code < 300) || code == 304) {
 
                         handlerResponse(call, response, builder);
                     } else {
-                        handlerError(builder, new IOException());
+                        handlerError(builder, null,code);
                     }
 
 
@@ -350,21 +351,22 @@ public class OkhttpHelper {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(final Call call, final IOException e) {
-                handlerError(builder, e);
+                handlerError(builder, e,UNKNOW);
             }
 
             @Override
             public void onResponse(final Call call, final Response response) throws IOException {
+                int code = response.code();
                 if(response==null){
-                    handlerError(builder, new IOException());
+                    handlerError(builder, null,code);
                     return;
                 }
-                int code = response.code();
+
                 if ((code >= 200 && code < 300) || code == 304) {
 
                     handlerResponse(call, response, builder);
                 } else {
-                    handlerError(builder, new IOException());
+                    handlerError(builder, null,code);
                 }
 
 
@@ -384,21 +386,22 @@ public class OkhttpHelper {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(final Call call, final IOException e) {
-                handlerError(builder, e);
+                handlerError(builder, e,-1);
             }
 
             @Override
             public void onResponse(final Call call, final Response response) throws IOException {
+                int code = response.code();
                 if(response==null){
-                    handlerError(builder, new IOException());
+                    handlerError(builder, new IOException(),code);
                     return;
                 }
-                int code = response.code();
+
                 if ((code >= 200 && code < 300) || code == 304) {
 
                     handlerResponse(call, response, builder);
                 } else {
-                    handlerError(builder, new IOException());
+                    handlerError(builder, new IOException(),code);
                 }
 
 
@@ -406,16 +409,12 @@ public class OkhttpHelper {
         });
     }
 
-    private <E> void handlerError(BPRequestBody<E> builder, IOException e) {
-        if (builder.onException != null && e != null) {
-            if(e.toString().contains("Socket closed")) {
-                //如果是主动取消的情况下
-                return;
-            }
+    private <E> void handlerError(BPRequestBody<E> builder, IOException e,int code) {
+        if (builder.onException != null ) {
             mMainHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    builder.onException.onException(e.getMessage());
+                    builder.onException.onException(e,code,null);
                 }
             });
 
@@ -424,7 +423,7 @@ public class OkhttpHelper {
             mMainHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    config.onResponseListener.exceptionListener(builder.url,e.getMessage());
+                    config.onResponseListener.exceptionListener(builder.url,null,e,code);
                 }
             });
 
@@ -516,7 +515,7 @@ public class OkhttpHelper {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            handlerError(builder, e);
+            handlerError(builder, e,UNKNOW);
         }
     }
 

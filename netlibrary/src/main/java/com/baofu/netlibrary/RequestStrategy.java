@@ -1,4 +1,4 @@
-package com.example.netlibrary;
+package com.baofu.netlibrary;
 
 public interface RequestStrategy {
 

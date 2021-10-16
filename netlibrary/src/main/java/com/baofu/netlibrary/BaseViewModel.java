@@ -1,4 +1,4 @@
-package com.example.netlibrary;
+package com.baofu.netlibrary;
 
 import android.app.Application;
 
@@ -17,7 +17,6 @@ public class BaseViewModel extends AndroidViewModel {
 
     public  String mRequestTag;
 
-    protected RequestStrategy mBaseModel;
 
 
     protected MutableLiveData<String> toastMessage = new MutableLiveData<>();
@@ -25,7 +24,6 @@ public class BaseViewModel extends AndroidViewModel {
     public BaseViewModel(@NonNull Application application) {
         super(application);
         mRequestTag = getClass().getName() + System.currentTimeMillis();
-        mBaseModel = BPRequest.getInstance().mStrategy;
     }
 
     public LiveData<String> getToastMessage() {
@@ -35,7 +33,9 @@ public class BaseViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
-        mBaseModel.cancelRequests(mRequestTag);
+        if(BPRequest.getInstance().mStrategy!=null){
+            BPRequest.getInstance().mStrategy.cancelRequests(mRequestTag);
+        }
     }
 
 }

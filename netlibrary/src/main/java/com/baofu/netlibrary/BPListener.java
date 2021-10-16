@@ -1,4 +1,4 @@
-package com.example.netlibrary;
+package com.baofu.netlibrary;
 
 
 
@@ -31,7 +31,7 @@ public interface BPListener {
     }
     public interface OnException {
 
-        void onException(String response);
+        void onException(Exception e,int code,String response);
     }
     public interface onCacheBean<E> {
 

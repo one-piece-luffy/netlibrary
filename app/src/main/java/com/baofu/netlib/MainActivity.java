@@ -6,6 +6,16 @@ import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
+import android.widget.Toast;
+
+import com.baofu.netlib.bean.ConfigModelBean;
+import com.baofu.netlibrary.BPListener;
+import com.baofu.netlibrary.BPRequest;
+import com.baofu.netlibrary.BPRequestBody;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     @Override
@@ -14,38 +24,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         AlertDialog.Builder localBuilder = new AlertDialog.Builder(this);
 
-//        /**
-//         * 请求方式1
-//         */
-//        VolleyHelper.getInstance().requestString(0, "https://api.dongqiudi.com/app/global/2/android.json?mark=gif&platform=android&version=216&android-channel=website", null, null, System.currentTimeMillis() + "", false, new VolleyListener.OnResponseStrListener() {
-//            @Override
-//            public void onResponse(String response) {
-//                Log.e("a", response);
-//                Log.e("time",System.currentTimeMillis()+"");
-//            }
-//
-//            @Override
-//            public void onCache(String response) {
-//
-//            }
-//
-//            @Override
-//            public void onNotModify() {
-//
-//            }
-//
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//
-//            }
-//        });
-
 
         /**
          * 请求方式2
          */
         MonitorViewModel viewModel = ViewModelProviders.of(this).get(MonitorViewModel.class);
         viewModel.request();
+
 //        viewModel.requestcookie();
 
 //        viewModel.requestGson();

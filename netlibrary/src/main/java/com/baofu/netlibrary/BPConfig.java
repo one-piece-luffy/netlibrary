@@ -1,8 +1,8 @@
-package com.example.netlibrary;
+package com.baofu.netlibrary;
 
 import android.content.Context;
 
-import com.example.netlibrary.listener.RequestListener;
+import com.baofu.netlibrary.listener.RequestListener;
 
 import java.util.ArrayList;
 import java.util.List;

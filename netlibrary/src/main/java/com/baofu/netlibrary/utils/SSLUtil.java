@@ -1,4 +1,4 @@
-package com.example.netlibrary.utils;
+package com.baofu.netlibrary.utils;
 
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;

@@ -1,8 +1,7 @@
-package com.example.netlibrary;
+package com.baofu.netlibrary;
 
-import androidx.annotation.NonNull;
+import com.baofu.netlibrary.okhttp.OkhttpStrategy;
 
-import java.lang.reflect.AnnotatedElement;
 import java.util.Map;
 
 public class BPRequestBody<E> {
@@ -128,6 +127,13 @@ public class BPRequestBody<E> {
         
         public BPRequestBody build() {
             return mBPRequestBody;
+        }
+
+        public void request(){
+            if(BPRequest.getInstance().mStrategy==null){
+                BPRequest.getInstance().mStrategy=new OkhttpStrategy();
+            }
+            BPRequest.getInstance().mStrategy.request(this.build());
         }
     }
 

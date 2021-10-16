@@ -4,9 +4,9 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.netlibrary.BPConfig;
-import com.example.netlibrary.BPRequest;
-import com.example.netlibrary.listener.RequestListener;
+import com.baofu.netlibrary.BPConfig;
+import com.baofu.netlibrary.BPRequest;
+import com.baofu.netlibrary.listener.RequestListener;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,9 +46,10 @@ public class BaseApplication extends Application{
                     }
 
                     @Override
-                    public void exceptionListener(String url, String error) {
+                    public void exceptionListener(String url, String error, Exception e, int code) {
 
                     }
+
                 })
                 .build();
         BPRequest.getInstance().init(config);
