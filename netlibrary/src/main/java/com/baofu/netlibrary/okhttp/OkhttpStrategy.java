@@ -1,5 +1,7 @@
 package com.baofu.netlibrary.okhttp;
 
+import static com.baofu.netlibrary.okhttp.OkhttpHelper.UNKNOW;
+
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -27,6 +29,10 @@ public class OkhttpStrategy implements RequestStrategy {
     public void request(BPRequestBody builder) {
         if(builder==null|| TextUtils.isEmpty(builder.url)){
             Log.e("OkhttpStrategy","==============url 不能为空==============");
+            if (builder.onException != null ) {
+                builder.onException.onException(new Exception("url 不能为空"),UNKNOW,"url 不能为空");
+
+            }
             return;
         }
         if (builder.encryptionUrl||!TextUtils.isEmpty(builder.appenEncryptPath)) {
@@ -35,6 +41,10 @@ public class OkhttpStrategy implements RequestStrategy {
             OkhttpHelper.getInstance().request(builder);
 
         }else {
+            if (builder.onException != null ) {
+                builder.onException.onException(new Exception("url 不能为空"),UNKNOW,"url 不能为空");
+
+            }
             Log.e("OkhttpStrategy", "==============url必须是http或者https开头==============");
         }
 

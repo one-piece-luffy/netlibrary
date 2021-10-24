@@ -44,7 +44,7 @@ public class OkhttpHelper {
     private static final OkhttpHelper ourInstance = new OkhttpHelper();
     Handler mMainHandler = new Handler(Looper.getMainLooper());
     private OkHttpClient mClient;
-    private final int UNKNOW=-1;
+    public static final int UNKNOW=-1;
 
     /**
      * Global request queue for Volley
