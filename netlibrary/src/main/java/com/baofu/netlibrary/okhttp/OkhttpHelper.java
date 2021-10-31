@@ -9,7 +9,7 @@ import com.alibaba.fastjson.JSONException;
 import com.baofu.netlibrary.BPConfig;
 import com.baofu.netlibrary.BPRequest;
 import com.baofu.netlibrary.BPRequestBody;
-import com.baofu.netlibrary.interceptor.RedirectInterceptor;
+import com.baofu.netlibrary.okhttp.interceptor.RedirectInterceptor;
 import com.baofu.netlibrary.utils.NetUtils;
 import com.baofu.netlibrary.utils.SSLUtil;
 import com.baofu.netlibrary.utils.NetSharePreference;

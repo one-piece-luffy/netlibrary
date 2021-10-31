@@ -35,9 +35,7 @@ public class OkhttpStrategy implements RequestStrategy {
             }
             return;
         }
-        if (builder.encryptionUrl||!TextUtils.isEmpty(builder.appenEncryptPath)) {
-            OkhttpHelper.getInstance().request(builder);
-        } else if( builder.url.startsWith("http://") || builder.url.startsWith("https://")){
+         if( builder.url.startsWith("http://") || builder.url.startsWith("https://")){
             OkhttpHelper.getInstance().request(builder);
 
         }else {
@@ -60,9 +58,7 @@ public class OkhttpStrategy implements RequestStrategy {
             }
             return null;
         }
-        if (builder.encryptionUrl||!TextUtils.isEmpty(builder.appenEncryptPath)) {
-            return OkhttpHelper.getInstance().requestSync(builder);
-        } else if( builder.url.startsWith("http://") || builder.url.startsWith("https://")){
+        if( builder.url.startsWith("http://") || builder.url.startsWith("https://")){
             return OkhttpHelper.getInstance().requestSync(builder);
 
         }else {
@@ -85,9 +81,7 @@ public class OkhttpStrategy implements RequestStrategy {
             }
             return null;
         }
-        if (builder.encryptionUrl||!TextUtils.isEmpty(builder.appenEncryptPath)) {
-            return OkhttpHelper.getInstance().requestStringSync(builder);
-        } else if( builder.url.startsWith("http://") || builder.url.startsWith("https://")){
+        if( builder.url.startsWith("http://") || builder.url.startsWith("https://")){
             return OkhttpHelper.getInstance().requestStringSync(builder);
 
         }else {
