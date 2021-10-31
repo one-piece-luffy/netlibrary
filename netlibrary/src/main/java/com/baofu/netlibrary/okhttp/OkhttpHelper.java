@@ -152,6 +152,96 @@ public class OkhttpHelper {
         }
     }
 
+    /**
+     * 同步请求
+     * @param builder
+     * @param <T>
+     */
+    public <T> T requestSync(BPRequestBody<T> builder) {
+
+        if (builder.encryptionUrl) {
+            try {
+                String url = NetUtils.decodePassword(builder.url,builder.encryptionDiff);
+                builder.url = url;
+            } catch (Exception e) {
+                e.printStackTrace();
+                handlerError(builder, null,UNKNOW);
+                return null;
+            }
+        }
+        if (!TextUtils.isEmpty(builder.appenEncryptPath)) {
+            try {
+                String appen = NetUtils.decodePassword(builder.appenEncryptPath,builder.encryptionDiff);
+                builder.url += appen;
+            } catch (Exception e) {
+                e.printStackTrace();
+                handlerError(builder, null,UNKNOW);
+                return null;
+            }
+        }
+
+        T result=null;
+        switch (builder.method) {
+            case BPRequest.Method.POST:
+                result= postSync(builder);
+                break;
+            case BPRequest.Method.GET:
+                result= getSync(builder);
+                break;
+            case BPRequest.Method.DELETE:
+                result= deleteSync(builder);
+                break;
+            case BPRequest.Method.PATCH:
+                result= patchSync(builder);
+                break;
+        }
+        return result;
+    }
+    /**
+     * 同步请求
+     * @param builder
+     */
+    public String requestStringSync(BPRequestBody builder) {
+
+        if (builder.encryptionUrl) {
+            try {
+                String url = NetUtils.decodePassword(builder.url,builder.encryptionDiff);
+                builder.url = url;
+            } catch (Exception e) {
+                e.printStackTrace();
+                handlerError(builder, null,UNKNOW);
+                return null;
+            }
+        }
+        if (!TextUtils.isEmpty(builder.appenEncryptPath)) {
+            try {
+                String appen = NetUtils.decodePassword(builder.appenEncryptPath,builder.encryptionDiff);
+                builder.url += appen;
+            } catch (Exception e) {
+                e.printStackTrace();
+                handlerError(builder, null,UNKNOW);
+                return null;
+            }
+        }
+
+        String result=null;
+        switch (builder.method) {
+            case BPRequest.Method.POST:
+                result= postStringSync(builder);
+                break;
+            case BPRequest.Method.GET:
+                result= getStringSync(builder);
+                break;
+            case BPRequest.Method.DELETE:
+                result= deleteStringSync(builder);
+                break;
+            case BPRequest.Method.PATCH:
+                result= patchStringSync(builder);
+                break;
+        }
+        return result;
+    }
+
     private <E> Request.Builder getBuilder(BPRequestBody<E> builder) {
         Request.Builder okBuilder = new Request.Builder();
         if (config != null && config.header != null) {
@@ -258,6 +348,8 @@ public class OkhttpHelper {
         });
     }
 
+
+
     private <E> void get(BPRequestBody<E> builder) {
         if(builder.needCache){
             if (builder.onCacheBean != null) {
@@ -340,6 +432,7 @@ public class OkhttpHelper {
         }
     }
 
+
     private <E> void delete(BPRequestBody<E> builder) {
         RequestBody body = setRequestBody(builder.params);
         Request.Builder okBuilder = getBuilder(builder);
@@ -386,7 +479,7 @@ public class OkhttpHelper {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(final Call call, final IOException e) {
-                handlerError(builder, e,-1);
+                handlerError(builder, e,UNKNOW);
             }
 
             @Override
@@ -409,7 +502,295 @@ public class OkhttpHelper {
         });
     }
 
-    private <E> void handlerError(BPRequestBody<E> builder, IOException e,int code) {
+    private <E> E postSync(BPRequestBody<E> builder) {
+
+        RequestBody body = null;
+        if (!TextUtils.isEmpty(builder.paramsJson)) {
+            body = RequestBody.create(MediaType.parse("application/json;charset=utf-8"), builder.paramsJson);
+        } else {
+            body = setRequestBody(builder.params);
+        }
+
+        Request.Builder okBuilder = getBuilder(builder);
+        Request request = okBuilder.post(body).url(builder.url).build();
+
+        try  {
+            //3 将Request封装为Call
+            Call call = mClient.newCall(request);
+            Response response = call.execute();
+            if(response==null){
+                handlerErrorSync(builder, new Exception(""), UNKNOW);
+                return null;
+            }
+            int code = response.code();
+            if ((code >= 200 && code < 300) || code == 304) {
+                E model = handlerResponseSync(response, builder);
+                return model;
+            } else {
+                handlerErrorSync(builder, null, code);
+            }
+
+        } catch (Exception e) {
+            handlerErrorSync(builder, e, UNKNOW);
+        }
+        return null;
+
+    }
+    private <E> E  getSync(BPRequestBody<E> builder) {
+        if (builder.needCache) {
+            if (builder.onCacheBean != null) {
+                final E model = NetSharePreference.getCache(config.context, builder.url, builder.clazz);
+                builder.onCacheBean.onCache(model);
+
+            } else if (builder.onResponse != null) {
+                //todo
+
+            } else {
+                // 得到响应报文体的字符串 String 对象
+                if (builder.onCacheString != null) {
+                    String res = NetSharePreference.getCacheByString(config.context, builder.url);
+                    builder.onCacheString.onCacheString(res);
+                }
+            }
+        }
+
+        Request.Builder okBuilder = getBuilder(builder);
+        String url = builder.url;
+        if (builder.params != null) {
+            Iterator<Map.Entry<String, String>> it = builder.params.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String, String> entry = it.next();
+                if(entry==null)
+                    continue;
+                String key=entry.getKey();
+                String value=entry.getValue();
+                if(TextUtils.isEmpty(key)||TextUtils.isEmpty(value)){
+                    continue;
+                }
+                if (url.contains("?")) {
+                    url = url + "&" + key + "=" + value;
+                } else {
+                    url = url + "?" + key + "=" + value;
+                }
+            }
+
+        }
+        Request request = okBuilder.url(url)
+                .build();
+        try {
+            Call call = mClient.newCall(request);
+            Response response = call.execute();
+            if (response == null) {
+                handlerErrorSync(builder, null, UNKNOW);
+                return null;
+            }
+            int code = response.code();
+            if ((code >= 200 && code < 300) || code == 304) {
+                E model = handlerResponseSync(response, builder);
+                return model;
+            } else {
+                handlerErrorSync(builder, null, code);
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            handlerErrorSync(builder, e, UNKNOW);
+        }
+        return null;
+    }
+    private <E> E deleteSync(BPRequestBody<E> builder) {
+        RequestBody body = setRequestBody(builder.params);
+        Request.Builder okBuilder = getBuilder(builder);
+        Request request = okBuilder.url(builder.url).delete(body).build();
+
+        try {
+            //3 将Request封装为Call
+            Call call = mClient.newCall(request);
+            Response response = call.execute();
+            if (response == null) {
+                handlerErrorSync(builder, null, UNKNOW);
+                return null;
+            }
+            int code = response.code();
+            if ((code >= 200 && code < 300) || code == 304) {
+                E model = handlerResponseSync(response, builder);
+                return model;
+            } else {
+                handlerErrorSync(builder, null, code);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+
+    }
+
+    private <E> E patchSync(BPRequestBody<E> builder) {
+        RequestBody body = setRequestBody(builder.params);
+        Request.Builder okBuilder = getBuilder(builder);
+        Request request = okBuilder.url(builder.url).patch(body).build();
+
+        try {
+            //3 将Request封装为Call
+            Call call = mClient.newCall(request);
+            Response response = call.execute();
+            if (response == null) {
+                handlerErrorSync(builder, null, UNKNOW);
+                return null;
+            }
+            int code = response.code();
+            if ((code >= 200 && code < 300) || code == 304) {
+                E model = handlerResponseSync(response, builder);
+                return model;
+            } else {
+                handlerErrorSync(builder, null, code);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private String postStringSync(BPRequestBody builder) {
+
+        RequestBody body = null;
+        if (!TextUtils.isEmpty(builder.paramsJson)) {
+            body = RequestBody.create(MediaType.parse("application/json;charset=utf-8"), builder.paramsJson);
+        } else {
+            body = setRequestBody(builder.params);
+        }
+
+        Request.Builder okBuilder = getBuilder(builder);
+        Request request = okBuilder.post(body).url(builder.url).build();
+
+        try  {
+            //3 将Request封装为Call
+            Call call = mClient.newCall(request);
+            Response response = call.execute();
+            if(response==null){
+                handlerErrorSync(builder, new Exception(""), UNKNOW);
+                return null;
+            }
+            int code = response.code();
+            if ((code >= 200 && code < 300) || code == 304) {
+                String model = handlerResponseStringSync(response, builder);
+                return model;
+            } else {
+                handlerErrorSync(builder, null, code);
+            }
+
+        } catch (Exception e) {
+            handlerErrorSync(builder, e, UNKNOW);
+        }
+        return null;
+
+    }
+    private String  getStringSync(BPRequestBody builder) {
+
+        Request.Builder okBuilder = getBuilder(builder);
+        String url = builder.url;
+        if (builder.params != null) {
+            Iterator<Map.Entry<String, String>> it = builder.params.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String, String> entry = it.next();
+                if(entry==null)
+                    continue;
+                String key=entry.getKey();
+                String value=entry.getValue();
+                if(TextUtils.isEmpty(key)||TextUtils.isEmpty(value)){
+                    continue;
+                }
+                if (url.contains("?")) {
+                    url = url + "&" + key + "=" + value;
+                } else {
+                    url = url + "?" + key + "=" + value;
+                }
+            }
+
+        }
+        Request request = okBuilder.url(url)
+                .build();
+        try {
+            Call call = mClient.newCall(request);
+            Response response = call.execute();
+            if (response == null) {
+                handlerErrorSync(builder, null, UNKNOW);
+                return null;
+            }
+            int code = response.code();
+            if ((code >= 200 && code < 300) || code == 304) {
+                String model = handlerResponseStringSync(response, builder);
+                return model;
+            } else {
+                handlerErrorSync(builder, null, code);
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            handlerErrorSync(builder, e, UNKNOW);
+        }
+        return null;
+    }
+    private String deleteStringSync(BPRequestBody builder) {
+        RequestBody body = setRequestBody(builder.params);
+        Request.Builder okBuilder = getBuilder(builder);
+        Request request = okBuilder.url(builder.url).delete(body).build();
+
+        try {
+            //3 将Request封装为Call
+            Call call = mClient.newCall(request);
+            Response response = call.execute();
+            if (response == null) {
+                handlerErrorSync(builder, null, UNKNOW);
+                return null;
+            }
+            int code = response.code();
+            if ((code >= 200 && code < 300) || code == 304) {
+                String model = handlerResponseStringSync(response, builder);
+                return model;
+            } else {
+                handlerErrorSync(builder, null, code);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+
+    }
+
+    private String patchStringSync(BPRequestBody builder) {
+        RequestBody body = setRequestBody(builder.params);
+        Request.Builder okBuilder = getBuilder(builder);
+        Request request = okBuilder.url(builder.url).patch(body).build();
+
+        try {
+            //3 将Request封装为Call
+            Call call = mClient.newCall(request);
+            Response response = call.execute();
+            if (response == null) {
+                handlerErrorSync(builder, null, UNKNOW);
+                return null;
+            }
+            int code = response.code();
+            if ((code >= 200 && code < 300) || code == 304) {
+                String model = handlerResponseStringSync(response, builder);
+                return model;
+            } else {
+                handlerErrorSync(builder, null, code);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private <E> void handlerError(BPRequestBody<E> builder, Exception e,int code) {
         if (builder.onException != null ) {
             mMainHandler.post(new Runnable() {
                 @Override
@@ -519,5 +900,155 @@ public class OkhttpHelper {
         }
     }
 
+    private <E> void handlerErrorSync(BPRequestBody<E> builder, Exception e, int code) {
+        if (builder.onException != null) {
+            builder.onException.onException(e, code, null);
+
+        }
+        if (config.onResponseListener != null) {
+            config.onResponseListener.exceptionListener(builder.url, null, e, code);
+        }
+    }
+
+    private <E> E handlerResponseSync(final Response response, BPRequestBody<E> builder) {
+
+        try {
+            String json = response.body().string();
+
+            if (config.onResponseListener != null) {
+                mMainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        config.onResponseListener.responseListener(response.headers(), response.code(), builder.url, json);
+                    }
+                });
+
+            }
+
+            if (builder.onResponseBean != null) {
+                E model = null;
+                try {
+                    model = JSON.parseObject(json, builder.clazz);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if (builder.needCache && config != null && config.context != null) {
+                    NetSharePreference.saveCache(config.context, builder.url, model);
+                }
+                return model;
+
+            } else if (builder.onResponse != null) {
+                // 响应回调
+
+                Headers headers = response.headers(); // 响应头
+                Map<String, String> map = new HashMap<>();
+                String cookie = "";
+
+                for (int i = 0, count = headers.size(); i < count; i++) {
+
+                    String name = headers.name(i);
+                    String value = headers.value(i);
+                    if (name.toLowerCase().equals("Set-Cookie".toLowerCase())) {
+                        cookie += value;
+                        if (!value.equals(";")) {
+                            cookie += ";";
+                        }
+                    } else {
+                        map.put(name, value);
+                    }
+                    if (!TextUtils.isEmpty(cookie)) {
+                        map.put("Set-Cookie", cookie);
+                    }
+                }
+
+                builder.onResponse.onResponse(json, map);
+                if (builder.needCache && config != null && config.context != null) {
+                    NetSharePreference.saveCacheByString(config.context, builder.url, json);
+                }
+                return (E) json;
+
+            } else {
+                // 得到响应报文体的字符串 String 对象
+                if (builder.onResponseString != null) {
+
+                    builder.onResponseString.onResponse(json);
+                    if (builder.needCache && config != null && config.context != null) {
+                        NetSharePreference.saveCacheByString(config.context, builder.url, json);
+                    }
+                    return (E) json;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            handlerError(builder, e, UNKNOW);
+        }
+        return null;
+    }
+    private String handlerResponseStringSync(final Response response, BPRequestBody builder) {
+
+        try {
+            String json = response.body().string();
+
+            if (config.onResponseListener != null) {
+                mMainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        config.onResponseListener.responseListener(response.headers(), response.code(), builder.url, json);
+                    }
+                });
+
+            }
+
+            if (builder.onResponseBean != null) {
+                if (builder.needCache && config != null && config.context != null) {
+                    NetSharePreference.saveCache(config.context, builder.url, json);
+                }
+
+            } else if (builder.onResponse != null) {
+                // 响应回调
+
+                Headers headers = response.headers(); // 响应头
+                Map<String, String> map = new HashMap<>();
+                String cookie = "";
+
+                for (int i = 0, count = headers.size(); i < count; i++) {
+
+                    String name = headers.name(i);
+                    String value = headers.value(i);
+                    if (name.toLowerCase().equals("Set-Cookie".toLowerCase())) {
+                        cookie += value;
+                        if (!value.equals(";")) {
+                            cookie += ";";
+                        }
+                    } else {
+                        map.put(name, value);
+                    }
+                    if (!TextUtils.isEmpty(cookie)) {
+                        map.put("Set-Cookie", cookie);
+                    }
+                }
+
+                builder.onResponse.onResponse(json, map);
+                if (builder.needCache && config != null && config.context != null) {
+                    NetSharePreference.saveCacheByString(config.context, builder.url, json);
+                }
+
+            } else {
+                // 得到响应报文体的字符串 String 对象
+                if (builder.onResponseString != null) {
+
+                    builder.onResponseString.onResponse(json);
+                    if (builder.needCache && config != null && config.context != null) {
+                        NetSharePreference.saveCacheByString(config.context, builder.url, json);
+                    }
+                }
+            }
+            return json;
+        } catch (IOException e) {
+            e.printStackTrace();
+            handlerError(builder, e, UNKNOW);
+        }
+        return null;
+    }
 
 }

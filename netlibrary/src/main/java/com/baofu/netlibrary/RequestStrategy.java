@@ -8,5 +8,8 @@ public interface RequestStrategy {
 
     public void request(BPRequestBody builder);
 
+    public <T> T requestSync(BPRequestBody<T> builder);
+    public String requestStringSync(BPRequestBody builder);
+
 
 }

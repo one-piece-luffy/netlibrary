@@ -14,7 +14,6 @@ public class BPRequestBody<E> {
     public boolean encryptionUrl;
     public int encryptionDiff;
     public String appenEncryptPath;
-
     public boolean needCache;
     public String requestTag;
     public BPListener.OnResponseBean onResponseBean;
@@ -134,6 +133,26 @@ public class BPRequestBody<E> {
                 BPRequest.getInstance().mStrategy=new OkhttpStrategy();
             }
             BPRequest.getInstance().mStrategy.request(this.build());
+        }
+        public <T> T requestSync(){
+            if(BPRequest.getInstance().mStrategy==null){
+                BPRequest.getInstance().mStrategy=new OkhttpStrategy();
+            }
+            Object o= BPRequest.getInstance().mStrategy.requestSync(this.build());
+            if(o==null)
+                return null;
+            try {
+                return (T) o;
+            }catch (Exception e){
+
+            }
+           return null;
+        }
+        public String requestStringSync(){
+            if(BPRequest.getInstance().mStrategy==null){
+                BPRequest.getInstance().mStrategy=new OkhttpStrategy();
+            }
+            return BPRequest.getInstance().mStrategy.requestStringSync(this.build());
         }
     }
 

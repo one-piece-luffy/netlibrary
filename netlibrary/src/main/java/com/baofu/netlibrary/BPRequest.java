@@ -132,5 +132,4 @@ public class BPRequest {
         return new BPRequestBody.Builder().appenEncryptPath(appenEncryptPath);
     }
 
-
 }

@@ -50,5 +50,55 @@ public class OkhttpStrategy implements RequestStrategy {
 
     }
 
+    @Override
+    public <T> T requestSync(BPRequestBody<T> builder) {
+        if(builder==null|| TextUtils.isEmpty(builder.url)){
+            Log.e("OkhttpStrategy","==============url 不能为空==============");
+            if (builder.onException != null ) {
+                builder.onException.onException(new Exception("url 不能为空"),UNKNOW,"url 不能为空");
+
+            }
+            return null;
+        }
+        if (builder.encryptionUrl||!TextUtils.isEmpty(builder.appenEncryptPath)) {
+            return OkhttpHelper.getInstance().requestSync(builder);
+        } else if( builder.url.startsWith("http://") || builder.url.startsWith("https://")){
+            return OkhttpHelper.getInstance().requestSync(builder);
+
+        }else {
+            if (builder.onException != null ) {
+                builder.onException.onException(new Exception("url 不能为空"),UNKNOW,"url 不能为空");
+
+            }
+            Log.e("OkhttpStrategy", "==============url必须是http或者https开头==============");
+        }
+        return null;
+    }
+
+    @Override
+    public String requestStringSync(BPRequestBody builder) {
+        if(builder==null|| TextUtils.isEmpty(builder.url)){
+            Log.e("OkhttpStrategy","==============url 不能为空==============");
+            if (builder.onException != null ) {
+                builder.onException.onException(new Exception("url 不能为空"),UNKNOW,"url 不能为空");
+
+            }
+            return null;
+        }
+        if (builder.encryptionUrl||!TextUtils.isEmpty(builder.appenEncryptPath)) {
+            return OkhttpHelper.getInstance().requestStringSync(builder);
+        } else if( builder.url.startsWith("http://") || builder.url.startsWith("https://")){
+            return OkhttpHelper.getInstance().requestStringSync(builder);
+
+        }else {
+            if (builder.onException != null ) {
+                builder.onException.onException(new Exception("url 不能为空"),UNKNOW,"url 不能为空");
+
+            }
+            Log.e("OkhttpStrategy", "==============url必须是http或者https开头==============");
+        }
+        return null;
+    }
+
 
 }

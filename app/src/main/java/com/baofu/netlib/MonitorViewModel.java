@@ -25,7 +25,9 @@ public class MonitorViewModel extends BaseViewModel {
     }
 
 
-
+    /**
+     * 异步请求
+     */
     public void request() {
 
 //        /**
@@ -77,6 +79,107 @@ public class MonitorViewModel extends BaseViewModel {
 //        },300);
 
 //
+    }
+
+    /**
+     * 同步请求返回String
+     */
+    public void requestStringSync() {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Map<String, String> param = new HashMap<>();
+                param.put("code", "18933333333");
+                param.put("password", "123456");
+                Map<String, String> header = new HashMap<>();
+                header.put("header", "header");
+                String result= BPRequest.getInstance()
+                        .setMethod(BPRequest.Method.GET)
+                        .setUrl("https://api.dongqiudi.com/app/global/2/android.json?mark=gif&platform=android&version=216&android-channel=website")
+                        .setParams(param)
+                        .setRequestTag(System.currentTimeMillis()+"")
+                        .setHeader(header)
+                        .setNeedCache(true)
+                        .setClazz(String.class)
+
+//                .setOnResponseBean(ConfigModelBean.class, new BPListener.OnResponseBean<ConfigModelBean>() {
+//                    @Override
+//                    public void onResponse(ConfigModelBean response) {
+//                        Log.e("time",response.toString()+"");
+//                        Toast.makeText(BaseApplication.getInstance(), response.getUpdated_at(), Toast.LENGTH_SHORT).show();
+//                    }
+//                })
+                        .setOnCacheBean(new BPListener.onCacheBean() {
+                            @Override
+                            public void onCache(Object response) {
+                                if(response==null)
+                                    return;
+                                Log.e("asdf","cache time:"+response.toString()+"");
+                            }
+                        })
+                        .setOnException(new BPListener.OnException() {
+                            @Override
+                            public void onException(Exception e, int code, String response) {
+                                e.printStackTrace();
+                            }
+
+                        })
+                        .requestStringSync();
+                Log.e("asdf","sync result:"+result);
+            }
+        }).start();
+
+    }
+    /**
+     * 同步请求返回bean
+     */
+    public void requestSync() {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Map<String, String> param = new HashMap<>();
+                param.put("code", "18933333333");
+                param.put("password", "123456");
+                Map<String, String> header = new HashMap<>();
+                header.put("header", "header");
+                ConfigModelBean result= BPRequest.getInstance()
+                        .setMethod(BPRequest.Method.GET)
+                        .setUrl("https://api.dongqiudi.com/app/global/2/android.json?mark=gif&platform=android&version=216&android-channel=website")
+                        .setParams(param)
+                        .setRequestTag(System.currentTimeMillis()+"")
+                        .setHeader(header)
+                        .setNeedCache(true)
+                        .setClazz(String.class)
+
+                .setOnResponseBean(ConfigModelBean.class, new BPListener.OnResponseBean<ConfigModelBean>() {
+                    @Override
+                    public void onResponse(ConfigModelBean response) {
+                        Log.e("time",response.toString()+"");
+                        Toast.makeText(BaseApplication.getInstance(), response.getUpdated_at(), Toast.LENGTH_SHORT).show();
+                    }
+                })
+                        .setOnCacheBean(new BPListener.onCacheBean() {
+                            @Override
+                            public void onCache(Object response) {
+                                if(response==null)
+                                    return;
+                                Log.e("asdf","cache time:"+response.toString()+"");
+                            }
+                        })
+                        .setOnException(new BPListener.OnException() {
+                            @Override
+                            public void onException(Exception e, int code, String response) {
+                                e.printStackTrace();
+                            }
+
+                        })
+                        .requestSync();
+                Log.e("asdf","sync result:"+result);
+            }
+        }).start();
+
     }
 
     public void requestcookie(){

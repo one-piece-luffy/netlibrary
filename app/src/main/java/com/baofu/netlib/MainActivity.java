@@ -29,7 +29,10 @@ public class MainActivity extends AppCompatActivity {
          * 请求方式2
          */
         MonitorViewModel viewModel = ViewModelProviders.of(this).get(MonitorViewModel.class);
-        viewModel.request();
+
+//        viewModel.request();//异步请求
+//        viewModel.requestStringSync();//同步请求，返回string
+        viewModel.requestSync();//同步请求，返回bean
 
 //        viewModel.requestcookie();
 
