@@ -830,7 +830,9 @@ public class OkhttpHelper {
                 try {
                     model=JSON.parseObject(json, builder.clazz);
                 }catch (JSONException e){
-                    e.printStackTrace();
+//                    e.printStackTrace();
+                    handlerError(builder, e,UNKNOW);
+                    return;
                 }
                 E finalModel = model;
                 mMainHandler.post(new Runnable() {
