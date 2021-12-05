@@ -44,7 +44,7 @@ public class OkhttpHelper {
     private static final OkhttpHelper ourInstance = new OkhttpHelper();
     Handler mMainHandler = new Handler(Looper.getMainLooper());
     private OkHttpClient mClient;
-    public static final int UNKNOW=-1;
+    public static final int UNKNOW = -1;
 
     /**
      * Global request queue for Volley
@@ -116,21 +116,21 @@ public class OkhttpHelper {
 //        }
         if (builder.encryptionUrl) {
             try {
-                String url = NetUtils.decodePassword(builder.url,builder.encryptionDiff);
+                String url = NetUtils.decodePassword(builder.url, builder.encryptionDiff);
                 builder.url = url;
             } catch (Exception e) {
                 e.printStackTrace();
-                handlerError(builder, null,UNKNOW);
+                handlerError(builder, null, UNKNOW);
                 return;
             }
         }
         if (!TextUtils.isEmpty(builder.appenEncryptPath)) {
             try {
-                String appen = NetUtils.decodePassword(builder.appenEncryptPath,builder.encryptionDiff);
+                String appen = NetUtils.decodePassword(builder.appenEncryptPath, builder.encryptionDiff);
                 builder.url += appen;
             } catch (Exception e) {
                 e.printStackTrace();
-                handlerError(builder, null,UNKNOW);
+                handlerError(builder, null, UNKNOW);
                 return;
             }
         }
@@ -154,6 +154,7 @@ public class OkhttpHelper {
 
     /**
      * 同步请求
+     *
      * @param builder
      * @param <T>
      */
@@ -161,82 +162,84 @@ public class OkhttpHelper {
 
         if (builder.encryptionUrl) {
             try {
-                String url = NetUtils.decodePassword(builder.url,builder.encryptionDiff);
+                String url = NetUtils.decodePassword(builder.url, builder.encryptionDiff);
                 builder.url = url;
             } catch (Exception e) {
                 e.printStackTrace();
-                handlerError(builder, null,UNKNOW);
+                handlerError(builder, null, UNKNOW);
                 return null;
             }
         }
         if (!TextUtils.isEmpty(builder.appenEncryptPath)) {
             try {
-                String appen = NetUtils.decodePassword(builder.appenEncryptPath,builder.encryptionDiff);
+                String appen = NetUtils.decodePassword(builder.appenEncryptPath, builder.encryptionDiff);
                 builder.url += appen;
             } catch (Exception e) {
                 e.printStackTrace();
-                handlerError(builder, null,UNKNOW);
+                handlerError(builder, null, UNKNOW);
                 return null;
             }
         }
 
-        T result=null;
+        T result = null;
         switch (builder.method) {
             case BPRequest.Method.POST:
-                result= postSync(builder);
+                result = postSync(builder);
                 break;
             case BPRequest.Method.GET:
-                result= getSync(builder);
+                result = getSync(builder);
                 break;
             case BPRequest.Method.DELETE:
-                result= deleteSync(builder);
+                result = deleteSync(builder);
                 break;
             case BPRequest.Method.PATCH:
-                result= patchSync(builder);
+                result = patchSync(builder);
                 break;
         }
         return result;
     }
+
     /**
      * 同步请求
+     *
      * @param builder
      */
     public String requestStringSync(BPRequestBody builder) {
 
         if (builder.encryptionUrl) {
             try {
-                String url = NetUtils.decodePassword(builder.url,builder.encryptionDiff);
+                String url = NetUtils.decodePassword(builder.url, builder.encryptionDiff);
                 builder.url = url;
             } catch (Exception e) {
                 e.printStackTrace();
-                handlerError(builder, null,UNKNOW);
+                handlerError(builder, null, UNKNOW);
                 return null;
             }
         }
         if (!TextUtils.isEmpty(builder.appenEncryptPath)) {
             try {
-                String appen = NetUtils.decodePassword(builder.appenEncryptPath,builder.encryptionDiff);
+                String appen = NetUtils.decodePassword(builder.appenEncryptPath, builder.encryptionDiff);
                 builder.url += appen;
             } catch (Exception e) {
                 e.printStackTrace();
-                handlerError(builder, null,UNKNOW);
+                handlerError(builder, null, UNKNOW);
                 return null;
             }
         }
 
-        String result=null;
+        String result = null;
         switch (builder.method) {
             case BPRequest.Method.POST:
-                result= postStringSync(builder);
+                result = postStringSync(builder);
                 break;
             case BPRequest.Method.GET:
-                result= getStringSync(builder);
+                result = getStringSync(builder);
                 break;
             case BPRequest.Method.DELETE:
-                result= deleteStringSync(builder);
+                result = deleteStringSync(builder);
                 break;
             case BPRequest.Method.PATCH:
-                result= patchStringSync(builder);
+                result = patchStringSync(builder);
                 break;
         }
         return result;
@@ -249,14 +252,14 @@ public class OkhttpHelper {
             Iterator<Map.Entry<String, String>> it = config.header.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry<String, String> entry = it.next();
-                if(entry==null)
+                if (entry == null)
                     continue;
-                String key=entry.getKey();
-                String value=entry.getValue();
-                if(TextUtils.isEmpty(key)||TextUtils.isEmpty(value)){
+                String key = entry.getKey();
+                String value = entry.getValue();
+                if (TextUtils.isEmpty(key) || TextUtils.isEmpty(value)) {
                     continue;
                 }
-                okBuilder.addHeader(key,value);
+                okBuilder.addHeader(key, value);
             }
 
         }
@@ -264,14 +267,14 @@ public class OkhttpHelper {
             Iterator<Map.Entry<String, String>> it = builder.header.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry<String, String> entry = it.next();
-                if(entry==null)
+                if (entry == null)
                     continue;
-                String key=entry.getKey();
-                String value=entry.getValue();
-                if(TextUtils.isEmpty(key)||TextUtils.isEmpty(value)){
+                String key = entry.getKey();
+                String value = entry.getValue();
+                if (TextUtils.isEmpty(key) || TextUtils.isEmpty(value)) {
                     continue;
                 }
-                okBuilder.addHeader(key,value);
+                okBuilder.addHeader(key, value);
             }
 
         }
@@ -293,11 +296,11 @@ public class OkhttpHelper {
             Iterator<Map.Entry<String, String>> it = BodyParams.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry<String, String> entry = it.next();
-                if(entry==null)
+                if (entry == null)
                     continue;
-                String key=entry.getKey();
-                String value=entry.getValue();
-                if(TextUtils.isEmpty(key)||TextUtils.isEmpty(value)){
+                String key = entry.getKey();
+                String value = entry.getValue();
+                if (TextUtils.isEmpty(key) || TextUtils.isEmpty(value)) {
                     continue;
                 }
                 formEncodingBuilder.add(key, value);
@@ -310,10 +313,10 @@ public class OkhttpHelper {
     }
 
     private <E> void post(BPRequestBody<E> builder) {
-        RequestBody body=null;
+        RequestBody body = null;
         if (!TextUtils.isEmpty(builder.paramsJson)) {
-            body=RequestBody.create(MediaType.parse("application/json;charset=utf-8"), builder.paramsJson);
-        }else {
+            body = RequestBody.create(MediaType.parse("application/json;charset=utf-8"), builder.paramsJson);
+        } else {
             body = setRequestBody(builder.params);
         }
 
@@ -326,14 +329,14 @@ public class OkhttpHelper {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(final Call call, final IOException e) {
-                handlerError(builder, e,UNKNOW);
+                handlerError(builder, e, UNKNOW);
             }
 
             @Override
             public void onResponse(final Call call, final Response response) throws IOException {
                 int code = response.code();
-                if(response==null){
-                    handlerError(builder, null,code);
+                if (response == null) {
+                    handlerError(builder, null, code);
                     return;
                 }
 
@@ -341,7 +344,7 @@ public class OkhttpHelper {
 
                     handlerResponse(call, response, builder);
                 } else {
-                    handlerError(builder, null,code);
+                    handlerError(builder, null, code);
                 }
 
             }
@@ -349,11 +352,10 @@ public class OkhttpHelper {
     }
 
 
-
     private <E> void get(BPRequestBody<E> builder) {
-        if(builder.needCache){
+        if (builder.needCache) {
             if (builder.onCacheBean != null) {
-                final E model = NetSharePreference.getCache(config.context,builder.url,builder.clazz);
+                final E model = NetSharePreference.getCache(config.context, builder.url, builder.clazz);
                 mMainHandler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -367,7 +369,7 @@ public class OkhttpHelper {
             } else {
                 // 得到响应报文体的字符串 String 对象
                 if (builder.onCacheString != null) {
-                    String res= NetSharePreference.getCacheByString(config.context,builder.url);
+                    String res = NetSharePreference.getCacheByString(config.context, builder.url);
                     mMainHandler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -384,11 +386,11 @@ public class OkhttpHelper {
             Iterator<Map.Entry<String, String>> it = builder.params.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry<String, String> entry = it.next();
-                if(entry==null)
+                if (entry == null)
                     continue;
-                String key=entry.getKey();
-                String value=entry.getValue();
-                if(TextUtils.isEmpty(key)||TextUtils.isEmpty(value)){
+                String key = entry.getKey();
+                String value = entry.getValue();
+                if (TextUtils.isEmpty(key) || TextUtils.isEmpty(value)) {
                     continue;
                 }
                 if (url.contains("?")) {
@@ -406,14 +408,14 @@ public class OkhttpHelper {
             call.enqueue(new Callback() {
                 @Override
                 public void onFailure(final Call call, final IOException e) {
-                    handlerError(builder, e,UNKNOW);
+                    handlerError(builder, e, UNKNOW);
                 }
 
                 @Override
                 public void onResponse(final Call call, final Response response) throws IOException {
                     int code = response.code();
-                    if(response==null){
-                        handlerError(builder, null,code);
+                    if (response == null) {
+                        handlerError(builder, null, code);
                         return;
                     }
 
@@ -421,7 +423,7 @@ public class OkhttpHelper {
 
                         handlerResponse(call, response, builder);
                     } else {
-                        handlerError(builder, null,code);
+                        handlerError(builder, null, code);
                     }
 
 
@@ -444,14 +446,14 @@ public class OkhttpHelper {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(final Call call, final IOException e) {
-                handlerError(builder, e,UNKNOW);
+                handlerError(builder, e, UNKNOW);
             }
 
             @Override
             public void onResponse(final Call call, final Response response) throws IOException {
                 int code = response.code();
-                if(response==null){
-                    handlerError(builder, null,code);
+                if (response == null) {
+                    handlerError(builder, null, code);
                     return;
                 }
 
@@ -459,7 +461,7 @@ public class OkhttpHelper {
 
                     handlerResponse(call, response, builder);
                 } else {
-                    handlerError(builder, null,code);
+                    handlerError(builder, null, code);
                 }
 
 
@@ -479,14 +481,14 @@ public class OkhttpHelper {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(final Call call, final IOException e) {
-                handlerError(builder, e,UNKNOW);
+                handlerError(builder, e, UNKNOW);
             }
 
             @Override
             public void onResponse(final Call call, final Response response) throws IOException {
                 int code = response.code();
-                if(response==null){
-                    handlerError(builder, new IOException(),code);
+                if (response == null) {
+                    handlerError(builder, new IOException(), code);
                     return;
                 }
 
@@ -494,7 +496,7 @@ public class OkhttpHelper {
 
                     handlerResponse(call, response, builder);
                 } else {
-                    handlerError(builder, new IOException(),code);
+                    handlerError(builder, new IOException(), code);
                 }
 
 
@@ -514,11 +516,11 @@ public class OkhttpHelper {
         Request.Builder okBuilder = getBuilder(builder);
         Request request = okBuilder.post(body).url(builder.url).build();
 
-        try  {
+        try {
             //3 将Request封装为Call
             Call call = mClient.newCall(request);
             Response response = call.execute();
-            if(response==null){
+            if (response == null) {
                 handlerErrorSync(builder, new Exception(""), UNKNOW);
                 return null;
             }
@@ -536,7 +538,8 @@ public class OkhttpHelper {
         return null;
 
     }
-    private <E> E  getSync(BPRequestBody<E> builder) {
+
+    private <E> E getSync(BPRequestBody<E> builder) {
         if (builder.needCache) {
             if (builder.onCacheBean != null) {
                 final E model = NetSharePreference.getCache(config.context, builder.url, builder.clazz);
@@ -560,11 +563,11 @@ public class OkhttpHelper {
             Iterator<Map.Entry<String, String>> it = builder.params.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry<String, String> entry = it.next();
-                if(entry==null)
+                if (entry == null)
                     continue;
-                String key=entry.getKey();
-                String value=entry.getValue();
-                if(TextUtils.isEmpty(key)||TextUtils.isEmpty(value)){
+                String key = entry.getKey();
+                String value = entry.getValue();
+                if (TextUtils.isEmpty(key) || TextUtils.isEmpty(value)) {
                     continue;
                 }
                 if (url.contains("?")) {
@@ -599,6 +602,7 @@ public class OkhttpHelper {
         }
         return null;
     }
+
     private <E> E deleteSync(BPRequestBody<E> builder) {
         RequestBody body = setRequestBody(builder.params);
         Request.Builder okBuilder = getBuilder(builder);
@@ -620,7 +624,7 @@ public class OkhttpHelper {
                 handlerErrorSync(builder, null, code);
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -648,7 +652,7 @@ public class OkhttpHelper {
                 handlerErrorSync(builder, null, code);
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -666,11 +670,11 @@ public class OkhttpHelper {
         Request.Builder okBuilder = getBuilder(builder);
         Request request = okBuilder.post(body).url(builder.url).build();
 
-        try  {
+        try {
             //3 将Request封装为Call
             Call call = mClient.newCall(request);
             Response response = call.execute();
-            if(response==null){
+            if (response == null) {
                 handlerErrorSync(builder, new Exception(""), UNKNOW);
                 return null;
             }
@@ -688,7 +692,8 @@ public class OkhttpHelper {
         return null;
 
     }
-    private String  getStringSync(BPRequestBody builder) {
+
+    private String getStringSync(BPRequestBody builder) {
 
         Request.Builder okBuilder = getBuilder(builder);
         String url = builder.url;
@@ -696,11 +701,11 @@ public class OkhttpHelper {
             Iterator<Map.Entry<String, String>> it = builder.params.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry<String, String> entry = it.next();
-                if(entry==null)
+                if (entry == null)
                     continue;
-                String key=entry.getKey();
-                String value=entry.getValue();
-                if(TextUtils.isEmpty(key)||TextUtils.isEmpty(value)){
+                String key = entry.getKey();
+                String value = entry.getValue();
+                if (TextUtils.isEmpty(key) || TextUtils.isEmpty(value)) {
                     continue;
                 }
                 if (url.contains("?")) {
@@ -735,6 +740,7 @@ public class OkhttpHelper {
         }
         return null;
     }
+
     private String deleteStringSync(BPRequestBody builder) {
         RequestBody body = setRequestBody(builder.params);
         Request.Builder okBuilder = getBuilder(builder);
@@ -756,7 +762,7 @@ public class OkhttpHelper {
                 handlerErrorSync(builder, null, code);
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -784,27 +790,27 @@ public class OkhttpHelper {
                 handlerErrorSync(builder, null, code);
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    private <E> void handlerError(BPRequestBody<E> builder, Exception e,int code) {
-        if (builder.onException != null ) {
+    private <E> void handlerError(BPRequestBody<E> builder, Exception e, int code) {
+        if (builder.onException != null) {
             mMainHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    builder.onException.onException(e,code,null);
+                    builder.onException.onException(e, code, null);
                 }
             });
 
         }
-        if(config.onResponseListener!=null){
+        if (config.onResponseListener != null) {
             mMainHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    config.onResponseListener.exceptionListener(builder.url,null,e,code);
+                    config.onResponseListener.exceptionListener(builder.url, null, e, code);
                 }
             });
 
@@ -816,11 +822,11 @@ public class OkhttpHelper {
         try {
             String json = response.body().string();
 
-            if(config.onResponseListener!=null){
+            if (config.onResponseListener != null) {
                 mMainHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        config.onResponseListener.responseListener(response.headers(),response.code(),builder.url,json);
+                        config.onResponseListener.responseListener(response.headers(), response.code(), builder.url, json);
                     }
                 });
 
@@ -828,10 +834,10 @@ public class OkhttpHelper {
             if (builder.onResponseBean != null) {
                 E model = null;
                 try {
-                    model=JSON.parseObject(json, builder.clazz);
-                }catch (JSONException e){
+                    model = JSON.parseObject(json, builder.clazz);
+                } catch (JSONException e) {
 //                    e.printStackTrace();
-                    handlerError(builder, e,UNKNOW);
+                    handlerError(builder, e, UNKNOW);
                     return;
                 }
                 E finalModel = model;
@@ -841,8 +847,8 @@ public class OkhttpHelper {
                         builder.onResponseBean.onResponse(finalModel);
                     }
                 });
-                if(builder.needCache&&config!=null&&config.context!=null){
-                    NetSharePreference.saveCache(config.context,builder.url,finalModel);
+                if (builder.needCache && config != null && config.context != null) {
+                    NetSharePreference.saveCache(config.context, builder.url, finalModel);
                 }
 
             } else if (builder.onResponse != null) {
@@ -876,8 +882,8 @@ public class OkhttpHelper {
                         builder.onResponse.onResponse(json, map);
                     }
                 });
-                if(builder.needCache&&config!=null&&config.context!=null){
-                    NetSharePreference.saveCacheByString(config.context,builder.url,json);
+                if (builder.needCache && config != null && config.context != null) {
+                    NetSharePreference.saveCacheByString(config.context, builder.url, json);
                 }
 
 
@@ -891,24 +897,35 @@ public class OkhttpHelper {
                             builder.onResponseString.onResponse(json);
                         }
                     });
-                    if(builder.needCache&&config!=null&&config.context!=null){
-                        NetSharePreference.saveCacheByString(config.context,builder.url,json);
+                    if (builder.needCache && config != null && config.context != null) {
+                        NetSharePreference.saveCacheByString(config.context, builder.url, json);
                     }
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
-            handlerError(builder, e,UNKNOW);
+            handlerError(builder, e, UNKNOW);
         }
     }
 
     private <E> void handlerErrorSync(BPRequestBody<E> builder, Exception e, int code) {
         if (builder.onException != null) {
-            builder.onException.onException(e, code, null);
+            mMainHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    builder.onException.onException(e, code, null);
+                }
+            });
+
 
         }
         if (config.onResponseListener != null) {
-            config.onResponseListener.exceptionListener(builder.url, null, e, code);
+            mMainHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    config.onResponseListener.exceptionListener(builder.url, null, e, code);
+                }
+            });
         }
     }
 
@@ -986,6 +1003,7 @@ public class OkhttpHelper {
         }
         return null;
     }
+
     private String handlerResponseStringSync(final Response response, BPRequestBody builder) {
 
         try {
