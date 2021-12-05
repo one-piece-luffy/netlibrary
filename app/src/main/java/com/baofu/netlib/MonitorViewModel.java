@@ -66,7 +66,7 @@ public class MonitorViewModel extends BaseViewModel {
                     @Override
                     public void onException(Exception e, int code, String response) {
                         e.printStackTrace();
-                        Log.e("asdf", response);
+                        Toast.makeText(BaseApplication.getInstance(),e.getMessage(),Toast.LENGTH_SHORT).show();
                     }
 
                 })
