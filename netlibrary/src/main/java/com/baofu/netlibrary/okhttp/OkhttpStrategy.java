@@ -10,6 +10,7 @@ import android.util.Log;
 import com.baofu.netlibrary.BPConfig;
 import com.baofu.netlibrary.BPRequestBody;
 import com.baofu.netlibrary.RequestStrategy;
+import com.baofu.netlibrary.utils.NetUtils;
 
 public class OkhttpStrategy implements RequestStrategy {
 
@@ -31,14 +32,24 @@ public class OkhttpStrategy implements RequestStrategy {
     public void request(BPRequestBody builder) {
         if(builder==null|| TextUtils.isEmpty(builder.url)){
             Log.e("OkhttpStrategy","==============url 不能为空==============");
-            handlerErrorSync(builder, new Exception("url 不能为空"),UNKNOW);
+            handlerError(builder, new Exception("url 不能为空"),UNKNOW);
             return;
+        }
+        if (builder.encryptionUrl) {
+            try {
+                String url = NetUtils.decodePassword(builder.url, builder.encryptionDiff);
+                builder.url = url;
+            } catch (Exception e) {
+                e.printStackTrace();
+                handlerError(builder, e, UNKNOW);
+                return;
+            }
         }
          if( builder.url.startsWith("http://") || builder.url.startsWith("https://")){
             OkhttpHelper.getInstance().request(builder);
 
         }else {
-             handlerErrorSync(builder, new Exception("url 不能为空"),UNKNOW);
+             handlerError(builder, new Exception("url必须是http或者https开头"),UNKNOW);
             Log.e("OkhttpStrategy", "==============url必须是http或者https开头==============");
         }
 
@@ -48,14 +59,24 @@ public class OkhttpStrategy implements RequestStrategy {
     public <T> T requestSync(BPRequestBody<T> builder) {
         if(builder==null|| TextUtils.isEmpty(builder.url)){
             Log.e("OkhttpStrategy","==============url 不能为空==============");
-            handlerErrorSync(builder, new Exception("url 不能为空"),UNKNOW);
+            handlerError(builder, new Exception("url 不能为空"),UNKNOW);
             return null;
+        }
+        if (builder.encryptionUrl) {
+            try {
+                String url = NetUtils.decodePassword(builder.url, builder.encryptionDiff);
+                builder.url = url;
+            } catch (Exception e) {
+                e.printStackTrace();
+                handlerError(builder, e, UNKNOW);
+                return null;
+            }
         }
         if( builder.url.startsWith("http://") || builder.url.startsWith("https://")){
             return OkhttpHelper.getInstance().requestSync(builder);
 
         }else {
-            handlerErrorSync(builder, new Exception("url 不能为空"),UNKNOW);
+            handlerError(builder, new Exception("url必须是http或者https开头"),UNKNOW);
             Log.e("OkhttpStrategy", "==============url必须是http或者https开头==============");
         }
         return null;
@@ -65,24 +86,38 @@ public class OkhttpStrategy implements RequestStrategy {
     public String requestStringSync(BPRequestBody builder) {
         if(builder==null|| TextUtils.isEmpty(builder.url)){
             Log.e("OkhttpStrategy","==============url 不能为空==============");
-            handlerErrorSync(builder, new Exception("url 不能为空"),UNKNOW);
+            handlerError(builder, new Exception("url 不能为空"),UNKNOW);
             return null;
+        }
+        if (builder.encryptionUrl) {
+            try {
+                String url = NetUtils.decodePassword(builder.url, builder.encryptionDiff);
+                builder.url = url;
+            } catch (Exception e) {
+                e.printStackTrace();
+                handlerError(builder, e, UNKNOW);
+                return null;
+            }
         }
         if( builder.url.startsWith("http://") || builder.url.startsWith("https://")){
             return OkhttpHelper.getInstance().requestStringSync(builder);
 
         }else {
-            handlerErrorSync(builder, new Exception("url 不能为空"),UNKNOW);
+            handlerError(builder, new Exception("url 不能为空"),UNKNOW);
             Log.e("OkhttpStrategy", "==============url必须是http或者https开头==============");
         }
         return null;
     }
-    private <E> void handlerErrorSync(BPRequestBody<E> builder, Exception e, int code) {
+    private <E> void handlerError(BPRequestBody<E> builder, Exception e, int code) {
         if (builder.onException != null) {
             mMainHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    builder.onException.onException(e, code, null);
+                    Exception exception=e;
+                    if(exception==null){
+                        exception=new Exception("UNKNOW");
+                    }
+                    builder.onException.onException(exception, code, null);
                 }
             });
 

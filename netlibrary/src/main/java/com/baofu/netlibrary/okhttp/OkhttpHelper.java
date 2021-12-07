@@ -114,16 +114,7 @@ public class OkhttpHelper {
 //            task.bodyType(OkHttps.JSON);
 //
 //        }
-        if (builder.encryptionUrl) {
-            try {
-                String url = NetUtils.decodePassword(builder.url, builder.encryptionDiff);
-                builder.url = url;
-            } catch (Exception e) {
-                e.printStackTrace();
-                handlerError(builder, null, UNKNOW);
-                return;
-            }
-        }
+
         if (!TextUtils.isEmpty(builder.appenEncryptPath)) {
             try {
                 String appen = NetUtils.decodePassword(builder.appenEncryptPath, builder.encryptionDiff);
@@ -160,16 +151,6 @@ public class OkhttpHelper {
      */
     public <T> T requestSync(BPRequestBody<T> builder) {
 
-        if (builder.encryptionUrl) {
-            try {
-                String url = NetUtils.decodePassword(builder.url, builder.encryptionDiff);
-                builder.url = url;
-            } catch (Exception e) {
-                e.printStackTrace();
-                handlerError(builder, null, UNKNOW);
-                return null;
-            }
-        }
         if (!TextUtils.isEmpty(builder.appenEncryptPath)) {
             try {
                 String appen = NetUtils.decodePassword(builder.appenEncryptPath, builder.encryptionDiff);
@@ -206,16 +187,6 @@ public class OkhttpHelper {
      */
     public String requestStringSync(BPRequestBody builder) {
 
-        if (builder.encryptionUrl) {
-            try {
-                String url = NetUtils.decodePassword(builder.url, builder.encryptionDiff);
-                builder.url = url;
-            } catch (Exception e) {
-                e.printStackTrace();
-                handlerError(builder, null, UNKNOW);
-                return null;
-            }
-        }
         if (!TextUtils.isEmpty(builder.appenEncryptPath)) {
             try {
                 String appen = NetUtils.decodePassword(builder.appenEncryptPath, builder.encryptionDiff);
@@ -801,7 +772,11 @@ public class OkhttpHelper {
             mMainHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    builder.onException.onException(e, code, null);
+                    Exception exception=e;
+                    if(exception==null){
+                        exception=new Exception("UNKNOW");
+                    }
+                    builder.onException.onException(exception, code, null);
                 }
             });
 
@@ -810,7 +785,11 @@ public class OkhttpHelper {
             mMainHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    config.onResponseListener.exceptionListener(builder.url, null, e, code);
+                    Exception exception=e;
+                    if(exception==null){
+                        exception=new Exception("UNKNOW");
+                    }
+                    config.onResponseListener.exceptionListener(builder.url, null, exception, code);
                 }
             });
 
@@ -913,7 +892,11 @@ public class OkhttpHelper {
             mMainHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    builder.onException.onException(e, code, null);
+                    Exception exception=e;
+                    if(exception==null){
+                        exception=new Exception("UNKNOW");
+                    }
+                    builder.onException.onException(exception, code, null);
                 }
             });
 
@@ -923,7 +906,11 @@ public class OkhttpHelper {
             mMainHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    config.onResponseListener.exceptionListener(builder.url, null, e, code);
+                    Exception exception=e;
+                    if(exception==null){
+                        exception=new Exception("UNKNOW");
+                    }
+                    config.onResponseListener.exceptionListener(builder.url, null, exception, code);
                 }
             });
         }
@@ -1013,6 +1000,7 @@ public class OkhttpHelper {
                 mMainHandler.post(new Runnable() {
                     @Override
                     public void run() {
+
                         config.onResponseListener.responseListener(response.headers(), response.code(), builder.url, json);
                     }
                 });
