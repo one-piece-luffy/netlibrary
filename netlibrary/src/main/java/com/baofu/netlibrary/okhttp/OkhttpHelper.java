@@ -12,6 +12,7 @@ import com.baofu.netlibrary.BPConfig;
 import com.baofu.netlibrary.BPRequest;
 import com.baofu.netlibrary.BPRequestBody;
 import com.baofu.netlibrary.okhttp.interceptor.RedirectInterceptor;
+import com.baofu.netlibrary.utils.NetConstans;
 import com.baofu.netlibrary.utils.NetUtils;
 import com.baofu.netlibrary.utils.SSLUtil;
 import com.baofu.netlibrary.utils.NetSharePreference;
@@ -729,6 +730,18 @@ public class OkhttpHelper {
     }
 
     private <E> void handlerError(BPRequestBody<E> builder, Exception e, int code) {
+
+        if (config.onResponseListener != null) {
+            Exception exception = e;
+            if (exception == null) {
+                exception = new Exception("UNKNOW");
+            }
+            String result = config.onResponseListener.exceptionListener(builder.url, null, exception, code);
+            //拦截错误，在config.exceptionListener里统一处理
+            if(NetConstans.Interceptor.equals(result)){
+                return;
+            }
+        }
         if (builder.onException != null) {
             mMainHandler.post(new Runnable() {
                 @Override
@@ -742,16 +755,6 @@ public class OkhttpHelper {
             });
 
         }
-        if (config.onResponseListener != null) {
-            mMainHandler.post(() -> {
-                Exception exception=e;
-                if(exception==null){
-                    exception=new Exception("UNKNOW");
-                }
-                config.onResponseListener.exceptionListener(builder.url, null, exception, code);
-            });
-
-        }
     }
 
     private <E> void handlerResponse(final Call call, final Response response, BPRequestBody<E> builder) {
@@ -760,13 +763,11 @@ public class OkhttpHelper {
             String json = response.body().string();
 
             if (config.onResponseListener != null) {
-                mMainHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        config.onResponseListener.responseListener(response.headers(), response.code(), builder.url, json);
-                    }
-                });
-
+                String result = config.onResponseListener.responseListener(response.headers(), response.code(), builder.url, json);
+                //拦截请求，在config.onResponseListener里统一处理
+                if (NetConstans.Interceptor.equals(result)) {
+                    return;
+                }
             }
             if (builder.onResponseBean != null) {
                 E model ;
@@ -846,6 +847,17 @@ public class OkhttpHelper {
     }
 
     private <E> void handlerErrorSync(BPRequestBody<E> builder, Exception e, int code) {
+        if (config.onResponseListener != null) {
+            Exception exception = e;
+            if (exception == null) {
+                exception = new Exception("UNKNOW");
+            }
+            String result = config.onResponseListener.exceptionListener(builder.url, null, exception, code);
+            //拦截错误，在config.exceptionListener里统一处理
+            if (NetConstans.Interceptor.equals(result)) {
+                return;
+            }
+        }
         if (builder.onException != null) {
             mMainHandler.post(new Runnable() {
                 @Override
@@ -860,18 +872,7 @@ public class OkhttpHelper {
 
 
         }
-        if (config.onResponseListener != null) {
-            mMainHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Exception exception=e;
-                    if(exception==null){
-                        exception=new Exception("UNKNOW");
-                    }
-                    config.onResponseListener.exceptionListener(builder.url, null, exception, code);
-                }
-            });
-        }
+
     }
 
     private <E> E handlerResponseSync(final Response response, BPRequestBody<E> builder) {
@@ -880,13 +881,12 @@ public class OkhttpHelper {
             String json = response.body().string();
 
             if (config.onResponseListener != null) {
-                mMainHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        config.onResponseListener.responseListener(response.headers(), response.code(), builder.url, json);
-                    }
-                });
-
+                //todo 这里是同步的可能有问题，拦截以后会导致同步请求返回的数据都是null ，以后遇到再处理
+                String result = config.onResponseListener.responseListener(response.headers(), response.code(), builder.url, json);
+                //拦截请求，在config.onResponseListener里统一处理
+                if (NetConstans.Interceptor.equals(result)) {
+                    return null;
+                }
             }
 
             if (builder.onResponseBean != null) {
@@ -955,14 +955,12 @@ public class OkhttpHelper {
             String json = response.body().string();
 
             if (config.onResponseListener != null) {
-                mMainHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
 
-                        config.onResponseListener.responseListener(response.headers(), response.code(), builder.url, json);
-                    }
-                });
-
+                String result = config.onResponseListener.responseListener(response.headers(), response.code(), builder.url, json);
+                //拦截请求，在config.onResponseListener里统一处理
+                if (NetConstans.Interceptor.equals(result)) {
+                    return null;
+                }
             }
 
             if (builder.onResponseBean != null) {
