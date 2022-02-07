@@ -13,6 +13,7 @@ import com.baofu.netlib.bean.ConfigModelBean;
 import com.baofu.netlibrary.BPListener;
 import com.baofu.netlibrary.BPRequest;
 import com.baofu.netlibrary.BPRequestBody;
+import com.baofu.netlibrary.utils.NetUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,6 +44,9 @@ public class MainActivity extends AppCompatActivity {
 
 //        viewModel.requestGsonPOST();
 //        viewModel.sendVifyCode("18259462251");
+        String a=new String( NetUtils.encode("aHR0cHM6Ly9wb2tvaW5zdGEuY29tL2FwaS9pbnN0YWdyYW0=".toCharArray(),3));
+        Log.e("asdf","encode:"+a);
+        Log.e("asdf","dencode:"+NetUtils.decodePassword(a,-3));
     }
 
 }

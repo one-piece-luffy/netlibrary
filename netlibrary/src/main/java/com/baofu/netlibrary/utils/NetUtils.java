@@ -47,6 +47,12 @@ public class NetUtils {
     }
 
 
+    /**
+     * 先把要加密的url base64加密，再调用endcode方法。
+     * @param c
+     * @param diff
+     * @return
+     */
     public static char[] encode(char[] c, int diff) {
         char[] passWord = new char[c.length];
         for (int i = 0; i < c.length; i++) {
@@ -61,6 +67,13 @@ public class NetUtils {
         }
         return passWord;
     }
+
+    /**
+     * decode传入与encode相反的位移
+     * @param password
+     * @param diff
+     * @return
+     */
     public static String decodePassword(String password,int diff){
 
         char[] decode = encode(password.toCharArray(), diff);
