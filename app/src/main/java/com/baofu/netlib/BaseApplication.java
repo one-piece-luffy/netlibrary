@@ -7,6 +7,8 @@ import android.util.Log;
 import com.baofu.netlibrary.BPConfig;
 import com.baofu.netlibrary.BPRequest;
 import com.baofu.netlibrary.listener.RequestListener;
+import com.baofu.netlibrary.utils.NetConstans;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,16 +40,26 @@ public class BaseApplication extends Application{
 //                .banProxy(true)
                 .setRequestListener(new RequestListener() {
                     @Override
-                    public void responseListener(Headers headers, int status, String url,String response) {
+                    public String responseListener(Headers headers, int status, String url,String response) {
+                        //这里是子线程
                         Log.e("asdf","所有的请求");
 //                        Log.e("asdf","status:"+status);
 //                        Log.e("asdf","url:"+url);
 //                        Log.e("asdf","response:"+response);
+
+                        //返回NetConstans.Interceptor表示拦截请求，不再向下传递，在这里统一处理
+//                        return NetConstans.Interceptor;
+                        return response;
                     }
 
                     @Override
-                    public void exceptionListener(String url, String error, Exception e, int code) {
+                    public String exceptionListener(String url, String error, Exception e, int code) {
+                         //这里是子线程
 
+                        //拦截错误，不再向下传递，在这里统一处理
+//                        return NetConstans.Interceptor;
+                        //返回null表示不拦截
+                        return null;
                     }
 
                 })

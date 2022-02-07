@@ -4,12 +4,15 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import com.baofu.netlibrary.BPConfig;
 import com.baofu.netlibrary.BPRequest;
 import com.baofu.netlibrary.BPRequestBody;
 import com.baofu.netlibrary.okhttp.interceptor.RedirectInterceptor;
+import com.baofu.netlibrary.utils.NetConstans;
 import com.baofu.netlibrary.utils.NetUtils;
 import com.baofu.netlibrary.utils.SSLUtil;
 import com.baofu.netlibrary.utils.NetSharePreference;
@@ -33,7 +36,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
- * Created by wanglin on 2017/10/31.
+ * Created by lhy on 2017/10/31.
  * 必须在application oncreate里面 先调用 init（context），必须传入applicationcontext
  */
 
@@ -46,11 +49,6 @@ public class OkhttpHelper {
     private OkHttpClient mClient;
     public static final int UNKNOW = -1;
 
-    /**
-     * Global request queue for Volley
-     */
-
-    private boolean inited;
 
     BPConfig config;
 
@@ -64,7 +62,6 @@ public class OkhttpHelper {
     /**
      * 参数传递 applicationContext
      *
-     * @param config
      */
     public void init(BPConfig config) {
 
@@ -146,8 +143,6 @@ public class OkhttpHelper {
     /**
      * 同步请求
      *
-     * @param builder
-     * @param <T>
      */
     public <T> T requestSync(BPRequestBody<T> builder) {
 
@@ -183,7 +178,6 @@ public class OkhttpHelper {
     /**
      * 同步请求
      *
-     * @param builder
      */
     public String requestStringSync(BPRequestBody builder) {
 
@@ -257,11 +251,9 @@ public class OkhttpHelper {
     /**
      * post的请求参数，构造RequestBody
      *
-     * @param BodyParams
-     * @return
      */
     private RequestBody setRequestBody(Map<String, String> BodyParams) {
-        RequestBody body = null;
+        RequestBody body ;
         okhttp3.FormBody.Builder formEncodingBuilder = new okhttp3.FormBody.Builder();
         if (BodyParams != null) {
             Iterator<Map.Entry<String, String>> it = BodyParams.entrySet().iterator();
@@ -284,9 +276,9 @@ public class OkhttpHelper {
     }
 
     private <E> void post(BPRequestBody<E> builder) {
-        RequestBody body = null;
+        RequestBody body;
         if (!TextUtils.isEmpty(builder.paramsJson)) {
-            body = RequestBody.create(MediaType.parse("application/json;charset=utf-8"), builder.paramsJson);
+            body = RequestBody.create(builder.paramsJson, MediaType.get("application/json; charset=utf-8"));
         } else {
             body = setRequestBody(builder.params);
         }
@@ -299,17 +291,13 @@ public class OkhttpHelper {
         //4 执行Call
         call.enqueue(new Callback() {
             @Override
-            public void onFailure(final Call call, final IOException e) {
+            public void onFailure(@NonNull final Call call, @NonNull final IOException e) {
                 handlerError(builder, e, UNKNOW);
             }
 
             @Override
-            public void onResponse(final Call call, final Response response) throws IOException {
+            public void onResponse(@NonNull final Call call, @NonNull  final Response response) {
                 int code = response.code();
-                if (response == null) {
-                    handlerError(builder, null, code);
-                    return;
-                }
 
                 if ((code >= 200 && code < 300) || code == 304) {
 
@@ -355,6 +343,7 @@ public class OkhttpHelper {
         String url = builder.url;
         if (builder.params != null) {
             Iterator<Map.Entry<String, String>> it = builder.params.entrySet().iterator();
+            StringBuilder stringBuffer=new StringBuilder(url);
             while (it.hasNext()) {
                 Map.Entry<String, String> entry = it.next();
                 if (entry == null)
@@ -365,11 +354,18 @@ public class OkhttpHelper {
                     continue;
                 }
                 if (url.contains("?")) {
-                    url = url + "&" + key + "=" + value;
+                    stringBuffer.append("&");
+                    stringBuffer.append(key);
+                    stringBuffer.append("=");
+                    stringBuffer.append(value);
                 } else {
-                    url = url + "?" + key + "=" + value;
+                    stringBuffer.append("?");
+                    stringBuffer.append(key);
+                    stringBuffer.append("=");
+                    stringBuffer.append(value);
                 }
             }
+            url=stringBuffer.toString();
 
         }
         Request request = okBuilder.url(url)
@@ -378,17 +374,13 @@ public class OkhttpHelper {
             Call call = mClient.newCall(request);
             call.enqueue(new Callback() {
                 @Override
-                public void onFailure(final Call call, final IOException e) {
+                public void onFailure(@NonNull final Call call, @NonNull final IOException e) {
                     handlerError(builder, e, UNKNOW);
                 }
 
                 @Override
-                public void onResponse(final Call call, final Response response) throws IOException {
+                public void onResponse(@NonNull final Call call, @NonNull final Response response) throws IOException {
                     int code = response.code();
-                    if (response == null) {
-                        handlerError(builder, null, code);
-                        return;
-                    }
 
                     if ((code >= 200 && code < 300) || code == 304) {
 
@@ -416,17 +408,13 @@ public class OkhttpHelper {
         //4 执行Call
         call.enqueue(new Callback() {
             @Override
-            public void onFailure(final Call call, final IOException e) {
+            public void onFailure(@NonNull final Call call, @NonNull final IOException e) {
                 handlerError(builder, e, UNKNOW);
             }
 
             @Override
-            public void onResponse(final Call call, final Response response) throws IOException {
+            public void onResponse(@NonNull final Call call,@NonNull final Response response)  {
                 int code = response.code();
-                if (response == null) {
-                    handlerError(builder, null, code);
-                    return;
-                }
 
                 if ((code >= 200 && code < 300) || code == 304) {
 
@@ -451,18 +439,13 @@ public class OkhttpHelper {
         //4 执行Call
         call.enqueue(new Callback() {
             @Override
-            public void onFailure(final Call call, final IOException e) {
+            public void onFailure(@NonNull final Call call, @NonNull final IOException e) {
                 handlerError(builder, e, UNKNOW);
             }
 
             @Override
-            public void onResponse(final Call call, final Response response) throws IOException {
+            public void onResponse(@NonNull final Call call, @NonNull final Response response) throws IOException {
                 int code = response.code();
-                if (response == null) {
-                    handlerError(builder, new IOException(), code);
-                    return;
-                }
-
                 if ((code >= 200 && code < 300) || code == 304) {
 
                     handlerResponse(call, response, builder);
@@ -491,10 +474,6 @@ public class OkhttpHelper {
             //3 将Request封装为Call
             Call call = mClient.newCall(request);
             Response response = call.execute();
-            if (response == null) {
-                handlerErrorSync(builder, new Exception(""), UNKNOW);
-                return null;
-            }
             int code = response.code();
             if ((code >= 200 && code < 300) || code == 304) {
                 E model = handlerResponseSync(response, builder);
@@ -532,6 +511,7 @@ public class OkhttpHelper {
         String url = builder.url;
         if (builder.params != null) {
             Iterator<Map.Entry<String, String>> it = builder.params.entrySet().iterator();
+            StringBuilder stringBuffer=new StringBuilder(url);
             while (it.hasNext()) {
                 Map.Entry<String, String> entry = it.next();
                 if (entry == null)
@@ -542,22 +522,24 @@ public class OkhttpHelper {
                     continue;
                 }
                 if (url.contains("?")) {
-                    url = url + "&" + key + "=" + value;
+                    stringBuffer.append("&");
+                    stringBuffer.append(key);
+                    stringBuffer.append("=");
+                    stringBuffer.append(value);
                 } else {
-                    url = url + "?" + key + "=" + value;
+                    stringBuffer.append("?");
+                    stringBuffer.append(key);
+                    stringBuffer.append("=");
+                    stringBuffer.append(value);
                 }
             }
-
+            url=stringBuffer.toString();
         }
         Request request = okBuilder.url(url)
                 .build();
         try {
             Call call = mClient.newCall(request);
             Response response = call.execute();
-            if (response == null) {
-                handlerErrorSync(builder, null, UNKNOW);
-                return null;
-            }
             int code = response.code();
             if ((code >= 200 && code < 300) || code == 304) {
                 E model = handlerResponseSync(response, builder);
@@ -583,14 +565,9 @@ public class OkhttpHelper {
             //3 将Request封装为Call
             Call call = mClient.newCall(request);
             Response response = call.execute();
-            if (response == null) {
-                handlerErrorSync(builder, null, UNKNOW);
-                return null;
-            }
             int code = response.code();
             if ((code >= 200 && code < 300) || code == 304) {
-                E model = handlerResponseSync(response, builder);
-                return model;
+                return handlerResponseSync(response, builder);
             } else {
                 handlerErrorSync(builder, null, code);
             }
@@ -611,14 +588,9 @@ public class OkhttpHelper {
             //3 将Request封装为Call
             Call call = mClient.newCall(request);
             Response response = call.execute();
-            if (response == null) {
-                handlerErrorSync(builder, null, UNKNOW);
-                return null;
-            }
             int code = response.code();
             if ((code >= 200 && code < 300) || code == 304) {
-                E model = handlerResponseSync(response, builder);
-                return model;
+                return handlerResponseSync(response, builder);
             } else {
                 handlerErrorSync(builder, null, code);
             }
@@ -631,9 +603,9 @@ public class OkhttpHelper {
 
     private String postStringSync(BPRequestBody builder) {
 
-        RequestBody body = null;
+        RequestBody body ;
         if (!TextUtils.isEmpty(builder.paramsJson)) {
-            body = RequestBody.create(MediaType.parse("application/json;charset=utf-8"), builder.paramsJson);
+            body = RequestBody.create(builder.paramsJson, MediaType.get("application/json; charset=utf-8"));
         } else {
             body = setRequestBody(builder.params);
         }
@@ -645,14 +617,9 @@ public class OkhttpHelper {
             //3 将Request封装为Call
             Call call = mClient.newCall(request);
             Response response = call.execute();
-            if (response == null) {
-                handlerErrorSync(builder, new Exception(""), UNKNOW);
-                return null;
-            }
             int code = response.code();
             if ((code >= 200 && code < 300) || code == 304) {
-                String model = handlerResponseStringSync(response, builder);
-                return model;
+                return handlerResponseStringSync(response, builder);
             } else {
                 handlerErrorSync(builder, null, code);
             }
@@ -669,7 +636,9 @@ public class OkhttpHelper {
         Request.Builder okBuilder = getBuilder(builder);
         String url = builder.url;
         if (builder.params != null) {
+
             Iterator<Map.Entry<String, String>> it = builder.params.entrySet().iterator();
+            StringBuilder stringBuffer=new StringBuilder(url);
             while (it.hasNext()) {
                 Map.Entry<String, String> entry = it.next();
                 if (entry == null)
@@ -680,11 +649,18 @@ public class OkhttpHelper {
                     continue;
                 }
                 if (url.contains("?")) {
-                    url = url + "&" + key + "=" + value;
+                    stringBuffer.append("&");
+                    stringBuffer.append(key);
+                    stringBuffer.append("=");
+                    stringBuffer.append(value);
                 } else {
-                    url = url + "?" + key + "=" + value;
+                    stringBuffer.append("?");
+                    stringBuffer.append(key);
+                    stringBuffer.append("=");
+                    stringBuffer.append(value);
                 }
             }
+            url=stringBuffer.toString();
 
         }
         Request request = okBuilder.url(url)
@@ -692,14 +668,10 @@ public class OkhttpHelper {
         try {
             Call call = mClient.newCall(request);
             Response response = call.execute();
-            if (response == null) {
-                handlerErrorSync(builder, null, UNKNOW);
-                return null;
-            }
+
             int code = response.code();
             if ((code >= 200 && code < 300) || code == 304) {
-                String model = handlerResponseStringSync(response, builder);
-                return model;
+                return handlerResponseStringSync(response, builder);
             } else {
                 handlerErrorSync(builder, null, code);
             }
@@ -721,14 +693,9 @@ public class OkhttpHelper {
             //3 将Request封装为Call
             Call call = mClient.newCall(request);
             Response response = call.execute();
-            if (response == null) {
-                handlerErrorSync(builder, null, UNKNOW);
-                return null;
-            }
             int code = response.code();
             if ((code >= 200 && code < 300) || code == 304) {
-                String model = handlerResponseStringSync(response, builder);
-                return model;
+                return handlerResponseStringSync(response, builder);
             } else {
                 handlerErrorSync(builder, null, code);
             }
@@ -749,14 +716,9 @@ public class OkhttpHelper {
             //3 将Request封装为Call
             Call call = mClient.newCall(request);
             Response response = call.execute();
-            if (response == null) {
-                handlerErrorSync(builder, null, UNKNOW);
-                return null;
-            }
             int code = response.code();
             if ((code >= 200 && code < 300) || code == 304) {
-                String model = handlerResponseStringSync(response, builder);
-                return model;
+                return handlerResponseStringSync(response, builder);
             } else {
                 handlerErrorSync(builder, null, code);
             }
@@ -768,6 +730,18 @@ public class OkhttpHelper {
     }
 
     private <E> void handlerError(BPRequestBody<E> builder, Exception e, int code) {
+
+        if (config.onResponseListener != null) {
+            Exception exception = e;
+            if (exception == null) {
+                exception = new Exception("UNKNOW");
+            }
+            String result = config.onResponseListener.exceptionListener(builder.url, null, exception, code);
+            //拦截错误，在config.exceptionListener里统一处理
+            if(NetConstans.Interceptor.equals(result)){
+                return;
+            }
+        }
         if (builder.onException != null) {
             mMainHandler.post(new Runnable() {
                 @Override
@@ -781,19 +755,6 @@ public class OkhttpHelper {
             });
 
         }
-        if (config.onResponseListener != null) {
-            mMainHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Exception exception=e;
-                    if(exception==null){
-                        exception=new Exception("UNKNOW");
-                    }
-                    config.onResponseListener.exceptionListener(builder.url, null, exception, code);
-                }
-            });
-
-        }
     }
 
     private <E> void handlerResponse(final Call call, final Response response, BPRequestBody<E> builder) {
@@ -802,16 +763,14 @@ public class OkhttpHelper {
             String json = response.body().string();
 
             if (config.onResponseListener != null) {
-                mMainHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        config.onResponseListener.responseListener(response.headers(), response.code(), builder.url, json);
-                    }
-                });
-
+                String result = config.onResponseListener.responseListener(response.headers(), response.code(), builder.url, json);
+                //拦截请求，在config.onResponseListener里统一处理
+                if (NetConstans.Interceptor.equals(result)) {
+                    return;
+                }
             }
             if (builder.onResponseBean != null) {
-                E model = null;
+                E model ;
                 try {
                     model = JSON.parseObject(json, builder.clazz);
                 } catch (JSONException e) {
@@ -841,7 +800,7 @@ public class OkhttpHelper {
 
                     String name = headers.name(i);
                     String value = headers.value(i);
-                    if (name.toLowerCase().equals("Set-Cookie".toLowerCase())) {
+                    if (name.equalsIgnoreCase("Set-Cookie")) {
                         cookie += value;
                         if (!value.equals(";")) {
                             cookie += ";";
@@ -888,6 +847,17 @@ public class OkhttpHelper {
     }
 
     private <E> void handlerErrorSync(BPRequestBody<E> builder, Exception e, int code) {
+        if (config.onResponseListener != null) {
+            Exception exception = e;
+            if (exception == null) {
+                exception = new Exception("UNKNOW");
+            }
+            String result = config.onResponseListener.exceptionListener(builder.url, null, exception, code);
+            //拦截错误，在config.exceptionListener里统一处理
+            if (NetConstans.Interceptor.equals(result)) {
+                return;
+            }
+        }
         if (builder.onException != null) {
             mMainHandler.post(new Runnable() {
                 @Override
@@ -902,18 +872,7 @@ public class OkhttpHelper {
 
 
         }
-        if (config.onResponseListener != null) {
-            mMainHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Exception exception=e;
-                    if(exception==null){
-                        exception=new Exception("UNKNOW");
-                    }
-                    config.onResponseListener.exceptionListener(builder.url, null, exception, code);
-                }
-            });
-        }
+
     }
 
     private <E> E handlerResponseSync(final Response response, BPRequestBody<E> builder) {
@@ -922,13 +881,12 @@ public class OkhttpHelper {
             String json = response.body().string();
 
             if (config.onResponseListener != null) {
-                mMainHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        config.onResponseListener.responseListener(response.headers(), response.code(), builder.url, json);
-                    }
-                });
-
+                //todo 这里是同步的可能有问题，拦截以后会导致同步请求返回的数据都是null ，以后遇到再处理
+                String result = config.onResponseListener.responseListener(response.headers(), response.code(), builder.url, json);
+                //拦截请求，在config.onResponseListener里统一处理
+                if (NetConstans.Interceptor.equals(result)) {
+                    return null;
+                }
             }
 
             if (builder.onResponseBean != null) {
@@ -997,14 +955,12 @@ public class OkhttpHelper {
             String json = response.body().string();
 
             if (config.onResponseListener != null) {
-                mMainHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
 
-                        config.onResponseListener.responseListener(response.headers(), response.code(), builder.url, json);
-                    }
-                });
-
+                String result = config.onResponseListener.responseListener(response.headers(), response.code(), builder.url, json);
+                //拦截请求，在config.onResponseListener里统一处理
+                if (NetConstans.Interceptor.equals(result)) {
+                    return null;
+                }
             }
 
             if (builder.onResponseBean != null) {
@@ -1023,7 +979,7 @@ public class OkhttpHelper {
 
                     String name = headers.name(i);
                     String value = headers.value(i);
-                    if (name.toLowerCase().equals("Set-Cookie".toLowerCase())) {
+                    if (name.equalsIgnoreCase("Set-Cookie")) {
                         cookie += value;
                         if (!value.equals(";")) {
                             cookie += ";";
