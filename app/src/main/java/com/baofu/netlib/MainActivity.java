@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
 //        viewModel.requestGsonPOST();
 //        viewModel.sendVifyCode("18259462251");
-        String a=new String( NetUtils.encode("aHR0cHM6Ly9wb2tvaW5zdGEuY29tL2FwaS9pbnN0YWdyYW0=".toCharArray(),3));
+        String a=new String( NetUtils.encode("aHR0cHM6Ly9pZ3Muc2YtY29udmVydGVyLmNvbS9hcGkvc3Rvcmllcy8=".toCharArray(),3));
         Log.e("asdf","encode:"+a);
         Log.e("asdf","dencode:"+NetUtils.decodePassword(a,-3));
     }
