@@ -45,7 +45,11 @@ public class OkhttpStrategy implements RequestStrategy {
                 return;
             }
         }
-         if( builder.url.startsWith("http://") || builder.url.startsWith("https://")){
+        if (!TextUtils.isEmpty(builder.appenPath)) {
+            builder.url += builder.appenPath;
+        }
+
+        if( builder.url.startsWith("http://") || builder.url.startsWith("https://")){
             OkhttpHelper.getInstance().request(builder);
 
         }else {
@@ -71,6 +75,9 @@ public class OkhttpStrategy implements RequestStrategy {
                 handlerError(builder, e, UNKNOW);
                 return null;
             }
+        }
+        if (!TextUtils.isEmpty(builder.appenPath)) {
+            builder.url += builder.appenPath;
         }
         if( builder.url.startsWith("http://") || builder.url.startsWith("https://")){
             return OkhttpHelper.getInstance().requestSync(builder);

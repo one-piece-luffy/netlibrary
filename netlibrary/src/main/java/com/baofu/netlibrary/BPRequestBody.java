@@ -11,9 +11,14 @@ public class BPRequestBody<E> {
     public Map<String,String> params;
     public Class<E> clazz;
     public String paramsJson;
+    //加密连接
     public boolean encryptionUrl;
+    //加密位移
     public int encryptionDiff;
+    //加密路径
     public String appenEncryptPath;
+    //非加密路径
+    public String appenPath;
     public boolean needCache;
     public String requestTag;
     public BPListener.OnResponseBean onResponseBean;
@@ -120,6 +125,10 @@ public class BPRequestBody<E> {
         }
         public Builder appenEncryptPath(String appenEncryptPath) {
             mBPRequestBody.appenEncryptPath=appenEncryptPath;
+            return this;
+        }
+        public Builder appenPath(String appenPath) {
+            mBPRequestBody.appenPath=appenPath;
             return this;
         }
 

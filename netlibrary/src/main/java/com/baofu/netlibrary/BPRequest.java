@@ -131,5 +131,8 @@ public class BPRequest {
     public BPRequestBody.Builder appenEncryptPath(String appenEncryptPath) {
         return new BPRequestBody.Builder().appenEncryptPath(appenEncryptPath);
     }
+    public BPRequestBody.Builder appenPath(String appenPath) {
+        return new BPRequestBody.Builder().appenPath(appenPath);
+    }
 
 }
