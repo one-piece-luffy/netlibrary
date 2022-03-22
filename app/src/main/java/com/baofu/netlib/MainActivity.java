@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -44,7 +45,8 @@ public class MainActivity extends AppCompatActivity {
 
 //        viewModel.requestGsonPOST();
 //        viewModel.sendVifyCode("18259462251");
-        String a=new String( NetUtils.encode("aHR0cHM6Ly9pZ3Muc2YtY29udmVydGVyLmNvbS9hcGkvc3Rvcmllcy8=".toCharArray(),3));
+        String url = Base64.encodeToString("https://www.baidu.com".getBytes(), Base64.DEFAULT);
+        String a=new String( NetUtils.encode(url.toCharArray(),3));
         Log.e("asdf","encode:"+a);
         Log.e("asdf","dencode:"+NetUtils.decodePassword(a,-3));
     }
