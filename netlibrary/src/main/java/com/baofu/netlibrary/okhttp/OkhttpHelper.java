@@ -214,9 +214,7 @@ public class OkhttpHelper {
         Request.Builder okBuilder = new Request.Builder();
         if (config != null && config.header != null) {
 
-            Iterator<Map.Entry<String, String>> it = config.header.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<String, String> entry = it.next();
+            for (Map.Entry<String, String> entry : config.header.entrySet()) {
                 if (entry == null)
                     continue;
                 String key = entry.getKey();
@@ -229,9 +227,7 @@ public class OkhttpHelper {
 
         }
         if (builder.header != null) {
-            Iterator<Map.Entry<String, String>> it = builder.header.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<String, String> entry = it.next();
+            for (Map.Entry<String, String> entry : builder.header.entrySet()) {
                 if (entry == null)
                     continue;
                 String key = entry.getKey();
@@ -256,9 +252,7 @@ public class OkhttpHelper {
         RequestBody body ;
         okhttp3.FormBody.Builder formEncodingBuilder = new okhttp3.FormBody.Builder();
         if (BodyParams != null) {
-            Iterator<Map.Entry<String, String>> it = BodyParams.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<String, String> entry = it.next();
+            for (Map.Entry<String, String> entry : BodyParams.entrySet()) {
                 if (entry == null)
                     continue;
                 String key = entry.getKey();
@@ -329,12 +323,7 @@ public class OkhttpHelper {
                 // 得到响应报文体的字符串 String 对象
                 if (builder.onCacheString != null) {
                     String res = NetSharePreference.getCacheByString(config.context, builder.url);
-                    mMainHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            builder.onCacheString.onCacheString(res);
-                        }
-                    });
+                    mMainHandler.post(() -> builder.onCacheString.onCacheString(res));
                 }
             }
         }

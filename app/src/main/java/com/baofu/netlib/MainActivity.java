@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
 //        viewModel.requestGsonPOST();
 //        viewModel.sendVifyCode("18259462251");
-        String url = Base64.encodeToString("https://www.baidu.com".getBytes(), Base64.DEFAULT);
+        String url = Base64.encodeToString("https://one-piece-luffy.github.io/api/ins/version2.json".getBytes(), Base64.DEFAULT);
         String a=new String( NetUtils.encode(url.toCharArray(),3));
         Log.e("asdf","encode:"+a);
         Log.e("asdf","dencode:"+NetUtils.decodePassword(a,-3));
