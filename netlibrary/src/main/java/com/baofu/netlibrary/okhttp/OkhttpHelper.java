@@ -758,6 +758,19 @@ public class OkhttpHelper {
                     return;
                 }
             }
+            // 得到响应报文体的字符串 String 对象
+            if (builder.onResponseString != null) {
+
+                mMainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        builder.onResponseString.onResponse(json);
+                    }
+                });
+                if (builder.needCache && config != null && config.context != null) {
+                    NetSharePreference.saveCacheByString(config.context, builder.url, json);
+                }
+            }
             if (builder.onResponseBean != null) {
                 E model ;
                 try {
@@ -814,20 +827,6 @@ public class OkhttpHelper {
                 }
 
 
-            } else {
-                // 得到响应报文体的字符串 String 对象
-                if (builder.onResponseString != null) {
-
-                    mMainHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            builder.onResponseString.onResponse(json);
-                        }
-                    });
-                    if (builder.needCache && config != null && config.context != null) {
-                        NetSharePreference.saveCacheByString(config.context, builder.url, json);
-                    }
-                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -877,7 +876,15 @@ public class OkhttpHelper {
                     return null;
                 }
             }
+            // 得到响应报文体的字符串 String 对象
+            if (builder.onResponseString != null) {
 
+                builder.onResponseString.onResponse(json);
+                if (builder.needCache && config != null && config.context != null) {
+                    NetSharePreference.saveCacheByString(config.context, builder.url, json);
+                }
+                return (E) json;
+            }
             if (builder.onResponseBean != null) {
                 E model = null;
                 try {
@@ -920,16 +927,6 @@ public class OkhttpHelper {
                 }
                 return (E) json;
 
-            } else {
-                // 得到响应报文体的字符串 String 对象
-                if (builder.onResponseString != null) {
-
-                    builder.onResponseString.onResponse(json);
-                    if (builder.needCache && config != null && config.context != null) {
-                        NetSharePreference.saveCacheByString(config.context, builder.url, json);
-                    }
-                    return (E) json;
-                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -951,7 +948,14 @@ public class OkhttpHelper {
                     return null;
                 }
             }
+            // 得到响应报文体的字符串 String 对象
+            if (builder.onResponseString != null) {
 
+                builder.onResponseString.onResponse(json);
+                if (builder.needCache && config != null && config.context != null) {
+                    NetSharePreference.saveCacheByString(config.context, builder.url, json);
+                }
+            }
             if (builder.onResponseBean != null) {
                 if (builder.needCache && config != null && config.context != null) {
                     NetSharePreference.saveCache(config.context, builder.url, json);
@@ -986,15 +990,6 @@ public class OkhttpHelper {
                     NetSharePreference.saveCacheByString(config.context, builder.url, json);
                 }
 
-            } else {
-                // 得到响应报文体的字符串 String 对象
-                if (builder.onResponseString != null) {
-
-                    builder.onResponseString.onResponse(json);
-                    if (builder.needCache && config != null && config.context != null) {
-                        NetSharePreference.saveCacheByString(config.context, builder.url, json);
-                    }
-                }
             }
             return json;
         } catch (IOException e) {
