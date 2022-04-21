@@ -750,7 +750,6 @@ public class OkhttpHelper {
 
         try {
             String json = response.body().string();
-
             if (config.onResponseListener != null) {
                 String result = config.onResponseListener.responseListener(response.headers(), response.code(), builder.url, json);
                 //拦截请求，在config.onResponseListener里统一处理
@@ -794,14 +793,14 @@ public class OkhttpHelper {
             } else if (builder.onResponse != null) {
                 // 响应回调
                 int status = response.code();      // 状态码
-                Headers headers = response.headers(); // 响应头
+                Headers responseHeader = response.headers(); // 响应头
                 Map<String, String> map = new HashMap<>();
                 String cookie = "";
 
-                for (int i = 0, count = headers.size(); i < count; i++) {
+                for (int i = 0, count = responseHeader.size(); i < count; i++) {
 
-                    String name = headers.name(i);
-                    String value = headers.value(i);
+                    String name = responseHeader.name(i);
+                    String value = responseHeader.value(i);
                     if (name.equalsIgnoreCase("Set-Cookie")) {
                         cookie += value;
                         if (!value.equals(";")) {
@@ -814,12 +813,20 @@ public class OkhttpHelper {
                         map.put("Set-Cookie", cookie);
                     }
                 }
+                long contentLength = 0;
+                String strLen = response.header("Content-Length");
+                try {
+                    contentLength = Long.parseLong(strLen);
+                } catch (Exception e) {
+                    contentLength = response.body().contentLength();
+                }
 
                 // 报文体
+                long finalContentLength = contentLength;
                 mMainHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        builder.onResponse.onResponse(json, map);
+                        builder.onResponse.onResponse(json, map, finalContentLength);
                     }
                 });
                 if (builder.needCache && config != null && config.context != null) {
@@ -920,8 +927,14 @@ public class OkhttpHelper {
                         map.put("Set-Cookie", cookie);
                     }
                 }
-
-                builder.onResponse.onResponse(json, map);
+                long contentLength = 0;
+                String strLen = response.header("Content-Length");
+                try {
+                    contentLength = Long.parseLong(strLen);
+                } catch (Exception e) {
+                    contentLength = response.body().contentLength();
+                }
+                builder.onResponse.onResponse(json, map,contentLength);
                 if (builder.needCache && config != null && config.context != null) {
                     NetSharePreference.saveCacheByString(config.context, builder.url, json);
                 }
@@ -984,8 +997,14 @@ public class OkhttpHelper {
                         map.put("Set-Cookie", cookie);
                     }
                 }
-
-                builder.onResponse.onResponse(json, map);
+                long contentLength = 0;
+                String strLen = response.header("Content-Length");
+                try {
+                    contentLength = Long.parseLong(strLen);
+                } catch (Exception e) {
+                    contentLength = response.body().contentLength();
+                }
+                builder.onResponse.onResponse(json, map,contentLength);
                 if (builder.needCache && config != null && config.context != null) {
                     NetSharePreference.saveCacheByString(config.context, builder.url, json);
                 }

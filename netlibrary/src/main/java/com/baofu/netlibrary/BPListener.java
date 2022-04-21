@@ -27,7 +27,7 @@ public interface BPListener {
     }
     public interface OnResponse {
 
-        void onResponse(String response,Map<String,String> heaer);
+        void onResponse(String response,Map<String,String> heaer,long contentLength);
     }
     public interface OnException {
 

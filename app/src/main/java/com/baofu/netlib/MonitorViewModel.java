@@ -205,8 +205,9 @@ public class MonitorViewModel extends BaseViewModel {
                 .setHeader(header)
                 .setParams(param)
                 .setOnResponse(new BPListener.OnResponse() {
+
                     @Override
-                    public void onResponse(String response, Map<String,String> obj) {
+                    public void onResponse(String response, Map<String,String> obj, long contentLength) {
                         Map<String,String> header= (Map<String, String>) obj;
                         String cookie=obj.get("Set-Cookie");
                         Map<String, String> he = new HashMap<>();
