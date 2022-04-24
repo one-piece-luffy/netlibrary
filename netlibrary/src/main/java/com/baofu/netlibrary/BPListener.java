@@ -4,6 +4,8 @@ package com.baofu.netlibrary;
 
 import java.util.Map;
 
+import okhttp3.Response;
+
 /**
  * Created by wanglin on 2017/11/14.
  */
@@ -27,7 +29,7 @@ public interface BPListener {
     }
     public interface OnResponse {
 
-        void onResponse(String response,Map<String,String> heaer,long contentLength);
+        void onResponse(Response response);
     }
     public interface OnException {
 

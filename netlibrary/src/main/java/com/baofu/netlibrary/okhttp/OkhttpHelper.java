@@ -13,13 +13,12 @@ import com.baofu.netlibrary.BPRequest;
 import com.baofu.netlibrary.BPRequestBody;
 import com.baofu.netlibrary.okhttp.interceptor.RedirectInterceptor;
 import com.baofu.netlibrary.utils.NetConstans;
+import com.baofu.netlibrary.utils.NetSharePreference;
 import com.baofu.netlibrary.utils.NetUtils;
 import com.baofu.netlibrary.utils.SSLUtil;
-import com.baofu.netlibrary.utils.NetSharePreference;
 
 import java.io.IOException;
 import java.net.Proxy;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -28,7 +27,6 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.ConnectionPool;
 import okhttp3.Dispatcher;
-import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -144,7 +142,7 @@ public class OkhttpHelper {
      * 同步请求
      *
      */
-    public <T> T requestSync(BPRequestBody<T> builder) {
+    public Response requestSync(BPRequestBody builder) {
 
         if (!TextUtils.isEmpty(builder.appenEncryptPath)) {
             try {
@@ -157,7 +155,7 @@ public class OkhttpHelper {
             }
         }
 
-        T result = null;
+        Response result = null;
         switch (builder.method) {
             case BPRequest.Method.POST:
                 result = postSync(builder);
@@ -175,40 +173,6 @@ public class OkhttpHelper {
         return result;
     }
 
-    /**
-     * 同步请求
-     *
-     */
-    public String requestStringSync(BPRequestBody builder) {
-
-        if (!TextUtils.isEmpty(builder.appenEncryptPath)) {
-            try {
-                String appen = NetUtils.decodePassword(builder.appenEncryptPath, builder.encryptionDiff);
-                builder.url += appen;
-            } catch (Exception e) {
-                e.printStackTrace();
-                handlerError(builder, null, UNKNOW);
-                return null;
-            }
-        }
-
-        String result = null;
-        switch (builder.method) {
-            case BPRequest.Method.POST:
-                result = postStringSync(builder);
-                break;
-            case BPRequest.Method.GET:
-                result = getStringSync(builder);
-                break;
-            case BPRequest.Method.DELETE:
-                result = deleteStringSync(builder);
-                break;
-            case BPRequest.Method.PATCH:
-                result = patchStringSync(builder);
-                break;
-        }
-        return result;
-    }
 
     private <E> Request.Builder getBuilder(BPRequestBody<E> builder) {
         Request.Builder okBuilder = new Request.Builder();
@@ -447,7 +411,7 @@ public class OkhttpHelper {
         });
     }
 
-    private <E> E postSync(BPRequestBody<E> builder) {
+    private Response postSync(BPRequestBody builder) {
 
         RequestBody body = null;
         if (!TextUtils.isEmpty(builder.paramsJson)) {
@@ -462,39 +426,16 @@ public class OkhttpHelper {
         try {
             //3 将Request封装为Call
             Call call = mClient.newCall(request);
-            Response response = call.execute();
-            int code = response.code();
-            if ((code >= 200 && code < 300) || code == 304) {
-                E model = handlerResponseSync(response, builder);
-                return model;
-            } else {
-                handlerErrorSync(builder, null, code);
-            }
+            return call.execute();
 
         } catch (Exception e) {
-            handlerErrorSync(builder, e, UNKNOW);
+            e.printStackTrace();
         }
         return null;
 
     }
 
-    private <E> E getSync(BPRequestBody<E> builder) {
-        if (builder.needCache) {
-            if (builder.onCacheBean != null) {
-                final E model = NetSharePreference.getCache(config.context, builder.url, builder.clazz);
-                builder.onCacheBean.onCache(model);
-
-            } else if (builder.onResponse != null) {
-                //todo
-
-            } else {
-                // 得到响应报文体的字符串 String 对象
-                if (builder.onCacheString != null) {
-                    String res = NetSharePreference.getCacheByString(config.context, builder.url);
-                    builder.onCacheString.onCacheString(res);
-                }
-            }
-        }
+    private Response getSync(BPRequestBody builder) {
 
         Request.Builder okBuilder = getBuilder(builder);
         String url = builder.url;
@@ -528,15 +469,7 @@ public class OkhttpHelper {
                 .build();
         try {
             Call call = mClient.newCall(request);
-            Response response = call.execute();
-            int code = response.code();
-            if ((code >= 200 && code < 300) || code == 304) {
-                E model = handlerResponseSync(response, builder);
-                return model;
-            } else {
-                handlerErrorSync(builder, null, code);
-            }
-
+            return call.execute();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -545,7 +478,7 @@ public class OkhttpHelper {
         return null;
     }
 
-    private <E> E deleteSync(BPRequestBody<E> builder) {
+    private Response deleteSync(BPRequestBody builder) {
         RequestBody body = setRequestBody(builder.params);
         Request.Builder okBuilder = getBuilder(builder);
         Request request = okBuilder.url(builder.url).delete(body).build();
@@ -553,14 +486,7 @@ public class OkhttpHelper {
         try {
             //3 将Request封装为Call
             Call call = mClient.newCall(request);
-            Response response = call.execute();
-            int code = response.code();
-            if ((code >= 200 && code < 300) || code == 304) {
-                return handlerResponseSync(response, builder);
-            } else {
-                handlerErrorSync(builder, null, code);
-            }
-
+            return call.execute();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -568,7 +494,7 @@ public class OkhttpHelper {
 
     }
 
-    private <E> E patchSync(BPRequestBody<E> builder) {
+    private Response patchSync(BPRequestBody builder) {
         RequestBody body = setRequestBody(builder.params);
         Request.Builder okBuilder = getBuilder(builder);
         Request request = okBuilder.url(builder.url).patch(body).build();
@@ -576,13 +502,7 @@ public class OkhttpHelper {
         try {
             //3 将Request封装为Call
             Call call = mClient.newCall(request);
-            Response response = call.execute();
-            int code = response.code();
-            if ((code >= 200 && code < 300) || code == 304) {
-                return handlerResponseSync(response, builder);
-            } else {
-                handlerErrorSync(builder, null, code);
-            }
+            return call.execute();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -590,133 +510,6 @@ public class OkhttpHelper {
         return null;
     }
 
-    private String postStringSync(BPRequestBody builder) {
-
-        RequestBody body ;
-        if (!TextUtils.isEmpty(builder.paramsJson)) {
-            body = RequestBody.create(builder.paramsJson, MediaType.get("application/json; charset=utf-8"));
-        } else {
-            body = setRequestBody(builder.params);
-        }
-
-        Request.Builder okBuilder = getBuilder(builder);
-        Request request = okBuilder.post(body).url(builder.url).build();
-
-        try {
-            //3 将Request封装为Call
-            Call call = mClient.newCall(request);
-            Response response = call.execute();
-            int code = response.code();
-            if ((code >= 200 && code < 300) || code == 304) {
-                return handlerResponseStringSync(response, builder);
-            } else {
-                handlerErrorSync(builder, null, code);
-            }
-
-        } catch (Exception e) {
-            handlerErrorSync(builder, e, UNKNOW);
-        }
-        return null;
-
-    }
-
-    private String getStringSync(BPRequestBody builder) {
-
-        Request.Builder okBuilder = getBuilder(builder);
-        String url = builder.url;
-        if (builder.params != null) {
-
-            Iterator<Map.Entry<String, String>> it = builder.params.entrySet().iterator();
-            StringBuilder stringBuffer=new StringBuilder(url);
-            while (it.hasNext()) {
-                Map.Entry<String, String> entry = it.next();
-                if (entry == null)
-                    continue;
-                String key = entry.getKey();
-                String value = entry.getValue();
-                if (TextUtils.isEmpty(key) || TextUtils.isEmpty(value)) {
-                    continue;
-                }
-                if (url.contains("?")) {
-                    stringBuffer.append("&");
-                    stringBuffer.append(key);
-                    stringBuffer.append("=");
-                    stringBuffer.append(value);
-                } else {
-                    stringBuffer.append("?");
-                    stringBuffer.append(key);
-                    stringBuffer.append("=");
-                    stringBuffer.append(value);
-                }
-            }
-            url=stringBuffer.toString();
-
-        }
-        Request request = okBuilder.url(url)
-                .build();
-        try {
-            Call call = mClient.newCall(request);
-            Response response = call.execute();
-
-            int code = response.code();
-            if ((code >= 200 && code < 300) || code == 304) {
-                return handlerResponseStringSync(response, builder);
-            } else {
-                handlerErrorSync(builder, null, code);
-            }
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            handlerErrorSync(builder, e, UNKNOW);
-        }
-        return null;
-    }
-
-    private String deleteStringSync(BPRequestBody builder) {
-        RequestBody body = setRequestBody(builder.params);
-        Request.Builder okBuilder = getBuilder(builder);
-        Request request = okBuilder.url(builder.url).delete(body).build();
-
-        try {
-            //3 将Request封装为Call
-            Call call = mClient.newCall(request);
-            Response response = call.execute();
-            int code = response.code();
-            if ((code >= 200 && code < 300) || code == 304) {
-                return handlerResponseStringSync(response, builder);
-            } else {
-                handlerErrorSync(builder, null, code);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-
-    }
-
-    private String patchStringSync(BPRequestBody builder) {
-        RequestBody body = setRequestBody(builder.params);
-        Request.Builder okBuilder = getBuilder(builder);
-        Request request = okBuilder.url(builder.url).patch(body).build();
-
-        try {
-            //3 将Request封装为Call
-            Call call = mClient.newCall(request);
-            Response response = call.execute();
-            int code = response.code();
-            if ((code >= 200 && code < 300) || code == 304) {
-                return handlerResponseStringSync(response, builder);
-            } else {
-                handlerErrorSync(builder, null, code);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     private <E> void handlerError(BPRequestBody<E> builder, Exception e, int code) {
 
@@ -749,6 +542,18 @@ public class OkhttpHelper {
     private <E> void handlerResponse(final Call call, final Response response, BPRequestBody<E> builder) {
 
         try {
+            if (builder.onResponse != null) {
+
+                mMainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        builder.onResponse.onResponse(response);
+                    }
+                });
+                return;
+
+
+            }
             String json = response.body().string();
             if (config.onResponseListener != null) {
                 String result = config.onResponseListener.responseListener(response.headers(), response.code(), builder.url, json);
@@ -790,50 +595,6 @@ public class OkhttpHelper {
                     NetSharePreference.saveCache(config.context, builder.url, finalModel);
                 }
 
-            } else if (builder.onResponse != null) {
-                // 响应回调
-                int status = response.code();      // 状态码
-                Headers responseHeader = response.headers(); // 响应头
-                Map<String, String> map = new HashMap<>();
-                String cookie = "";
-
-                for (int i = 0, count = responseHeader.size(); i < count; i++) {
-
-                    String name = responseHeader.name(i);
-                    String value = responseHeader.value(i);
-                    if (name.equalsIgnoreCase("Set-Cookie")) {
-                        cookie += value;
-                        if (!value.equals(";")) {
-                            cookie += ";";
-                        }
-                    } else {
-                        map.put(name, value);
-                    }
-                    if (!TextUtils.isEmpty(cookie)) {
-                        map.put("Set-Cookie", cookie);
-                    }
-                }
-                long contentLength = 0;
-                String strLen = response.header("Content-Length");
-                try {
-                    contentLength = Long.parseLong(strLen);
-                } catch (Exception e) {
-                    contentLength = response.body().contentLength();
-                }
-
-                // 报文体
-                long finalContentLength = contentLength;
-                mMainHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        builder.onResponse.onResponse(json, map, finalContentLength);
-                    }
-                });
-                if (builder.needCache && config != null && config.context != null) {
-                    NetSharePreference.saveCacheByString(config.context, builder.url, json);
-                }
-
-
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -841,7 +602,7 @@ public class OkhttpHelper {
         }
     }
 
-    private <E> void handlerErrorSync(BPRequestBody<E> builder, Exception e, int code) {
+    private  void handlerErrorSync(BPRequestBody builder, Exception e, int code) {
         if (config.onResponseListener != null) {
             Exception exception = e;
             if (exception == null) {
@@ -868,154 +629,6 @@ public class OkhttpHelper {
 
         }
 
-    }
-
-    private <E> E handlerResponseSync(final Response response, BPRequestBody<E> builder) {
-
-        try {
-            String json = response.body().string();
-
-            if (config.onResponseListener != null) {
-                //todo 这里是同步的可能有问题，拦截以后会导致同步请求返回的数据都是null ，以后遇到再处理
-                String result = config.onResponseListener.responseListener(response.headers(), response.code(), builder.url, json);
-                //拦截请求，在config.onResponseListener里统一处理
-                if (NetConstans.Interceptor.equals(result)) {
-                    return null;
-                }
-            }
-            // 得到响应报文体的字符串 String 对象
-            if (builder.onResponseString != null) {
-
-                builder.onResponseString.onResponse(json);
-                if (builder.needCache && config != null && config.context != null) {
-                    NetSharePreference.saveCacheByString(config.context, builder.url, json);
-                }
-                return (E) json;
-            }
-            if (builder.onResponseBean != null) {
-                E model = null;
-                try {
-                    model = JSON.parseObject(json, builder.clazz);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                if (builder.needCache && config != null && config.context != null) {
-                    NetSharePreference.saveCache(config.context, builder.url, model);
-                }
-                return model;
-
-            } else if (builder.onResponse != null) {
-                // 响应回调
-
-                Headers headers = response.headers(); // 响应头
-                Map<String, String> map = new HashMap<>();
-                String cookie = "";
-
-                for (int i = 0, count = headers.size(); i < count; i++) {
-
-                    String name = headers.name(i);
-                    String value = headers.value(i);
-                    if (name.toLowerCase().equals("Set-Cookie".toLowerCase())) {
-                        cookie += value;
-                        if (!value.equals(";")) {
-                            cookie += ";";
-                        }
-                    } else {
-                        map.put(name, value);
-                    }
-                    if (!TextUtils.isEmpty(cookie)) {
-                        map.put("Set-Cookie", cookie);
-                    }
-                }
-                long contentLength = 0;
-                String strLen = response.header("Content-Length");
-                try {
-                    contentLength = Long.parseLong(strLen);
-                } catch (Exception e) {
-                    contentLength = response.body().contentLength();
-                }
-                builder.onResponse.onResponse(json, map,contentLength);
-                if (builder.needCache && config != null && config.context != null) {
-                    NetSharePreference.saveCacheByString(config.context, builder.url, json);
-                }
-                return (E) json;
-
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            handlerError(builder, e, UNKNOW);
-        }
-        return null;
-    }
-
-    private String handlerResponseStringSync(final Response response, BPRequestBody builder) {
-
-        try {
-            String json = response.body().string();
-
-            if (config.onResponseListener != null) {
-
-                String result = config.onResponseListener.responseListener(response.headers(), response.code(), builder.url, json);
-                //拦截请求，在config.onResponseListener里统一处理
-                if (NetConstans.Interceptor.equals(result)) {
-                    return null;
-                }
-            }
-            // 得到响应报文体的字符串 String 对象
-            if (builder.onResponseString != null) {
-
-                builder.onResponseString.onResponse(json);
-                if (builder.needCache && config != null && config.context != null) {
-                    NetSharePreference.saveCacheByString(config.context, builder.url, json);
-                }
-            }
-            if (builder.onResponseBean != null) {
-                if (builder.needCache && config != null && config.context != null) {
-                    NetSharePreference.saveCache(config.context, builder.url, json);
-                }
-
-            } else if (builder.onResponse != null) {
-                // 响应回调
-
-                Headers headers = response.headers(); // 响应头
-                Map<String, String> map = new HashMap<>();
-                String cookie = "";
-
-                for (int i = 0, count = headers.size(); i < count; i++) {
-
-                    String name = headers.name(i);
-                    String value = headers.value(i);
-                    if (name.equalsIgnoreCase("Set-Cookie")) {
-                        cookie += value;
-                        if (!value.equals(";")) {
-                            cookie += ";";
-                        }
-                    } else {
-                        map.put(name, value);
-                    }
-                    if (!TextUtils.isEmpty(cookie)) {
-                        map.put("Set-Cookie", cookie);
-                    }
-                }
-                long contentLength = 0;
-                String strLen = response.header("Content-Length");
-                try {
-                    contentLength = Long.parseLong(strLen);
-                } catch (Exception e) {
-                    contentLength = response.body().contentLength();
-                }
-                builder.onResponse.onResponse(json, map,contentLength);
-                if (builder.needCache && config != null && config.context != null) {
-                    NetSharePreference.saveCacheByString(config.context, builder.url, json);
-                }
-
-            }
-            return json;
-        } catch (IOException e) {
-            e.printStackTrace();
-            handlerError(builder, e, UNKNOW);
-        }
-        return null;
     }
 
 }
