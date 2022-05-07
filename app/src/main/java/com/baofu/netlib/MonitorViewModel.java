@@ -7,14 +7,18 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.alibaba.fastjson.JSON;
 import com.baofu.netlib.bean.ConfigModelBean;
 import com.baofu.netlibrary.BPRequest;
 import com.baofu.netlibrary.BPRequestBody;
 import com.baofu.netlibrary.BaseViewModel;
 import com.baofu.netlibrary.BPListener;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import okhttp3.Response;
 
 public class MonitorViewModel extends BaseViewModel {
     public final String COOKIE = "jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YzNhYzYxOGNmOWYzNDNkOGZkMDMyMzkiLCJpYXQiOjE2MDAzOTkzMjgsImV4cCI6MTYwMTYwODkyOH0.ImOPavAeqrTKFT-WOBmPefoKVV3c29DV1v5eZylNvXc";
@@ -80,57 +84,6 @@ public class MonitorViewModel extends BaseViewModel {
 
 //
     }
-
-    /**
-     * 同步请求返回String
-     */
-    public void requestStringSync() {
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Map<String, String> param = new HashMap<>();
-                param.put("code", "18933333333");
-                param.put("password", "123456");
-                Map<String, String> header = new HashMap<>();
-                header.put("header", "header");
-                String result= BPRequest.getInstance()
-                        .setMethod(BPRequest.Method.GET)
-                        .setUrl("https://api.dongqiudi.com/app/global/2/android.json?mark=gif&platform=android&version=216&android-channel=website")
-                        .setParams(param)
-                        .setRequestTag(System.currentTimeMillis()+"")
-                        .setHeader(header)
-                        .setNeedCache(true)
-                        .setClazz(String.class)
-
-//                .setOnResponseBean(ConfigModelBean.class, new BPListener.OnResponseBean<ConfigModelBean>() {
-//                    @Override
-//                    public void onResponse(ConfigModelBean response) {
-//                        Log.e("time",response.toString()+"");
-//                        Toast.makeText(BaseApplication.getInstance(), response.getUpdated_at(), Toast.LENGTH_SHORT).show();
-//                    }
-//                })
-                        .setOnCacheBean(new BPListener.onCacheBean() {
-                            @Override
-                            public void onCache(Object response) {
-                                if(response==null)
-                                    return;
-                                Log.e("asdf","cache time:"+response.toString()+"");
-                            }
-                        })
-                        .setOnException(new BPListener.OnException() {
-                            @Override
-                            public void onException(Exception e, int code, String response) {
-                                e.printStackTrace();
-                            }
-
-                        })
-                        .requestStringSync();
-                Log.e("asdf","sync result:"+result);
-            }
-        }).start();
-
-    }
     /**
      * 同步请求返回bean
      */
@@ -144,7 +97,7 @@ public class MonitorViewModel extends BaseViewModel {
                 param.put("password", "123456");
                 Map<String, String> header = new HashMap<>();
                 header.put("header", "header");
-                ConfigModelBean result= BPRequest.getInstance()
+                Response response= BPRequest.getInstance()
                         .setMethod(BPRequest.Method.GET)
                         .setUrl("https://api.dongqiudi.com/app/global/2/android.json?mark=gif&platform=android&version=216&android-channel=website")
                         .setParams(param)
@@ -160,14 +113,6 @@ public class MonitorViewModel extends BaseViewModel {
                         Toast.makeText(BaseApplication.getInstance(), response.getUpdated_at(), Toast.LENGTH_SHORT).show();
                     }
                 })
-                        .setOnCacheBean(new BPListener.onCacheBean() {
-                            @Override
-                            public void onCache(Object response) {
-                                if(response==null)
-                                    return;
-                                Log.e("asdf","cache time:"+response.toString()+"");
-                            }
-                        })
                         .setOnException(new BPListener.OnException() {
                             @Override
                             public void onException(Exception e, int code, String response) {
@@ -176,6 +121,12 @@ public class MonitorViewModel extends BaseViewModel {
 
                         })
                         .requestSync();
+                ConfigModelBean result= null;
+                try {
+                    result = JSON.parseObject(response.body().string(), ConfigModelBean.class);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 Log.e("asdf","sync result:"+result);
             }
         }).start();
@@ -205,10 +156,9 @@ public class MonitorViewModel extends BaseViewModel {
                 .setHeader(header)
                 .setParams(param)
                 .setOnResponse(new BPListener.OnResponse() {
+
                     @Override
-                    public void onResponse(String response, Map<String,String> obj) {
-                        Map<String,String> header= (Map<String, String>) obj;
-                        String cookie=obj.get("Set-Cookie");
+                    public void onResponse(Response response) {
                         Map<String, String> he = new HashMap<>();
                         he.put("timestamp", System.currentTimeMillis() + "");
 //                        he.put("cookie",cookie);

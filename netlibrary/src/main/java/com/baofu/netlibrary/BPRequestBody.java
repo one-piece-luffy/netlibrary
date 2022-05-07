@@ -4,6 +4,8 @@ import com.baofu.netlibrary.okhttp.OkhttpStrategy;
 
 import java.util.Map;
 
+import okhttp3.Response;
+
 public class BPRequestBody<E> {
     public int method;
     public String url;
@@ -143,25 +145,13 @@ public class BPRequestBody<E> {
             }
             BPRequest.getInstance().mStrategy.request(this.build());
         }
-        public <T> T requestSync(){
-            if(BPRequest.getInstance().mStrategy==null){
-                BPRequest.getInstance().mStrategy=new OkhttpStrategy();
-            }
-            Object o= BPRequest.getInstance().mStrategy.requestSync(this.build());
-            if(o==null)
-                return null;
-            try {
-                return (T) o;
-            }catch (Exception e){
 
+        public Response requestSync() {
+            if (BPRequest.getInstance().mStrategy == null) {
+                BPRequest.getInstance().mStrategy = new OkhttpStrategy();
             }
-           return null;
-        }
-        public String requestStringSync(){
-            if(BPRequest.getInstance().mStrategy==null){
-                BPRequest.getInstance().mStrategy=new OkhttpStrategy();
-            }
-            return BPRequest.getInstance().mStrategy.requestStringSync(this.build());
+            Response o = BPRequest.getInstance().mStrategy.requestSync(this.build());
+            return o;
         }
     }
 

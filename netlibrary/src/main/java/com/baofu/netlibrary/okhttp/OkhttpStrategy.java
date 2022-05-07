@@ -12,6 +12,8 @@ import com.baofu.netlibrary.BPRequestBody;
 import com.baofu.netlibrary.RequestStrategy;
 import com.baofu.netlibrary.utils.NetUtils;
 
+import okhttp3.Response;
+
 public class OkhttpStrategy implements RequestStrategy {
 
     Handler mMainHandler = new Handler(Looper.getMainLooper());
@@ -60,7 +62,7 @@ public class OkhttpStrategy implements RequestStrategy {
     }
 
     @Override
-    public <T> T requestSync(BPRequestBody<T> builder) {
+    public Response requestSync(BPRequestBody builder) {
         if(builder==null|| TextUtils.isEmpty(builder.url)){
             Log.e("OkhttpStrategy","==============url 不能为空==============");
             handlerError(builder, new Exception("url 不能为空"),UNKNOW);
@@ -89,32 +91,7 @@ public class OkhttpStrategy implements RequestStrategy {
         return null;
     }
 
-    @Override
-    public String requestStringSync(BPRequestBody builder) {
-        if(builder==null|| TextUtils.isEmpty(builder.url)){
-            Log.e("OkhttpStrategy","==============url 不能为空==============");
-            handlerError(builder, new Exception("url 不能为空"),UNKNOW);
-            return null;
-        }
-        if (builder.encryptionUrl) {
-            try {
-                String url = NetUtils.decodePassword(builder.url, builder.encryptionDiff);
-                builder.url = url;
-            } catch (Exception e) {
-                e.printStackTrace();
-                handlerError(builder, e, UNKNOW);
-                return null;
-            }
-        }
-        if( builder.url.startsWith("http://") || builder.url.startsWith("https://")){
-            return OkhttpHelper.getInstance().requestStringSync(builder);
 
-        }else {
-            handlerError(builder, new Exception("url 不能为空"),UNKNOW);
-            Log.e("OkhttpStrategy", "==============url必须是http或者https开头==============");
-        }
-        return null;
-    }
     private <E> void handlerError(BPRequestBody<E> builder, Exception e, int code) {
         if (builder.onException != null) {
             mMainHandler.post(new Runnable() {

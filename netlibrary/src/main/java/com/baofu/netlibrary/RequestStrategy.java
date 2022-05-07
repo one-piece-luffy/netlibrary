@@ -1,5 +1,7 @@
 package com.baofu.netlibrary;
 
+import okhttp3.Response;
+
 public interface RequestStrategy {
 
     public void init(BPConfig config);
@@ -8,8 +10,7 @@ public interface RequestStrategy {
 
     public void request(BPRequestBody builder);
 
-    public <T> T requestSync(BPRequestBody<T> builder);
-    public String requestStringSync(BPRequestBody builder);
+    public Response requestSync(BPRequestBody builder);
 
 
 }

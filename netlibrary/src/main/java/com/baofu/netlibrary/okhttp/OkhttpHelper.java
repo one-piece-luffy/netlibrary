@@ -297,8 +297,7 @@ public class OkhttpHelper {
 
                     handlerResponse(call, response, builder);
                 } else {
-
-                    handlerError(builder, new Exception( response.message()), code);
+                    handlerError(builder, null, code);
                 }
 
             }
@@ -376,7 +375,7 @@ public class OkhttpHelper {
 
                         handlerResponse(call, response, builder);
                     } else {
-                        handlerError(builder,  new Exception( response.message()), code);
+                        handlerError(builder, null, code);
                     }
 
 
@@ -410,7 +409,7 @@ public class OkhttpHelper {
 
                     handlerResponse(call, response, builder);
                 } else {
-                    handlerError(builder,  new Exception( response.message()), code);
+                    handlerError(builder, null, code);
                 }
 
 
@@ -710,7 +709,7 @@ public class OkhttpHelper {
             if ((code >= 200 && code < 300) || code == 304) {
                 return handlerResponseStringSync(response, builder);
             } else {
-                handlerErrorSync(builder, new Exception( response.message()), code);
+                handlerErrorSync(builder, null, code);
             }
 
         } catch (Exception e) {
@@ -765,7 +764,7 @@ public class OkhttpHelper {
                     model = JSON.parseObject(json, builder.clazz);
                 } catch (JSONException e) {
 //                    e.printStackTrace();
-                    handlerError(builder,  e, UNKNOW);
+                    handlerError(builder, e, UNKNOW);
                     return;
                 }
                 E finalModel = model;
@@ -807,7 +806,7 @@ public class OkhttpHelper {
                 mMainHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        builder.onResponse.onResponse(json, map);
+                        builder.onResponse.onResponse(response);
                     }
                 });
                 if (builder.needCache && config != null && config.context != null) {
@@ -915,7 +914,7 @@ public class OkhttpHelper {
                     }
                 }
 
-                builder.onResponse.onResponse(json, map);
+                builder.onResponse.onResponse(response);
                 if (builder.needCache && config != null && config.context != null) {
                     NetSharePreference.saveCacheByString(config.context, builder.url, json);
                 }
@@ -982,7 +981,7 @@ public class OkhttpHelper {
                     }
                 }
 
-                builder.onResponse.onResponse(json, map);
+                builder.onResponse.onResponse(response);
                 if (builder.needCache && config != null && config.context != null) {
                     NetSharePreference.saveCacheByString(config.context, builder.url, json);
                 }
