@@ -297,7 +297,8 @@ public class OkhttpHelper {
 
                     handlerResponse(call, response, builder);
                 } else {
-                    handlerError(builder, null, code);
+
+                    handlerError(builder, new Exception( response.message()), code);
                 }
 
             }
@@ -375,7 +376,7 @@ public class OkhttpHelper {
 
                         handlerResponse(call, response, builder);
                     } else {
-                        handlerError(builder, null, code);
+                        handlerError(builder,  new Exception( response.message()), code);
                     }
 
 
@@ -409,7 +410,7 @@ public class OkhttpHelper {
 
                     handlerResponse(call, response, builder);
                 } else {
-                    handlerError(builder, null, code);
+                    handlerError(builder,  new Exception( response.message()), code);
                 }
 
 
@@ -709,7 +710,7 @@ public class OkhttpHelper {
             if ((code >= 200 && code < 300) || code == 304) {
                 return handlerResponseStringSync(response, builder);
             } else {
-                handlerErrorSync(builder, null, code);
+                handlerErrorSync(builder, new Exception( response.message()), code);
             }
 
         } catch (Exception e) {
@@ -764,7 +765,7 @@ public class OkhttpHelper {
                     model = JSON.parseObject(json, builder.clazz);
                 } catch (JSONException e) {
 //                    e.printStackTrace();
-                    handlerError(builder, e, UNKNOW);
+                    handlerError(builder,  e, UNKNOW);
                     return;
                 }
                 E finalModel = model;
