@@ -32,12 +32,12 @@ public class MainActivity extends AppCompatActivity {
          */
         MonitorViewModel viewModel = ViewModelProviders.of(this).get(MonitorViewModel.class);
 
-        viewModel.request();//异步请求
+//        viewModel.request();//异步请求
 //        viewModel.requestStringSync();//同步请求，返回string
 //        viewModel.requestSync();//同步请求，返回bean
 
 //        viewModel.getToken();
-        viewModel.requestDailymotion();
+//        viewModel.requestDailymotion();
 
 
 //        viewModel.requestcookie();
@@ -49,7 +49,8 @@ public class MainActivity extends AppCompatActivity {
 
 //        viewModel.requestGsonPOST();
 //        viewModel.sendVifyCode("18259462251");
-        String url = Base64.encodeToString("https://one-piece-luffy.github.io/api/movies/version.json".getBytes(), Base64.DEFAULT);
+
+        String url = Base64.encodeToString("/update".getBytes(), Base64.DEFAULT);
         String a=new String( NetUtils.encode(url.toCharArray(),3));
         Log.e("asdf","encode:"+a);
         Log.e("asdf","dencode:"+NetUtils.decodePassword(a,-3));

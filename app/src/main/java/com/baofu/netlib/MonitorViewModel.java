@@ -229,17 +229,13 @@ public class MonitorViewModel extends BaseViewModel {
 
     public void requestDailymotion(){
         Map<String, String> header = new HashMap<>();
-        header.put("Authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhaWQiOiJmMWEzNjJkMjg4YzFiOTgwOTljNyIsInJvbCI6ImNhbi1tYW5hZ2UtcGFydG5lcnMtcmVwb3J0cyBjYW4tcmVhZC12aWRlby1zdHJlYW1zIGNhbi1zcG9vZi1jb3VudHJ5IGNhbi1hZG9wdC11c2VycyBjYW4tcmVhZC1jbGFpbS1ydWxlcyBjYW4tbWFuYWdlLWNsYWltLXJ1bGVzIGNhbi1tYW5hZ2UtdXNlci1hbmFseXRpY3MgY2FuLXJlYWQtbXktdmlkZW8tc3RyZWFtcyBjYW4tZG93bmxvYWQtbXktdmlkZW9zIGFjdC1hcyBhbGxzY29wZXMgYWNjb3VudC1jcmVhdG9yIGNhbi1yZWFkLWFwcGxpY2F0aW9ucyIsInNjbyI6InJlYWQgd3JpdGUgZGVsZXRlIGVtYWlsIHVzZXJpbmZvIGZlZWQgbWFuYWdlX3ZpZGVvcyBtYW5hZ2VfY29tbWVudHMgbWFuYWdlX3BsYXlsaXN0cyBtYW5hZ2VfdGlsZXMgbWFuYWdlX3N1YnNjcmlwdGlvbnMgbWFuYWdlX2ZyaWVuZHMgbWFuYWdlX2Zhdm9yaXRlcyBtYW5hZ2VfbGlrZXMgbWFuYWdlX2dyb3VwcyBtYW5hZ2VfcmVjb3JkcyBtYW5hZ2Vfc3VidGl0bGVzIG1hbmFnZV9mZWF0dXJlcyBtYW5hZ2VfaGlzdG9yeSBpZnR0dCByZWFkX2luc2lnaHRzIG1hbmFnZV9jbGFpbV9ydWxlcyBkZWxlZ2F0ZV9hY2NvdW50X21hbmFnZW1lbnQgbWFuYWdlX2FuYWx5dGljcyBtYW5hZ2VfcGxheWVyIG1hbmFnZV9wbGF5ZXJzIG1hbmFnZV91c2VyX3NldHRpbmdzIG1hbmFnZV9jb2xsZWN0aW9ucyBtYW5hZ2VfYXBwX2Nvbm5lY3Rpb25zIG1hbmFnZV9hcHBsaWNhdGlvbnMgbWFuYWdlX2RvbWFpbnMiLCJsdG8iOiJlVEZiVXlaRFFocG5XU1VGR0NvZUFFVWVBUVV0RmpoaFhpMVVNQSIsImFpbiI6MSwiYWRnIjoxLCJpYXQiOjE2NTE4ODE4MjksImV4cCI6MTY1MTkxNzI2MywiZG12IjoiMSIsImF0cCI6ImJyb3dzZXIiLCJhZGEiOiJ3d3cuZGFpbHltb3Rpb24uY29tIiwidmlkIjoiRDlERkYzRjZGRjA0RTQ2Mjk5NDk0QzI3NjE1QkRFNkIiLCJmdHMiOjY4MzYyMCwiY2FkIjoyLCJjeHAiOjIsImNhdSI6Miwia2lkIjoiQUY4NDlERDczQTU4NjNDRDdEOTdEMEJBQjA3MjI0M0IifQ.2HKQm-7Vbez2Tqeea5J75Iv15bSHogLp3s9KDnz3yGE");
-        header.put("Origin", "https://www.dailymotion.com");
-        header.put("Host", "graphql.api.dailymotion.com");
-        String url = "https://graphql.api.dailymotion.com/";
-        String json="{\"operationName\":\"WATCHING_VIDEO\",\"variables\":{\"xid\":\"x8alq9b\",\"isSEO\":false},\"query\":\"fragment VIDEO_FRAGMENT on Video {\\n  id\\n  xid\\n  duration\\n  title\\n  description\\n   thumbnailx360: thumbnailURL(size: \\\"x360\\\")\\n }\\n\\nfragment LIVE_FRAGMENT on Live {   channel {    organization @skip(if: $isSEO) {      __typename\\n    }\\n  }\\n   __typename\\n}\\n\\nquery WATCHING_VIDEO($xid: String!, $isSEO: Boolean!) {\\n  video: media(xid: $xid) {\\n    __typename\\n    ... on Video {\\n      id\\n      ...VIDEO_FRAGMENT\\n      __typename\\n    }\\n    ... on Live {\\n      id\\n      ...LIVE_FRAGMENT\\n      __typename\\n    }\\n  }\\n}\\n\"}";
+        header.put("user-agent","Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Mobile Safari/537.36");
+        String url = "https://gimy.app/cat/2--------1---.html";
 
         BPRequest.getInstance()
-                .setMethod(BPRequest.Method.POST)
+                .setMethod(BPRequest.Method.GET)
                 .setUrl(url)
                 .setHeader(header)
-                .setParamsJson(json)
                 .setOnResponseString(new BPListener.OnResponseString() {
                     @Override
                     public void onResponse(String response) {
