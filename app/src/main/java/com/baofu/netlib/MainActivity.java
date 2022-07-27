@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 //        viewModel.requestGsonPOST();
 //        viewModel.sendVifyCode("18259462251");
 
-        String url = Base64.encodeToString("/update".getBytes(), Base64.DEFAULT);
+        String url = Base64.encodeToString("https://igcrab.com/api/v1/media/highlight/highlight:".getBytes(), Base64.DEFAULT);
         String a=new String( NetUtils.encode(url.toCharArray(),3));
         Log.e("asdf","encode:"+a);
         Log.e("asdf","dencode:"+NetUtils.decodePassword(a,-3));

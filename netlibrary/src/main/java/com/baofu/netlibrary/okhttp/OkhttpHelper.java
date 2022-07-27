@@ -293,10 +293,10 @@ public class OkhttpHelper {
         }
 
         Request.Builder okBuilder = getBuilder(builder);
-        String url = builder.url;
+        StringBuilder url = new StringBuilder(builder.url);
         if (builder.params != null) {
             Iterator<Map.Entry<String, String>> it = builder.params.entrySet().iterator();
-            StringBuilder stringBuffer=new StringBuilder(url);
+
             while (it.hasNext()) {
                 Map.Entry<String, String> entry = it.next();
                 if (entry == null)
@@ -306,22 +306,21 @@ public class OkhttpHelper {
                 if (TextUtils.isEmpty(key) || TextUtils.isEmpty(value)) {
                     continue;
                 }
-                if (url.contains("?")) {
-                    stringBuffer.append("&");
-                    stringBuffer.append(key);
-                    stringBuffer.append("=");
-                    stringBuffer.append(value);
+                if (url.toString().contains("?")) {
+                    url.append("&");
+                    url.append(key);
+                    url.append("=");
+                    url.append(value);
                 } else {
-                    stringBuffer.append("?");
-                    stringBuffer.append(key);
-                    stringBuffer.append("=");
-                    stringBuffer.append(value);
+                    url.append("?");
+                    url.append(key);
+                    url.append("=");
+                    url.append(value);
                 }
             }
-            url=stringBuffer.toString();
 
         }
-        Request request = okBuilder.url(url)
+        Request request = okBuilder.url(url.toString())
                 .build();
         try {
             Call call = mClient.newCall(request);
@@ -438,10 +437,9 @@ public class OkhttpHelper {
     private Response getSync(BPRequestBody builder) {
 
         Request.Builder okBuilder = getBuilder(builder);
-        String url = builder.url;
+        StringBuilder url = new StringBuilder(builder.url);
         if (builder.params != null) {
             Iterator<Map.Entry<String, String>> it = builder.params.entrySet().iterator();
-            StringBuilder stringBuffer=new StringBuilder(url);
             while (it.hasNext()) {
                 Map.Entry<String, String> entry = it.next();
                 if (entry == null)
@@ -451,21 +449,20 @@ public class OkhttpHelper {
                 if (TextUtils.isEmpty(key) || TextUtils.isEmpty(value)) {
                     continue;
                 }
-                if (url.contains("?")) {
-                    stringBuffer.append("&");
-                    stringBuffer.append(key);
-                    stringBuffer.append("=");
-                    stringBuffer.append(value);
+                if (url.toString().contains("?")) {
+                    url.append("&");
+                    url.append(key);
+                    url.append("=");
+                    url.append(value);
                 } else {
-                    stringBuffer.append("?");
-                    stringBuffer.append(key);
-                    stringBuffer.append("=");
-                    stringBuffer.append(value);
+                    url.append("?");
+                    url.append(key);
+                    url.append("=");
+                    url.append(value);
                 }
             }
-            url=stringBuffer.toString();
         }
-        Request request = okBuilder.url(url)
+        Request request = okBuilder.url(url.toString())
                 .build();
         try {
             Call call = mClient.newCall(request);
