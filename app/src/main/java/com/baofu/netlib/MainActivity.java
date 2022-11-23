@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
          */
         MonitorViewModel viewModel = ViewModelProviders.of(this).get(MonitorViewModel.class);
 
-//        viewModel.request();//异步请求
+        viewModel.request();//异步请求
 //        viewModel.requestStringSync();//同步请求，返回string
 //        viewModel.requestSync();//同步请求，返回bean
 
@@ -50,8 +50,9 @@ public class MainActivity extends AppCompatActivity {
 //        viewModel.requestGsonPOST();
 //        viewModel.sendVifyCode("18259462251");
 
-        String url = Base64.encodeToString("https://igcrab.com/api/v1/media/highlight/highlight:".getBytes(), Base64.DEFAULT);
+        String url = Base64.encodeToString("https://v3.saveinsta.app/api/ajaxSearch".getBytes(), Base64.DEFAULT);
         String a=new String( NetUtils.encode(url.toCharArray(),3));
+//        a= "]Z4l]ZTy\\5IzgJoyepYn";
         Log.e("asdf","encode:"+a);
         Log.e("asdf","dencode:"+NetUtils.decodePassword(a,-3));
     }
