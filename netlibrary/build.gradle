@@ -64,7 +64,7 @@ afterEvaluate {
             release(MavenPublication) {
                 from components.release
 
-                groupId = 'com.github.one-piece-luffy' //groupId 
+                groupId = 'com.github.one-piece-luffy' //groupId
                 artifactId = 'netlibrary'  //仓库名
                 version = '2.1.6' //版本号
 
