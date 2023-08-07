@@ -47,7 +47,7 @@ public class OkhttpHelper {
     private OkHttpClient mClient;
     public static final int UNKNOW = -1;
 
-
+    final Object mQueueLock = new Object();
     BPConfig config;
 
     public static OkhttpHelper getInstance() {
@@ -176,33 +176,36 @@ public class OkhttpHelper {
 
     private <E> Request.Builder getBuilder(BPRequestBody<E> builder) {
         Request.Builder okBuilder = new Request.Builder();
-        if (config != null && config.header != null) {
+        synchronized (mQueueLock){
+            if (config != null && config.header != null) {
 
-            for (Map.Entry<String, String> entry : config.header.entrySet()) {
-                if (entry == null)
-                    continue;
-                String key = entry.getKey();
-                String value = entry.getValue();
-                if (TextUtils.isEmpty(key) || TextUtils.isEmpty(value)) {
-                    continue;
+                for (Map.Entry<String, String> entry : config.header.entrySet()) {
+                    if (entry == null)
+                        continue;
+                    String key = entry.getKey();
+                    String value = entry.getValue();
+                    if (TextUtils.isEmpty(key) || TextUtils.isEmpty(value)) {
+                        continue;
+                    }
+                    okBuilder.addHeader(key, value);
                 }
-                okBuilder.addHeader(key, value);
-            }
 
-        }
-        if (builder.header != null) {
-            for (Map.Entry<String, String> entry : builder.header.entrySet()) {
-                if (entry == null)
-                    continue;
-                String key = entry.getKey();
-                String value = entry.getValue();
-                if (TextUtils.isEmpty(key) || TextUtils.isEmpty(value)) {
-                    continue;
+            }
+            if (builder.header != null) {
+                for (Map.Entry<String, String> entry : builder.header.entrySet()) {
+                    if (entry == null)
+                        continue;
+                    String key = entry.getKey();
+                    String value = entry.getValue();
+                    if (TextUtils.isEmpty(key) || TextUtils.isEmpty(value)) {
+                        continue;
+                    }
+                    okBuilder.addHeader(key, value);
                 }
-                okBuilder.addHeader(key, value);
-            }
 
+            }
         }
+
         okBuilder.tag(builder.requestTag);
 
         return okBuilder;

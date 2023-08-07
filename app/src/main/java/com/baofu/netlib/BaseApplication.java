@@ -11,6 +11,7 @@ import com.baofu.netlibrary.utils.NetConstans;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import okhttp3.Headers;
 
@@ -33,7 +34,7 @@ public class BaseApplication extends Application{
     @Override
     public void onCreate() {
         super.onCreate();
-        Map<String, String> header = new HashMap<>();
+        Map<String, String> header = new ConcurrentHashMap<>();
         header.put("User-Agent", "UA");
         BPConfig config=new BPConfig.Builder().context(this).strategyType(BPRequest.STRATEGY_TYPE.OKHTTP).addHeader(header)
                 .addInterceptor(new MyTestInterceptor())

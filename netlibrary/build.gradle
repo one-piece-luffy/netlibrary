@@ -1,6 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.github.dcendents.android-maven' //jitpack上传
-group='com.github.one-piece-luffy'// jitpack上传 : 这里对应自己的github名称就可以了
 
 android {
     compileSdkVersion 30
@@ -34,7 +32,7 @@ android {
         abortOnError false
     }
 
-
+    namespace 'com.example.netlibrary'
 }
 
 dependencies {
@@ -53,16 +51,30 @@ dependencies {
 }
 
 
-task sourcesJar(type: Jar) {
-    classifier = 'sources'
-    from android.sourceSets.main.java.sourceFiles
+apply plugin: "maven-publish"
+
+android {
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
 }
 
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
 
-artifacts {
-//    archives classesJar
-//    archives javadocJar
-    archives sourcesJar
+                groupId = 'com.github.one-piece-luffy' //groupId 随便取，jitpack不会使用
+                artifactId = 'netlibrary'  //test随便取,jitpack不会使用
+                version = '2.5.18' //随便取，jitpack不会使用
+
+            }
+        }
+    }
 }
 
 
