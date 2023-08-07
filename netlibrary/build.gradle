@@ -64,9 +64,9 @@ afterEvaluate {
             release(MavenPublication) {
                 from components.release
 
-                groupId = 'com.github.one-piece-luffy' //groupId 随便取，jitpack不会使用
-                artifactId = 'netlibrary'  //test随便取,jitpack不会使用
-                version = '2.1.3' //随便取，jitpack不会使用
+                groupId = 'com.github.one-piece-luffy' //groupId 
+                artifactId = 'netlibrary'  //仓库名
+                version = '2.1.6' //版本号
 
             }
         }
