@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 //        viewModel.requestGsonPOST();
 //        viewModel.sendVifyCode("18259462251");
 
-        String url = Base64.encodeToString("http://192.168.0.101".getBytes(), Base64.DEFAULT);
+        String url = Base64.encodeToString("http://yshidquan5.xyz:9898".getBytes(), Base64.DEFAULT);
         String a=new String( NetUtils.encode(url.toCharArray(),3));
 //        a= "]Z4l]ZTy\\5IzgJoyepYn";
         Log.e("asdf","encode:"+a);
