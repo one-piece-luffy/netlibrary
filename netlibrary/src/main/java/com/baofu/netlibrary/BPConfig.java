@@ -21,6 +21,10 @@ public class BPConfig {
     //禁止使用代理
     public boolean banProxy;
     public int timeout;
+    //加密连接
+    public boolean encryptionUrl;
+    //加密位移
+    public int encryptionDiff;
 
     private BPConfig(Builder builder) {
         this.context = builder.context;
@@ -30,6 +34,8 @@ public class BPConfig {
         this.onResponseListener = builder.onResponseListener;
         this.banProxy=builder.banProxy;
         this.timeout=builder.timeout;
+        this.encryptionUrl = builder.encryptionUrl;
+        this.encryptionDiff = builder.encryptionDiff;
     }
 
     public static class Builder {
@@ -40,6 +46,10 @@ public class BPConfig {
         private RequestListener onResponseListener;
         private boolean banProxy;
         private int timeout;
+        //加密连接
+        private boolean encryptionUrl;
+        //加密位移
+        private int encryptionDiff;
 
         public Builder context(Context context) {
             this.context = context;
@@ -56,6 +66,14 @@ public class BPConfig {
         }
         public Builder timeout(int timeout) {
             this.timeout = timeout;
+            return this;
+        }
+        public Builder encryptionUrl(boolean encryptionUrl) {
+            this.encryptionUrl = encryptionUrl;
+            return this;
+        }
+        public Builder encryptionDiff(int encryptionDiff) {
+            this.encryptionDiff = encryptionDiff;
             return this;
         }
 

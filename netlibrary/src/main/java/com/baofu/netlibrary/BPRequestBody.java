@@ -13,10 +13,6 @@ public class BPRequestBody<E> {
     public Map<String,String> params;
     public Class<E> clazz;
     public String paramsJson;
-    //加密连接
-    public boolean encryptionUrl;
-    //加密位移
-    public int encryptionDiff;
     //加密路径
     public String appenEncryptPath;
     //非加密路径
@@ -115,14 +111,6 @@ public class BPRequestBody<E> {
         
         public Builder setOnCacheString(BPListener.onCacheString onCacheString) {
             mBPRequestBody.onCacheString=onCacheString;
-            return this;
-        }
-        public Builder encryptionUrl(boolean encryptionUrl) {
-            mBPRequestBody.encryptionUrl=encryptionUrl;
-            return this;
-        }
-        public Builder encryptionDiff(int encryptionDiff) {
-            mBPRequestBody.encryptionDiff=encryptionDiff;
             return this;
         }
         public Builder appenEncryptPath(String appenEncryptPath) {

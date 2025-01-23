@@ -110,17 +110,6 @@ public class OkhttpHelper {
 //
 //        }
 
-        if (!TextUtils.isEmpty(builder.appenEncryptPath)) {
-            try {
-                String appen = NetUtils.decodePassword(builder.appenEncryptPath, builder.encryptionDiff);
-                builder.url += appen;
-            } catch (Exception e) {
-                e.printStackTrace();
-                handlerError(builder, null, UNKNOW);
-                return;
-            }
-        }
-
 
         switch (builder.method) {
             case BPRequest.Method.POST:
@@ -144,16 +133,7 @@ public class OkhttpHelper {
      */
     public Response requestSync(BPRequestBody builder) {
 
-        if (!TextUtils.isEmpty(builder.appenEncryptPath)) {
-            try {
-                String appen = NetUtils.decodePassword(builder.appenEncryptPath, builder.encryptionDiff);
-                builder.url += appen;
-            } catch (Exception e) {
-                e.printStackTrace();
-                handlerError(builder, null, UNKNOW);
-                return null;
-            }
-        }
+
 
         Response result = null;
         switch (builder.method) {

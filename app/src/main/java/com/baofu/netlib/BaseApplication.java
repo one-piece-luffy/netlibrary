@@ -38,6 +38,8 @@ public class BaseApplication extends Application{
         header.put("User-Agent", "UA");
         BPConfig config=new BPConfig.Builder().context(this).strategyType(BPRequest.STRATEGY_TYPE.OKHTTP).addHeader(header)
                 .addInterceptor(new MyTestInterceptor())
+//                .encryptionUrl(true)
+//                .encryptionDiff(-3)
 //                .banProxy(true)
                 .setRequestListener(new RequestListener() {
                     @Override

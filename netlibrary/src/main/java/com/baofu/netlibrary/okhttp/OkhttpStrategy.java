@@ -17,11 +17,13 @@ import okhttp3.Response;
 public class OkhttpStrategy implements RequestStrategy {
 
     Handler mMainHandler = new Handler(Looper.getMainLooper());
+    BPConfig mConfig;
     public OkhttpStrategy() {
     }
 
     @Override
     public void init(BPConfig config) {
+        mConfig = config;
         OkhttpHelper.getInstance().init(config);
     }
 
@@ -37,18 +39,32 @@ public class OkhttpStrategy implements RequestStrategy {
             handlerError(builder, new Exception("url 不能为空"),UNKNOW);
             return;
         }
-        if (builder.encryptionUrl) {
+        String url = null;
+        String appenEncryptPath = null;
+        if (mConfig != null && mConfig.encryptionUrl) {
             try {
-                String url = NetUtils.decodePassword(builder.url, builder.encryptionDiff);
-                builder.url = url;
+                url = NetUtils.decodePassword(builder.url, mConfig.encryptionDiff);
             } catch (Exception e) {
                 e.printStackTrace();
                 handlerError(builder, e, UNKNOW);
                 return;
             }
+            if (!TextUtils.isEmpty(builder.appenEncryptPath)) {
+                try {
+                    appenEncryptPath = NetUtils.decodePassword(builder.appenEncryptPath, mConfig.encryptionDiff);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    handlerError(builder, null, UNKNOW);
+                    return;
+                }
+            }
         }
+        builder.url = url;
         if (!TextUtils.isEmpty(builder.appenPath)) {
             builder.url += builder.appenPath;
+        }
+        if (!TextUtils.isEmpty(appenEncryptPath)) {
+            builder.url += appenEncryptPath;
         }
 
         if( builder.url.startsWith("http://") || builder.url.startsWith("https://")){
@@ -68,18 +84,33 @@ public class OkhttpStrategy implements RequestStrategy {
             handlerError(builder, new Exception("url 不能为空"),UNKNOW);
             return null;
         }
-        if (builder.encryptionUrl) {
+        String url = null;
+        String appenEncryptPath=null;
+        if (mConfig != null && mConfig.encryptionUrl) {
             try {
-                String url = NetUtils.decodePassword(builder.url, builder.encryptionDiff);
-                builder.url = url;
+                url = NetUtils.decodePassword(builder.url, mConfig.encryptionDiff);
             } catch (Exception e) {
                 e.printStackTrace();
                 handlerError(builder, e, UNKNOW);
                 return null;
             }
+            if (!TextUtils.isEmpty(builder.appenEncryptPath)) {
+                try {
+                    appenEncryptPath = NetUtils.decodePassword(builder.appenEncryptPath, mConfig.encryptionDiff);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    handlerError(builder, null, UNKNOW);
+                    return null;
+                }
+            }
         }
+
+        builder.url = url;
         if (!TextUtils.isEmpty(builder.appenPath)) {
             builder.url += builder.appenPath;
+        }
+        if (!TextUtils.isEmpty(appenEncryptPath)) {
+            builder.url += appenEncryptPath;
         }
         if( builder.url.startsWith("http://") || builder.url.startsWith("https://")){
             return OkhttpHelper.getInstance().requestSync(builder);

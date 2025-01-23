@@ -122,12 +122,6 @@ public class BPRequest {
     public BPRequestBody.Builder setOnCacheString(BPListener.onCacheString onCacheString) {
         return new BPRequestBody.Builder().setOnCacheString(onCacheString);
     }
-    public BPRequestBody.Builder encryptionUrl(boolean encryptionUrl) {
-        return new BPRequestBody.Builder().encryptionUrl(encryptionUrl);
-    }
-    public BPRequestBody.Builder encryptionDiff(int encryptionDiff) {
-        return new BPRequestBody.Builder().encryptionDiff(encryptionDiff);
-    }
     public BPRequestBody.Builder appenEncryptPath(String appenEncryptPath) {
         return new BPRequestBody.Builder().appenEncryptPath(appenEncryptPath);
     }
