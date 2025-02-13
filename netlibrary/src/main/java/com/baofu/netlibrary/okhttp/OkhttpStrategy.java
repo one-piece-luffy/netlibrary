@@ -58,8 +58,9 @@ public class OkhttpStrategy implements RequestStrategy {
                     return;
                 }
             }
+            builder.url = url;
         }
-        builder.url = url;
+
         if (!TextUtils.isEmpty(builder.appenPath)) {
             builder.url += builder.appenPath;
         }
@@ -103,9 +104,10 @@ public class OkhttpStrategy implements RequestStrategy {
                     return null;
                 }
             }
+            builder.url = url;
         }
 
-        builder.url = url;
+
         if (!TextUtils.isEmpty(builder.appenPath)) {
             builder.url += builder.appenPath;
         }
