@@ -4,7 +4,7 @@
 
 
 2.在项目gradle 引入： 
-api 'com.example.netlibrary:netlibrary:1.4'
+api 'com.example.netlibrary:netlibrary:2.2.0'
 
 3.在application 初始化
 
@@ -13,36 +13,22 @@ api 'com.example.netlibrary:netlibrary:1.4'
 
 4.请求：
 
- RequestStrategy mBaseModel = BPRequest.getInstance().mStrategy;
- 
 
- BPRequestBody build = new BPRequestBody.Builder()
-
-                .setMethod(BPRequest.Method.POST)
-
-                .setParams(null)
-
-                .setUrl("url")
-
-                .setRequestTag("mRequestTag")
-
-                .setOnResponseString(new BPListener.OnResponseString() {
-
+BPRequest.getInstance()
+    .setMethod(BPRequest.Method.GET)
+    .setUrl("url")
+    .setParams(param)
+    .setHeader(header)
+    .setOnResponseBean(ConfigModelBean.class, new BPListener.OnResponseBean<ConfigModelBean>() {
                     @Override
-
-                    public void onResponse(String s) {
-
-
+                    public void onResponse(ConfigModelBean response) {
+                        Log.e("time",response.toString()+"");
                     }
                 })
                 .setOnException(new BPListener.OnException() {
-
                     @Override
-
-                    public void onException(String s) {
-
-
+                    public void onException(Exception e, int code, String response) {
                     }
 
-                }).build();
-        mBaseModel.request(build);
+                })
+                .request();
