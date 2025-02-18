@@ -33,6 +33,26 @@
                 })  
                 .request();
 
+返回字符串
+
+    BPRequest.getInstance()  
+    .setMethod(BPRequest.Method.GET)  
+    .setUrl("url")  
+    .setParams(param)  
+    .setHeader(header)  
+    .setOnResponseString(new BPListener.OnResponseString() {  
+                    @Override  
+                    public void onResponse(String response) {  
+                        
+                    }  
+                })  
+                .setOnException(new BPListener.OnException() {  
+                    @Override  
+                    public void onException(Exception e, int code, String response) {  
+                    }  
+                })  
+                .request();
+
 
 
    
