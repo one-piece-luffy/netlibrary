@@ -45,7 +45,7 @@ public class MonitorViewModel extends BaseViewModel {
         param.put("code", "18933333333");
         param.put("password", "123456");
         Map<String, String> header = new HashMap<>();
-        header.put("header", "header");
+        header.put("header1", "header1");
         BPRequest.getInstance()
                 .setMethod(BPRequest.Method.GET)
                 .setUrl("https://api.dongqiudi.com/app/global/2/android.json?mark=gif&platform=android&version=216&android-channel=website")
@@ -131,11 +131,30 @@ public class MonitorViewModel extends BaseViewModel {
     }
 
     public void request301() {
+//        if(true){
+//            String text = "这里有123个数字456和一些其他字符789";
+//            Pattern pattern = Pattern.compile("\\d+"); // 编译正则表达式
+//            Matcher matcher = pattern.matcher(text); // 创建matcher对象
+//
+//            while (matcher.find()) { // 查找匹配项
+//                Log.e("asdf","originCover:"+matcher.group());
+//            }
+////            if (matcher.find()){
+////                String cover=matcher.group();
+////                Log.e("asdf","originCover:"+cover);
+////            }else {
+////                Log.e("asdf","no find");
+////            }
+//            return;
+//        }
+
+
+        //更新数据
+        String url = "https://vt.tiktok.com/ZSMSWsfc7/";
         Map<String, String> header = new HashMap<>();
         header.put("source", "dev");
-        header.put("version", "24121212");
-        //更新数据
-        String url = "https://vt.tiktok.com/ZSMdspmsU/";
+        header.put("User-Agent"
+                , "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.5845.97 Safari/537.36 Core/1.116.485.400 QQBrowser/13.6.6321.400");
         BPRequest.getInstance()
                 .setMethod(BPRequest.Method.GET)
                 .setHeader(header)
@@ -159,7 +178,48 @@ public class MonitorViewModel extends BaseViewModel {
                                 String result = matcher.group().replace("\\u002F", "/");
                                 int starIndex = matcher.start();
                                 Log.e("asdf", result);
-                                Log.e("asdf", "index:" + starIndex);
+                                break;
+                            }
+                            // 定义正则表达式来匹配 JSON 字符串，JSON 以 { 开始，以 } 结束
+                             regex = "\\{.*\\}";
+                             pattern = Pattern.compile(regex);
+                             matcher = pattern.matcher(response);
+                            if (matcher.find()) {
+                                String jsonString = matcher.group();
+
+                                Pattern subPatern = Pattern.compile("\"originCover\":\\s*\"([^\"]+)\"");
+                                Matcher subMatcher = subPatern.matcher(jsonString);
+                                if (subMatcher.find()){
+                                    String cover=subMatcher.group().replace("\\u002F", "/");
+                                    int index=cover.indexOf("http");
+                                    cover=cover.substring(index,cover.length()-1);
+                                    Log.e("asdf","originCover: "+cover);
+                                }
+
+                                subPatern = Pattern.compile("\"avatarThumb\":\\s*\"([^\"]+)\"");
+                                subMatcher = subPatern.matcher(jsonString);
+                                if (subMatcher.find()){
+                                    String avatarThumb=subMatcher.group().replace("\\u002F", "/");
+                                    int index=avatarThumb.indexOf("http");
+                                    avatarThumb=avatarThumb.substring(index,avatarThumb.length()-1);
+                                    Log.e("asdf","avatarThumb: "+avatarThumb);
+                                }
+
+                                subPatern = Pattern.compile("\"desc\":\\s*\"([^\"]+)\"");
+                                subMatcher= subPatern.matcher(jsonString);
+                                if (subMatcher.find()){
+                                    String desc=subMatcher.group();
+                                    desc=desc.substring("\"desc\":\"".length(),desc.length()-1);
+                                    Log.e("asdf","desc: "+desc);
+                                }
+                                subPatern = Pattern.compile("\"nickname\":\\s*\"([^\"]+)\"");
+                                subMatcher= subPatern.matcher(jsonString);
+                                if (subMatcher.find()){
+                                    String nickname=subMatcher.group();
+                                    nickname=nickname.substring("\"nickname\":\"".length(),nickname.length()-1);
+                                    Log.e("asdf","nickname: "+nickname);
+                                }
+
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
