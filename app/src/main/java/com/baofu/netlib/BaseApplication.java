@@ -6,14 +6,14 @@ import android.util.Log;
 
 import com.baofu.netlibrary.BPConfig;
 import com.baofu.netlibrary.BPRequest;
-import com.baofu.netlibrary.listener.RequestListener;
-import com.baofu.netlibrary.utils.NetConstans;
+import com.baofu.netlibrary.listener.ResponseInterceptor;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import okhttp3.Headers;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 
 public class BaseApplication extends Application{
@@ -36,36 +36,48 @@ public class BaseApplication extends Application{
         super.onCreate();
         Map<String, String> header = new ConcurrentHashMap<>();
         header.put("User-Agent", "UA");
+        ResponseInterceptor responseInterceptor=new ResponseInterceptor() {
+            @Override
+            public Response responseListener(Headers headers, int status, String url, Response originalResponse) {
+                //这里是子线程
+                Log.e("asdf","所有的请求");
+                try {
+                    ResponseBody responseBody = originalResponse.body();
+                    if (responseBody != null) {
+                        // 将ResponseBody转换为String，以便修改
+                        String originalString = responseBody.string();;
+                        // 在这里修改字符串内容
+                        String modifiedString = "惊不惊喜!";
+
+                        // 创建新的ResponseBody
+                        ResponseBody modifiedBody = ResponseBody.create(modifiedString, responseBody.contentType());
+                        // 可以使用新的ResponseBody做一些操作，例如再次封装成Response等
+                        Response newResponse=originalResponse.newBuilder()
+                                .body(modifiedBody)
+                                .build();
+                        return newResponse;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return originalResponse;
+            }
+
+            @Override
+            public Exception exceptionListener(String url, String error, Exception e, int code) {
+                //这里是子线程
+
+                //拦截错误，不再向下传递，在这里统一处理
+//                        return NetConstans.Interceptor;
+                //返回null表示不拦截
+                e=new Exception("意不意外");
+                return e;
+            }
+        };
         BPConfig config=new BPConfig.Builder().context(this).strategyType(BPRequest.STRATEGY_TYPE.OKHTTP).addHeader(header)
                 .addInterceptor(new MyTestInterceptor())
-//                .encryptionUrl(true)
-//                .encryptionDiff(-3)
-//                .banProxy(true)
-                .setRequestListener(new RequestListener() {
-                    @Override
-                    public String responseListener(Headers headers, int status, String url,String response) {
-                        //这里是子线程
-                        Log.e("asdf","所有的请求");
-//                        Log.e("asdf","status:"+status);
-//                        Log.e("asdf","url:"+url);
-//                        Log.e("asdf","response:"+response);
-
-                        //返回NetConstans.Interceptor表示拦截请求，不再向下传递，在这里统一处理
-//                        return NetConstans.Interceptor;
-                        return response;
-                    }
-
-                    @Override
-                    public String exceptionListener(String url, String error, Exception e, int code) {
-                         //这里是子线程
-
-                        //拦截错误，不再向下传递，在这里统一处理
-//                        return NetConstans.Interceptor;
-                        //返回null表示不拦截
-                        return null;
-                    }
-
-                })
+                //添加返回结果拦截器
+//                .addResponseInterceptor(responseInterceptor)
                 .build();
         BPRequest.getInstance().init(config);
     }

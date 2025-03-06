@@ -12,9 +12,7 @@ import com.baofu.netlibrary.BPConfig;
 import com.baofu.netlibrary.BPRequest;
 import com.baofu.netlibrary.BPRequestBody;
 import com.baofu.netlibrary.okhttp.interceptor.RedirectInterceptor;
-import com.baofu.netlibrary.utils.NetConstans;
 import com.baofu.netlibrary.utils.NetSharePreference;
-import com.baofu.netlibrary.utils.NetUtils;
 import com.baofu.netlibrary.utils.SSLUtil;
 
 import java.io.IOException;
@@ -493,24 +491,20 @@ public class OkhttpHelper {
 
     private <E> void handlerError(BPRequestBody<E> builder, Exception e, int code) {
 
-        if (config.onResponseListener != null) {
-            Exception exception = e;
-            if (exception == null) {
-                exception = new Exception("UNKNOW");
+        if (config.responseInterceptor != null) {
+            if (e == null) {
+                e = new Exception("UNKNOW");
             }
-            String result = config.onResponseListener.exceptionListener(builder.url, null, exception, code);
-            //拦截错误，在config.exceptionListener里统一处理
-            if(NetConstans.Interceptor.equals(result)){
-                return;
-            }
+            e = config.responseInterceptor.exceptionListener(builder.url, null, e, code);
         }
+        final Exception temp = e;
         if (builder.onException != null) {
             mMainHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    Exception exception=e;
-                    if(exception==null){
-                        exception=new Exception("UNKNOW");
+                    Exception exception = temp;
+                    if (exception == null) {
+                        exception = new Exception("UNKNOW");
                     }
                     builder.onException.onException(exception, code, null);
                 }
@@ -519,29 +513,26 @@ public class OkhttpHelper {
         }
     }
 
-    private <E> void handlerResponse(final Call call, final Response response, BPRequestBody<E> builder) {
+    private <E> void handlerResponse(final Call call,  Response response, BPRequestBody<E> builder) {
 
         try {
-            if (builder.onResponse != null) {
 
+            if (config.responseInterceptor != null) {
+                response = config.responseInterceptor.responseListener(response.headers(), response.code(), builder.url, response);
+            }
+            if (builder.onResponse != null) {
+                Response responseTemp = response;
                 mMainHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        builder.onResponse.onResponse(response);
+                        builder.onResponse.onResponse(responseTemp);
                     }
                 });
                 return;
 
 
             }
-            String json = response.body().string();
-            if (config.onResponseListener != null) {
-                String result = config.onResponseListener.responseListener(response.headers(), response.code(), builder.url, json);
-                //拦截请求，在config.onResponseListener里统一处理
-                if (NetConstans.Interceptor.equals(result)) {
-                    return;
-                }
-            }
+            String json=response.body().string();
             // 得到响应报文体的字符串 String 对象
             if (builder.onResponseString != null) {
 
@@ -583,22 +574,18 @@ public class OkhttpHelper {
     }
 
     private  void handlerErrorSync(BPRequestBody builder, Exception e, int code) {
-        if (config.onResponseListener != null) {
-            Exception exception = e;
-            if (exception == null) {
-                exception = new Exception("UNKNOW");
+        if (config.responseInterceptor != null) {
+            if (e == null) {
+                e = new Exception("UNKNOW");
             }
-            String result = config.onResponseListener.exceptionListener(builder.url, null, exception, code);
-            //拦截错误，在config.exceptionListener里统一处理
-            if (NetConstans.Interceptor.equals(result)) {
-                return;
-            }
+            e= config.responseInterceptor.exceptionListener(builder.url, null, e, code);
         }
+        Exception temp=e;
         if (builder.onException != null) {
             mMainHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    Exception exception=e;
+                    Exception exception=temp;
                     if(exception==null){
                         exception=new Exception("UNKNOW");
                     }

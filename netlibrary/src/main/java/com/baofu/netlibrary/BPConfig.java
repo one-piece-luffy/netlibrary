@@ -2,7 +2,7 @@ package com.baofu.netlibrary;
 
 import android.content.Context;
 
-import com.baofu.netlibrary.listener.RequestListener;
+import com.baofu.netlibrary.listener.ResponseInterceptor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,7 @@ public class BPConfig {
     public int strategyType;
     public Map<String, String> header;// 通用header，所有请求都会加
     public List<Interceptor> interceptorList;
-    public RequestListener onResponseListener;
+    public ResponseInterceptor responseInterceptor;
     //禁止使用代理
     public boolean banProxy;
     public int timeout;
@@ -27,7 +27,7 @@ public class BPConfig {
         this.strategyType = builder.strategyType;
         this.header = builder.header;
         this.interceptorList = builder.interceptorList;
-        this.onResponseListener = builder.onResponseListener;
+        this.responseInterceptor = builder.responseInterceptor;
         this.banProxy=builder.banProxy;
         this.timeout=builder.timeout;
     }
@@ -37,7 +37,7 @@ public class BPConfig {
         private int strategyType;
         private Map<String, String> header;
         private List<Interceptor> interceptorList;
-        private RequestListener onResponseListener;
+        private ResponseInterceptor responseInterceptor;
         private boolean banProxy;
         private int timeout;
 
@@ -72,9 +72,8 @@ public class BPConfig {
             return this;
         }
 
-        //volley还没处理
-        public Builder setRequestListener(RequestListener listener) {
-            this.onResponseListener = listener;
+        public Builder addResponseInterceptor(ResponseInterceptor listener) {
+            this.responseInterceptor = listener;
             return this;
         }
 
