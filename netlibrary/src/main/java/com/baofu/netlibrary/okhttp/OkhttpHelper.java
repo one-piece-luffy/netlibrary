@@ -240,7 +240,7 @@ public class OkhttpHelper {
 
                 if ((code >= 200 && code < 300) || code == 304) {
 
-                    handlerResponse(call, response, builder);
+                    handlerResponse(response, builder);
                 } else {
                     handlerError(builder, new Exception(response.message()), code);
                 }
@@ -317,7 +317,7 @@ public class OkhttpHelper {
 
                     if ((code >= 200 && code < 300) || code == 304) {
 
-                        handlerResponse(call, response, builder);
+                        handlerResponse(response, builder);
                     } else {
                         handlerError(builder,  new Exception(response.message()), code);
                     }
@@ -351,7 +351,7 @@ public class OkhttpHelper {
 
                 if ((code >= 200 && code < 300) || code == 304) {
 
-                    handlerResponse(call, response, builder);
+                    handlerResponse(response, builder);
                 } else {
                     handlerError(builder,  new Exception(response.message()), code);
                 }
@@ -381,7 +381,7 @@ public class OkhttpHelper {
                 int code = response.code();
                 if ((code >= 200 && code < 300) || code == 304) {
 
-                    handlerResponse(call, response, builder);
+                    handlerResponse(response, builder);
                 } else {
                     handlerError(builder,  new Exception(response.message()), code);
                 }
@@ -513,7 +513,7 @@ public class OkhttpHelper {
         }
     }
 
-    private <E> void handlerResponse(final Call call,  Response response, BPRequestBody<E> builder) {
+    private <E> void handlerResponse(Response response, BPRequestBody<E> builder) {
 
         try {
 
