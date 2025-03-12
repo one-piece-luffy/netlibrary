@@ -8,15 +8,39 @@ import java.util.Base64;
  */
 public class ShiftUtils {
 
+
     /**
-     * 先把要加密的url base64加密，再调用endcode方法。
-     * @param text
-     * @param diff
+     * @param text 移位字符串
+     * @param diff 位移
      * @return
      */
     public static String encode(String text, int diff) {
-        String base64= Base64.getEncoder().encodeToString(text.getBytes());
-        char[] c=base64.toCharArray();
+        String base64= base64Encode(text);
+        return shift(base64,diff);
+    }
+
+    /**
+     * decode传入与encode相反的位移
+     * @param password 移位字符串
+     * @param diff 位移
+     * @return
+     */
+    public static String decode(String password,int diff){
+
+        String decode = shift(password, diff);
+        String dencodeUrl = base64Decode(decode);
+        return dencodeUrl;
+    }
+
+
+    /**
+     * 移位操作
+     * @param text 移位字符串
+     * @param diff 位移
+     * @return
+     */
+    public static String shift(String text, int diff) {
+        char[] c=text.toCharArray();
         char[] passWord = new char[c.length];
         for (int i = 0; i < c.length; i++) {
             try {
@@ -32,23 +56,24 @@ public class ShiftUtils {
         return new String(passWord);
     }
 
+
     /**
-     * decode传入与encode相反的位移
-     * @param password
-     * @param diff
+     * base64加密
+     * @param text
      * @return
      */
-    public static String decodePassword(String password,int diff){
-
-        String decode = encode(password, diff);
-        String dencodeUrl = "";
-        try {
-            dencodeUrl = new String(Base64.getDecoder().decode(decode));
-            return dencodeUrl;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+    public static String base64Encode(String text){
+        return Base64.getEncoder().encodeToString(text.getBytes());
     }
+    /**
+     * base64解密
+     * @param text
+     * @return
+     */
+    public static String base64Decode(String text){
+        return new String(Base64.getDecoder().decode(text.getBytes()));
+    }
+
+
 
 }

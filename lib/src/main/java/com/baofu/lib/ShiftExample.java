@@ -9,7 +9,7 @@ public class ShiftExample {
         String encryptTextECB = ShiftUtils.encode(text, 3);
         System.out.println("=============================");
         System.out.println("ECB Encrypted text:" + encryptTextECB);
-        System.out.println("ECB Decrypted text:" + ShiftUtils.decodePassword(encryptTextECB, -1*diff));
+        System.out.println("ECB Decrypted text:" + ShiftUtils.decode(encryptTextECB, -1*diff));
         System.out.println();
 
     }
