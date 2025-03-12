@@ -7,8 +7,8 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class AesExample {
     public static void main(String a[]){
-        String text = "http://www.downloader.net.cn";
-        String key  = "12345678abcdefgh"; // 16字节的密钥
+        String text = "http://8.210.128.221:9898";
+        String key  = "87654321abcdefgh"; // 16字节的密钥
         String iv  = AesUtils.getIV();
 
         //随机生成key
