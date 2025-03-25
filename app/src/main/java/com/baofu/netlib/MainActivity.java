@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
                  * 请求方式2
                  */
 
-                viewModel.request301();
+                viewModel.requsnt2();
             }
         });
 
