@@ -37,34 +37,12 @@ public class MainActivity extends AppCompatActivity {
                  * 请求方式2
                  */
 
-                viewModel.requsnt2();
+                viewModel.request301();
             }
         });
 
 
-//        viewModel.request();//异步请求
-//        viewModel.requestStringSync();//同步请求，返回string
-//        viewModel.requestSync();//同步请求，返回bean
 
-//        viewModel.getToken();
-//        viewModel.requestDailymotion();
-
-
-//        viewModel.requestcookie();
-
-//        viewModel.requestGson();
-//        viewModel.requestCheap(null, null, null, null, null);
-//        viewModel.requestSp(null,null,"002142");
-//        viewModel.requestStringPost();
-
-//        viewModel.requestGsonPOST();
-//        viewModel.sendVifyCode("18259462251");
-
-        String url = Base64.encodeToString("http://yingshidaquan6.top:9898".getBytes(), Base64.DEFAULT);
-        String a=new String( NetUtils.encode(url.toCharArray(),3));
-//        a= "]Z4l]ZTy\\5IzgJoyepYn";
-        Log.e("asdf","encode:"+a);
-        Log.e("asdf","dencode:"+NetUtils.decodePassword(a,-3));
     }
 
 }
