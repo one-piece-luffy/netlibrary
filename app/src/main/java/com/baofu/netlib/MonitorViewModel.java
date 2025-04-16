@@ -101,8 +101,6 @@ public class MonitorViewModel extends BaseViewModel {
                         .setRequestTag(System.currentTimeMillis() + "")
                         .setHeader(header)
                         .setNeedCache(true)
-                        .setClazz(String.class)
-
                         .setOnResponseBean(ConfigModelBean.class, new BPListener.OnResponseBean<ConfigModelBean>() {
                             @Override
                             public void onResponse(ConfigModelBean response) {

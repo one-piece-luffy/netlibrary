@@ -21,17 +21,17 @@
     .setParams(param)  
     .setHeader(header)  
     .setOnResponseBean(ConfigModelBean.class, new BPListener.OnResponseBean<ConfigModelBean>() {  
-                    @Override  
-                    public void onResponse(ConfigModelBean response) {  
-                        Log.e("time",response.toString()+"");  
-                    }  
-                })  
-                .setOnException(new BPListener.OnException() {  
-                    @Override  
-                    public void onException(Exception e, int code, String response) {  
-                    }  
-                })  
-                .request();
+        @Override  
+        public void onResponse(ConfigModelBean response) {  
+            Log.e("time",response.toString()+"");  
+        }  
+    })  
+    .setOnException(new BPListener.OnException() {  
+        @Override  
+        public void onException(Exception e, int code, String response) {  
+        }  
+    })  
+    .request();
 
 返回字符串
 
@@ -41,17 +41,17 @@
     .setParams(param)  
     .setHeader(header)  
     .setOnResponseString(new BPListener.OnResponseString() {  
-                    @Override  
-                    public void onResponse(String response) {  
-                        
-                    }  
-                })  
-                .setOnException(new BPListener.OnException() {  
-                    @Override  
-                    public void onException(Exception e, int code, String response) {  
-                    }  
-                })  
-                .request();
+        @Override  
+        public void onResponse(String response) {  
+            
+        }  
+    })  
+    .setOnException(new BPListener.OnException() {  
+        @Override  
+        public void onException(Exception e, int code, String response) {  
+        }  
+    })  
+    .request();
 
 
 

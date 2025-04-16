@@ -2,7 +2,7 @@ package com.baofu.lib;
 
 public class ShiftExample {
     public static void main(String a[]){
-        String text = "http://bfttget.top:9898";
+        String text = "http://shortdq.xyz:9898";
         int diff  = 3;
 
         //ECB
