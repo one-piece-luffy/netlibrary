@@ -4,8 +4,7 @@
 |  **动态 Host**   |        ✅        |  ❌  |
 |      全局参数      |        ✅        |  ❌  |
 | **配置 Http 缓存** |        ✅        |  ❌  |
-|     响应统一处理     |        ✅        |   ✅   |
-|  Json 日志打印格式化  |        ✅        |   ❌   |
+|     响应统一处理     |        ✅        |   ❌   |
 |   **请求生命周期**   |      自动管控       |   需要封装  | 
 |     框架灵活性      |        高        |     低      |
 |     框架学习成本     |        中        |     高    |
@@ -29,8 +28,14 @@
 3.在application 初始化
 
 
-    BPConfig config=new BPConfig.Builder().context(this).strategyType(BPRequest.STRATEGY_TYPE.OKHTTP).build();  
-    BPRequest.getInstance().init(config);
+     BPConfig bpConfig =
+                new BPConfig.Builder().context(this)
+                        .strategyType(BPRequest.STRATEGY_TYPE.OKHTTP)
+                        .timeout(10)
+                        .banProxy(true)
+                        .addHeader(globalHeader)
+                        .build();
+    BPRequest.getInstance().init(bpConfig);
 
 4.请求：
 
