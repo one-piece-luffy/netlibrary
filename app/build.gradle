@@ -40,10 +40,10 @@ android {
 }
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:2.0.20"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:2.2.0"
 
     implementation 'androidx.appcompat:appcompat:1.7.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
 
 //    api 'com.baofu.base:base:0.0.9'
 

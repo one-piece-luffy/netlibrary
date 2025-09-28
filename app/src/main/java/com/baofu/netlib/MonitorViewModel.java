@@ -148,82 +148,25 @@ public class MonitorViewModel extends BaseViewModel {
 
 
         //更新数据
-        String url = "https://vt.tiktok.com/ZSMSWsfc7/";
+        String url = "https://downloadgram.net/wp-json/visolix/api/download";
+        String insUrl="https://www.instagram.com/p/DIsynCUoJ8t/?utm_source=ig_web_copy_link";
+        JSONObject jsonObject=new JSONObject();
+        jsonObject.put("captcha_response","");
+        jsonObject.put("format","");
+        jsonObject.put("url",insUrl);
         Map<String, String> header = new HashMap<>();
-        header.put("source", "dev");
         header.put("User-Agent"
                 , "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.5845.97 Safari/537.36 Core/1.116.485.400 QQBrowser/13.6.6321.400");
         BPRequest.getInstance()
-                .setMethod(BPRequest.Method.GET)
+                .setMethod(BPRequest.Method.POST)
                 .setHeader(header)
                 .setUrl(url)
+                .setParamsJson(jsonObject.toJSONString())
                 .setOnResponseString(new BPListener.OnResponseString() {
                     @Override
                     public void onResponse(String response) {
                         Log.e("asdf", response);
-                        try {
-                            String start = "\",\"https:{1}";
-//                            String end = "], \\[\"NavigationMetrics";
-                            String end = "\"\\]{1}";
-                            String filter = start + ".*" + "is_play{1}" + ".*" + end;
-                            String regex = "https?:[\\s\\S]{12}[^\"]*is_play_url=1[^\"]*";
-//                            String urlPattern = "https?[\\s\\S]{12}(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&//=]*)";
-
-                            Pattern pattern = Pattern.compile(regex);
-                            Matcher matcher = pattern.matcher(response);
-                            while (matcher.find()) {
-
-                                String result = matcher.group().replace("\\u002F", "/");
-                                int starIndex = matcher.start();
-                                Log.e("asdf", result);
-                                break;
-                            }
-                            // 定义正则表达式来匹配 JSON 字符串，JSON 以 { 开始，以 } 结束
-                             regex = "\\{.*\\}";
-                             pattern = Pattern.compile(regex);
-                             matcher = pattern.matcher(response);
-                            if (matcher.find()) {
-                                String jsonString = matcher.group();
-
-                                Pattern subPatern = Pattern.compile("\"originCover\":\\s*\"([^\"]+)\"");
-                                Matcher subMatcher = subPatern.matcher(jsonString);
-                                if (subMatcher.find()){
-                                    String cover=subMatcher.group().replace("\\u002F", "/");
-                                    int index=cover.indexOf("http");
-                                    cover=cover.substring(index,cover.length()-1);
-                                    Log.e("asdf","originCover: "+cover);
-                                }
-
-                                subPatern = Pattern.compile("\"avatarThumb\":\\s*\"([^\"]+)\"");
-                                subMatcher = subPatern.matcher(jsonString);
-                                if (subMatcher.find()){
-                                    String avatarThumb=subMatcher.group().replace("\\u002F", "/");
-                                    int index=avatarThumb.indexOf("http");
-                                    avatarThumb=avatarThumb.substring(index,avatarThumb.length()-1);
-                                    Log.e("asdf","avatarThumb: "+avatarThumb);
-                                }
-
-                                subPatern = Pattern.compile("\"desc\":\\s*\"([^\"]+)\"");
-                                subMatcher= subPatern.matcher(jsonString);
-                                if (subMatcher.find()){
-                                    String desc=subMatcher.group();
-                                    desc=desc.substring("\"desc\":\"".length(),desc.length()-1);
-                                    Log.e("asdf","desc: "+desc);
-                                }
-                                subPatern = Pattern.compile("\"nickname\":\\s*\"([^\"]+)\"");
-                                subMatcher= subPatern.matcher(jsonString);
-                                if (subMatcher.find()){
-                                    String nickname=subMatcher.group();
-                                    nickname=nickname.substring("\"nickname\":\"".length(),nickname.length()-1);
-                                    Log.e("asdf","nickname: "+nickname);
-                                }
-
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-//                            requestPlanB(insUrl);
-                        }
-                        Toast.makeText(BaseApplication.getInstance(), response, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(BaseApplication.getInstance(), "suc", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setOnException((e, code, response) -> {
