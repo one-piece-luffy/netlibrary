@@ -55,13 +55,19 @@ public class MonitorViewModel extends BaseViewModel {
                 .setNeedCache(true)
 
 
-                .setOnResponseBean(ConfigModelBean.class, new BPListener.OnResponseBean<ConfigModelBean>() {
+                .setOnResponseString(new BPListener.OnResponseString() {
                     @Override
-                    public void onResponse(ConfigModelBean response) {
-                        Log.e("time", response.toString() + "");
-                        Toast.makeText(BaseApplication.getInstance(), response.getUpdated_at(), Toast.LENGTH_SHORT).show();
+                    public void onResponse(String response) {
+                        Log.e("asdf",response);
                     }
                 })
+//                .setOnResponseBean(ConfigModelBean.class, new BPListener.OnResponseBean<ConfigModelBean>() {
+//                    @Override
+//                    public void onResponse(ConfigModelBean response) {
+//                        Log.e("time", response.toString() + "");
+//                        Toast.makeText(BaseApplication.getInstance(), response.getUpdated_at(), Toast.LENGTH_SHORT).show();
+//                    }
+//                })
                 .setOnCacheBean(new BPListener.onCacheBean() {
                     @Override
                     public void onCache(Object response) {

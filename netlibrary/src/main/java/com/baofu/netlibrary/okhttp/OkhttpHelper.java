@@ -114,6 +114,7 @@ public class OkhttpHelper {
                 post(builder);
                 break;
             case BPRequest.Method.GET:
+            case BPRequest.Method.HEAD:
                 get(builder);
                 break;
             case BPRequest.Method.DELETE:
@@ -139,6 +140,7 @@ public class OkhttpHelper {
                 result = postSync(builder);
                 break;
             case BPRequest.Method.GET:
+            case BPRequest.Method.HEAD:
                 result = getSync(builder);
                 break;
             case BPRequest.Method.DELETE:
@@ -301,8 +303,15 @@ public class OkhttpHelper {
             }
 
         }
-        Request request = okBuilder.url(url.toString())
-                .build();
+        Request request = null;
+        if (builder.method == BPRequest.Method.HEAD) {
+            request = okBuilder.url(url.toString())
+                    .head()
+                    .build();
+        } else {
+            request = okBuilder.url(url.toString())
+                    .build();
+        }
         try {
             Call call = mClient.newCall(request);
             call.enqueue(new Callback() {
@@ -443,8 +452,15 @@ public class OkhttpHelper {
                 }
             }
         }
-        Request request = okBuilder.url(url.toString())
-                .build();
+        Request request = null;
+        if (builder.method == BPRequest.Method.HEAD) {
+            request = okBuilder.url(url.toString())
+                    .head()
+                    .build();
+        } else {
+            request = okBuilder.url(url.toString())
+                    .build();
+        }
         try {
             Call call = mClient.newCall(request);
             return call.execute();
