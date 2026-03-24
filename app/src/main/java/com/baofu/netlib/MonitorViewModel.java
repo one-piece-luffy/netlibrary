@@ -68,11 +68,9 @@ public class MonitorViewModel extends BaseViewModel {
 //                        Toast.makeText(BaseApplication.getInstance(), response.getUpdated_at(), Toast.LENGTH_SHORT).show();
 //                    }
 //                })
-                .setOnCacheBean(new BPListener.onCacheBean() {
+                .setOnCacheString(new BPListener.onCacheString() {
                     @Override
-                    public void onCache(Object response) {
-                        if (response == null)
-                            return;
+                    public void onCacheString(String response) {
                         Log.e("asdf", "cache time:" + response.toString() + "");
                     }
                 })
@@ -124,7 +122,10 @@ public class MonitorViewModel extends BaseViewModel {
                         .requestSync();
                 ConfigModelBean result = null;
                 try {
-                    result = JSON.parseObject(response.body().string(), ConfigModelBean.class);
+                    if(response!=null){
+
+                        result = JSON.parseObject(response.body().string(), ConfigModelBean.class);
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

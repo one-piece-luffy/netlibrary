@@ -3,6 +3,7 @@ package com.baofu.netlibrary.okhttp;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -12,12 +13,13 @@ import com.baofu.netlibrary.BPConfig;
 import com.baofu.netlibrary.BPRequest;
 import com.baofu.netlibrary.BPRequestBody;
 import com.baofu.netlibrary.okhttp.interceptor.RedirectInterceptor;
+import com.baofu.netlibrary.utils.ErrorCode;
 import com.baofu.netlibrary.utils.NetSharePreference;
 import com.baofu.netlibrary.utils.SSLUtil;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.net.Proxy;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -40,21 +42,33 @@ public class OkhttpHelper {
 
     private static final String TAG = "OkhttpsHelper";
 
-    private static final OkhttpHelper ourInstance = new OkhttpHelper();
-    Handler mMainHandler = new Handler(Looper.getMainLooper());
+    // 使用WeakReference避免Handler内存泄漏
+    private WeakReference<Handler> mMainHandlerRef;
     private OkHttpClient mClient;
     public static final int UNKNOW = -1;
 
     final Object mQueueLock = new Object();
     BPConfig config;
 
+    private static class Holder {
+        private static final OkhttpHelper INSTANCE = new OkhttpHelper();
+    }
+
     public static OkhttpHelper getInstance() {
-        return ourInstance;
+        return Holder.INSTANCE;
     }
 
     private OkhttpHelper() {
+        mMainHandlerRef = new WeakReference<>(new Handler(Looper.getMainLooper()));
     }
-
+    private Handler getMainHandler() {
+        Handler handler = mMainHandlerRef.get();
+        if (handler == null) {
+            handler = new Handler(Looper.getMainLooper());
+            mMainHandlerRef = new WeakReference<>(handler);
+        }
+        return handler;
+    }
     /**
      * 参数传递 applicationContext
      *
@@ -86,12 +100,18 @@ public class OkhttpHelper {
     }
 
     public void cancelRequests(Object tag) {
+        if (mClient == null) return;
+
         Dispatcher dispatcher = mClient.dispatcher();
+
+        // 取消排队中的请求
         for (Call call : dispatcher.queuedCalls()) {
             if (tag.equals(call.request().tag())) {
                 call.cancel();
             }
         }
+
+        // 取消运行中的请求
         for (Call call : dispatcher.runningCalls()) {
             if (tag.equals(call.request().tag())) {
                 call.cancel();
@@ -130,27 +150,41 @@ public class OkhttpHelper {
      * 同步请求
      *
      */
-    public Response requestSync(BPRequestBody builder) {
-
-
-
-        Response result = null;
-        switch (builder.method) {
-            case BPRequest.Method.POST:
-                result = postSync(builder);
-                break;
-            case BPRequest.Method.GET:
-            case BPRequest.Method.HEAD:
-                result = getSync(builder);
-                break;
-            case BPRequest.Method.DELETE:
-                result = deleteSync(builder);
-                break;
-            case BPRequest.Method.PATCH:
-                result = patchSync(builder);
-                break;
+    public <E> Response requestSync(BPRequestBody<E> builder) {
+        if (builder == null || TextUtils.isEmpty(builder.url)) {
+            handleError(builder, new Exception("url 不能为空"), ErrorCode.ERROR_URL_EMPTY);
+            return null;
         }
-        return result;
+
+        if (!builder.url.startsWith("http://") && !builder.url.startsWith("https://")) {
+            handleError(builder, new Exception("url必须是http或者https开头"), ErrorCode.ERROR_URL_INVALID);
+            return null;
+        }
+
+        if (!TextUtils.isEmpty(builder.appenPath)) {
+            builder.url += builder.appenPath;
+        }
+
+
+
+        try {
+            switch (builder.method) {
+                case BPRequest.Method.POST:
+                    return postSync(builder);
+                case BPRequest.Method.GET:
+                case BPRequest.Method.HEAD:
+                    return getSync(builder);
+                case BPRequest.Method.DELETE:
+                    return deleteSync(builder);
+                case BPRequest.Method.PATCH:
+                    return patchSync(builder);
+                default:
+                    return getSync(builder);
+            }
+        } catch (Exception e) {
+            handleError(builder, e, ErrorCode.ERROR_UNKNOWN);
+            return null;
+        }
     }
 
 
@@ -195,26 +229,18 @@ public class OkhttpHelper {
      * post的请求参数，构造RequestBody
      *
      */
-    private RequestBody setRequestBody(Map<String, String> BodyParams) {
-        RequestBody body ;
+    private RequestBody setRequestBody(Map<String, String> params) {
         okhttp3.FormBody.Builder formEncodingBuilder = new okhttp3.FormBody.Builder();
-        if (BodyParams != null) {
-            for (Map.Entry<String, String> entry : BodyParams.entrySet()) {
-                if (entry == null)
-                    continue;
-                String key = entry.getKey();
-                String value = entry.getValue();
-                if (TextUtils.isEmpty(key) || TextUtils.isEmpty(value)) {
-                    continue;
+        if (params != null) {
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                if (entry != null && !TextUtils.isEmpty(entry.getKey()) && !TextUtils.isEmpty(entry.getValue())) {
+                    formEncodingBuilder.add(entry.getKey(), entry.getValue());
                 }
-                formEncodingBuilder.add(key, value);
             }
-
         }
-        body = formEncodingBuilder.build();
-        return body;
-
+        return formEncodingBuilder.build();
     }
+
 
     private <E> void post(BPRequestBody<E> builder) {
         RequestBody body;
@@ -226,117 +252,24 @@ public class OkhttpHelper {
 
         Request.Builder okBuilder = getBuilder(builder);
         Request request = okBuilder.post(body).url(builder.url).build();
-
-        //3 将Request封装为Call
-        Call call = mClient.newCall(request);
-        //4 执行Call
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(@NonNull final Call call, @NonNull final IOException e) {
-                handlerError(builder, e, UNKNOW);
-            }
-
-            @Override
-            public void onResponse(@NonNull final Call call, @NonNull  final Response response) {
-                int code = response.code();
-
-                if ((code >= 200 && code < 300) || code == 304) {
-
-                    handlerResponse(response, builder);
-                } else {
-                    handlerError(builder, new Exception(response.message()), code);
-                }
-
-            }
-        });
+        executeRequest(request, builder);
     }
 
 
     private <E> void get(BPRequestBody<E> builder) {
         if (builder.needCache) {
-            if (builder.onCacheBean != null) {
-                final E model = NetSharePreference.getCache(config.context, builder.url, builder.clazz);
-                mMainHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        builder.onCacheBean.onCache(model);
-                    }
-                });
-
-            } else if (builder.onResponse != null) {
-                //todo
-
-            } else {
-                // 得到响应报文体的字符串 String 对象
-                if (builder.onCacheString != null) {
-                    String res = NetSharePreference.getCacheByString(config.context, builder.url);
-                    mMainHandler.post(() -> builder.onCacheString.onCacheString(res));
-                }
-            }
+            handleCache(builder);
         }
 
         Request.Builder okBuilder = getBuilder(builder);
-        StringBuilder url = new StringBuilder(builder.url);
-        if (builder.params != null) {
-            Iterator<Map.Entry<String, String>> it = builder.params.entrySet().iterator();
+        String url = buildUrlWithParams(builder.url, builder.params);
 
-            while (it.hasNext()) {
-                Map.Entry<String, String> entry = it.next();
-                if (entry == null)
-                    continue;
-                String key = entry.getKey();
-                String value = entry.getValue();
-                if (TextUtils.isEmpty(key) || TextUtils.isEmpty(value)) {
-                    continue;
-                }
-                if (url.toString().contains("?")) {
-                    url.append("&");
-                    url.append(key);
-                    url.append("=");
-                    url.append(value);
-                } else {
-                    url.append("?");
-                    url.append(key);
-                    url.append("=");
-                    url.append(value);
-                }
-            }
+        Request request = builder.method == BPRequest.Method.HEAD
+                ? okBuilder.url(url).head().build()
+                : okBuilder.url(url).build();
 
-        }
-        Request request = null;
-        if (builder.method == BPRequest.Method.HEAD) {
-            request = okBuilder.url(url.toString())
-                    .head()
-                    .build();
-        } else {
-            request = okBuilder.url(url.toString())
-                    .build();
-        }
-        try {
-            Call call = mClient.newCall(request);
-            call.enqueue(new Callback() {
-                @Override
-                public void onFailure(@NonNull final Call call, @NonNull final IOException e) {
-                    handlerError(builder, e, UNKNOW);
-                }
+        executeRequest(request, builder);
 
-                @Override
-                public void onResponse(@NonNull final Call call, @NonNull final Response response) throws IOException {
-                    int code = response.code();
-
-                    if ((code >= 200 && code < 300) || code == 304) {
-
-                        handlerResponse(response, builder);
-                    } else {
-                        handlerError(builder,  new Exception(response.message()), code);
-                    }
-
-
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
 
@@ -344,30 +277,7 @@ public class OkhttpHelper {
         RequestBody body = setRequestBody(builder.params);
         Request.Builder okBuilder = getBuilder(builder);
         Request request = okBuilder.url(builder.url).delete(body).build();
-
-        //3 将Request封装为Call
-        Call call = mClient.newCall(request);
-        //4 执行Call
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(@NonNull final Call call, @NonNull final IOException e) {
-                handlerError(builder, e, UNKNOW);
-            }
-
-            @Override
-            public void onResponse(@NonNull final Call call,@NonNull final Response response)  {
-                int code = response.code();
-
-                if ((code >= 200 && code < 300) || code == 304) {
-
-                    handlerResponse(response, builder);
-                } else {
-                    handlerError(builder,  new Exception(response.message()), code);
-                }
-
-
-            }
-        });
+        executeRequest(request, builder);
 
     }
 
@@ -376,35 +286,32 @@ public class OkhttpHelper {
         Request.Builder okBuilder = getBuilder(builder);
         Request request = okBuilder.url(builder.url).patch(body).build();
 
-        //3 将Request封装为Call
-        Call call = mClient.newCall(request);
-        //4 执行Call
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(@NonNull final Call call, @NonNull final IOException e) {
-                handlerError(builder, e, UNKNOW);
-            }
-
-            @Override
-            public void onResponse(@NonNull final Call call, @NonNull final Response response) throws IOException {
-                int code = response.code();
-                if ((code >= 200 && code < 300) || code == 304) {
-
-                    handlerResponse(response, builder);
-                } else {
-                    handlerError(builder,  new Exception(response.message()), code);
-                }
-
-
-            }
-        });
+        executeRequest(request, builder);
     }
 
-    private Response postSync(BPRequestBody builder) {
+    /**
+     * 同步GET请求
+     */
+    private <E> Response getSync(BPRequestBody<E> builder) {
 
-        RequestBody body = null;
+        Request.Builder okBuilder = getBuilder(builder);
+        String url = buildUrlWithParams(builder.url, builder.params);
+
+        Request request;
+        if (builder.method == BPRequest.Method.HEAD) {
+            request = okBuilder.url(url).head().build();
+        } else {
+            request = okBuilder.url(url).build();
+        }
+        return executeSyncRequest(request, builder);
+    }
+
+    private <E> Response postSync(BPRequestBody<E> builder) {
+
+        RequestBody body;
         if (!TextUtils.isEmpty(builder.paramsJson)) {
-            body = RequestBody.create(MediaType.parse("application/json;charset=utf-8"), builder.paramsJson);
+            body = RequestBody.create(builder.paramsJson,
+                    MediaType.get("application/json; charset=utf-8"));
         } else {
             body = setRequestBody(builder.params);
         }
@@ -412,206 +319,236 @@ public class OkhttpHelper {
         Request.Builder okBuilder = getBuilder(builder);
         Request request = okBuilder.post(body).url(builder.url).build();
 
-        try {
-            //3 将Request封装为Call
-            Call call = mClient.newCall(request);
-            return call.execute();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-
+        return executeSyncRequest(request, builder);
     }
 
-    private Response getSync(BPRequestBody builder) {
 
-        Request.Builder okBuilder = getBuilder(builder);
-        StringBuilder url = new StringBuilder(builder.url);
-        if (builder.params != null) {
-            Iterator<Map.Entry<String, String>> it = builder.params.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<String, String> entry = it.next();
-                if (entry == null)
-                    continue;
-                String key = entry.getKey();
-                String value = entry.getValue();
-                if (TextUtils.isEmpty(key) || TextUtils.isEmpty(value)) {
-                    continue;
-                }
-                if (url.toString().contains("?")) {
-                    url.append("&");
-                    url.append(key);
-                    url.append("=");
-                    url.append(value);
-                } else {
-                    url.append("?");
-                    url.append(key);
-                    url.append("=");
-                    url.append(value);
-                }
-            }
-        }
-        Request request = null;
-        if (builder.method == BPRequest.Method.HEAD) {
-            request = okBuilder.url(url.toString())
-                    .head()
-                    .build();
-        } else {
-            request = okBuilder.url(url.toString())
-                    .build();
-        }
-        try {
-            Call call = mClient.newCall(request);
-            return call.execute();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            handlerErrorSync(builder, e, UNKNOW);
-        }
-        return null;
-    }
-
-    private Response deleteSync(BPRequestBody builder) {
+    private <E> Response deleteSync(BPRequestBody<E> builder) {
         RequestBody body = setRequestBody(builder.params);
         Request.Builder okBuilder = getBuilder(builder);
         Request request = okBuilder.url(builder.url).delete(body).build();
-
-        try {
-            //3 将Request封装为Call
-            Call call = mClient.newCall(request);
-            return call.execute();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-
+        return executeSyncRequest(request, builder);
     }
 
-    private Response patchSync(BPRequestBody builder) {
+    private <E> Response patchSync(BPRequestBody<E> builder) {
         RequestBody body = setRequestBody(builder.params);
         Request.Builder okBuilder = getBuilder(builder);
         Request request = okBuilder.url(builder.url).patch(body).build();
-
-        try {
-            //3 将Request封装为Call
-            Call call = mClient.newCall(request);
-            return call.execute();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        return executeSyncRequest(request, builder);
     }
 
-
-    private <E> void handlerError(BPRequestBody<E> builder, Exception e, int code) {
-
-        if (config.responseInterceptor != null) {
-            if (e == null) {
-                e = new Exception("UNKNOW");
-            }
-            e = config.responseInterceptor.exceptionListener(builder.url, null, e, code);
-        }
-        final Exception temp = e;
-        if (builder.onException != null) {
-            mMainHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Exception exception = temp;
-                    if (exception == null) {
-                        exception = new Exception("UNKNOW");
-                    }
-                    builder.onException.onException(exception, code, null);
-                }
-            });
-
-        }
-    }
-
-    private <E> void handlerResponse(Response response, BPRequestBody<E> builder) {
+    /**
+     * 执行同步请求（统一处理）
+     */
+    private <E> Response executeSyncRequest(Request request, BPRequestBody<E> builder) {
+        Call call = null;
+        Response response = null;
 
         try {
+            call = mClient.newCall(request);
+            response = call.execute();
 
+            // 应用响应拦截器
             if (config.responseInterceptor != null) {
-                response = config.responseInterceptor.responseListener(response.headers(), response.code(), builder.url, response);
+                Response intercepted = config.responseInterceptor.onResponseReceived(
+                        response.headers(), response.code(), builder.url, response);
+                if (intercepted == null) {
+                    // 拦截器返回null，中断处理
+                    return null;
+                }
+                response = intercepted;
             }
+
+            // 检查响应状态
+            int code = response.code();
+            if (code >= 200 && code < 300 || code == 304) {
+                return response;
+            } else {
+                Exception httpError = new Exception("HTTP error: " + response.message());
+                handleError(builder, httpError, code);
+                return null;
+            }
+
+        } catch (IOException e) {
+            handleError(builder, e, getErrorCode(e));
+
+            return null;
+        } finally {
+            // 注意：不要在这里关闭response，因为需要返回给调用者
+            if (response == null && call != null) {
+                call.cancel();
+            }
+        }
+    }
+
+
+
+
+    // 统一处理请求
+    private <E> void executeRequest(Request request, BPRequestBody<E> builder) {
+        Call call = mClient.newCall(request);
+        call.enqueue(createCallback(builder));
+    }
+
+    // 创建统一的回调
+    private <E> Callback createCallback(BPRequestBody<E> builder) {
+        return new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                int errorCode = getErrorCode(e);
+                handleError(builder, e, errorCode);
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) {
+                handleResponse(response, builder);
+            }
+        };
+    }
+
+    // 统一处理响应
+    private <E> void handleResponse(Response response, BPRequestBody<E> builder) {
+        try (Response resp = response) { // try-with-resources自动关闭
+            // 应用拦截器
+            if (config.responseInterceptor != null) {
+                Response intercepted = config.responseInterceptor.onResponseReceived(
+                        response.headers(), response.code(), builder.url, response);
+                if (intercepted == null) {
+                    // 拦截器返回null，中断处理
+                    return;
+                }
+            }
+
+            int code = response.code();
+            if (code >= 200 && code < 300 || code == 304) {
+                processResponseBody(response, builder);
+            } else {
+                handleError(builder, new Exception("HTTP error: " + response.message()), code);
+            }
+        } catch (Exception e) {
+            handleError(builder, e, ErrorCode.ERROR_RESPONSE_EMPTY);
+        }
+
+    }
+
+    // 处理响应体（支持多种回调类型）
+    private <E> void processResponseBody(Response response, BPRequestBody<E> builder) {
+        try {
+            String json = response.body().string();
+
+            // 优先处理原始Response回调
             if (builder.onResponse != null) {
-                Response responseTemp = response;
-                mMainHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        builder.onResponse.onResponse(responseTemp);
-                    }
-                });
+                postToMainThread(() -> builder.onResponse.onResponse(response));
                 return;
-
-
             }
-            String json=response.body().string();
-            // 得到响应报文体的字符串 String 对象
-            if (builder.onResponseString != null) {
 
-                mMainHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        builder.onResponseString.onResponse(json);
-                    }
-                });
+            // 处理String回调
+            if (builder.onResponseString != null) {
+                postToMainThread(() -> builder.onResponseString.onResponse(json));
                 if (builder.needCache && config != null && config.context != null) {
                     NetSharePreference.saveCacheByString(config.context, builder.url, json);
                 }
+                return;
             }
-            if (builder.onResponseBean != null) {
-                E model ;
-                try {
-                    model = JSON.parseObject(json, builder.clazz);
-                } catch (JSONException e) {
-//                    e.printStackTrace();
-                    handlerError(builder, e, UNKNOW);
-                    return;
-                }
-                E finalModel = model;
-                mMainHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        builder.onResponseBean.onResponse(finalModel);
-                    }
-                });
-                if (builder.needCache && config != null && config.context != null) {
-                    NetSharePreference.saveCache(config.context, builder.url, finalModel);
-                }
 
+            // 处理Bean回调
+            if (builder.onResponseBean != null && builder.clazz != null) {
+                try {
+                    E model = JSON.parseObject(json, builder.clazz);
+                    postToMainThread(() -> builder.onResponseBean.onResponse(model));
+                    if (builder.needCache && config != null && config.context != null) {
+                        NetSharePreference.saveCache(config.context, builder.url, model);
+                    }
+                } catch (JSONException e) {
+                    handleError(builder, e, ErrorCode.ERROR_JSON_PARSE);
+                }
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            handlerError(builder, e, UNKNOW);
+            handleError(builder, e, ErrorCode.ERROR_RESPONSE_EMPTY);
         }
     }
 
-    private  void handlerErrorSync(BPRequestBody builder, Exception e, int code) {
+    // 统一处理错误
+    private <E> void handleError(BPRequestBody<E> builder, Exception e, int code) {
         if (config.responseInterceptor != null) {
-            if (e == null) {
-                e = new Exception("UNKNOW");
-            }
-            e= config.responseInterceptor.exceptionListener(builder.url, null, e, code);
+            config.responseInterceptor.onExceptionOccurred(
+                    builder.url, e != null ? e.getMessage() : null, e, code);
         }
-        Exception temp=e;
+
+        final Exception finalException = e != null ? e : new Exception("Unknown error");
+        final int finalCode = code;
+
         if (builder.onException != null) {
-            mMainHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Exception exception=temp;
-                    if(exception==null){
-                        exception=new Exception("UNKNOW");
-                    }
-                    builder.onException.onException(exception, code, null);
-                }
-            });
-
-
+            postToMainThread(() -> builder.onException.onException(finalException, finalCode, null));
         }
+
+        // 添加日志记录
+        Log.e(TAG, "Request failed: url=" + builder.url + ", code=" + code +
+                ", error=" + finalException.getMessage());
 
     }
 
+
+    // 获取错误码
+    private int getErrorCode(IOException e) {
+        if (e.getMessage() != null && e.getMessage().contains("timeout")) {
+            return ErrorCode.ERROR_TIMEOUT;
+        }
+        if (e.getMessage() != null && e.getMessage().contains("canceled")) {
+            return ErrorCode.ERROR_CANCELED;
+        }
+        return ErrorCode.ERROR_NETWORK;
+    }
+
+    // 线程安全的主线程执行
+    private void postToMainThread(Runnable runnable) {
+        Handler handler = getMainHandler();
+        if ( Looper.myLooper() != Looper.getMainLooper()) {
+            handler.post(runnable);
+        } else {
+            runnable.run();
+        }
+    }
+
+    // 处理缓存
+    private <E> void handleCache(BPRequestBody<E> builder) {
+        if (builder.onCacheBean != null && builder.clazz != null) {
+            E cache = NetSharePreference.getCache(config.context, builder.url, builder.clazz);
+            if (cache != null) {
+                postToMainThread(() -> builder.onCacheBean.onCache(cache));
+            }
+        } else if (builder.onCacheString != null) {
+            String cache = NetSharePreference.getCacheByString(config.context, builder.url);
+            if (cache != null) {
+                postToMainThread(() -> builder.onCacheString.onCacheString(cache));
+            }
+        }
+    }
+
+    // 构建带参数的URL
+    private String buildUrlWithParams(String baseUrl, Map<String, String> params) {
+        if (params == null || params.isEmpty()) {
+            return baseUrl;
+        }
+
+        StringBuilder url = new StringBuilder(baseUrl);
+        boolean hasQuery = baseUrl.contains("?");
+
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            if (entry == null) continue;
+            String key = entry.getKey();
+            String value = entry.getValue();
+            if (TextUtils.isEmpty(key) || TextUtils.isEmpty(value)) continue;
+
+            if (hasQuery) {
+                url.append("&");
+            } else {
+                url.append("?");
+                hasQuery = true;
+            }
+            url.append(key).append("=").append(value);
+        }
+
+        return url.toString();
+    }
 }

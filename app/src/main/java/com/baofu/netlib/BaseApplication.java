@@ -38,8 +38,7 @@ public class BaseApplication extends Application{
         header.put("User-Agent", "UA");
         ResponseInterceptor responseInterceptor=new ResponseInterceptor() {
             @Override
-            public Response responseListener(Headers headers, int status, String url, Response originalResponse) {
-                //这里是子线程
+            public Response onResponseReceived(Headers headers, int statusCode, String url, Response originalResponse) {
                 Log.e("asdf","所有的请求");
                 try {
                     ResponseBody responseBody = originalResponse.body();
@@ -64,15 +63,16 @@ public class BaseApplication extends Application{
             }
 
             @Override
-            public Exception exceptionListener(String url, String error, Exception e, int code) {
+            public void onExceptionOccurred(String url, String errorMessage, Exception exception, int errorCode) {
                 //这里是子线程
 
                 //拦截错误，不再向下传递，在这里统一处理
 //                        return NetConstans.Interceptor;
                 //返回null表示不拦截
-                e=new Exception("意不意外");
-                return e;
+                exception=new Exception("意不意外");
+                Log.e("asdf","意不意外");
             }
+
         };
         BPConfig config=new BPConfig.Builder().context(this).strategyType(BPRequest.STRATEGY_TYPE.OKHTTP).addHeader(header)
                 .addInterceptor(new MyTestInterceptor())
